@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="bn" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MF Tifor</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        secondary: '#9333EA', // Purple 600
+                    },
+                    animation: {
+                        'blob': 'blob 10s infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Dynamic Background Animation */
+        .dynamic-bg {
+            background: linear-gradient(-45deg, #fdfbfb, #e0c3fc, #e0eafc, #f5f7fa);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid rgba(255, 255, 255, 1);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+            backdrop-filter: blur(4px);
+        }
+        
+        /* Modal Transition */
+        .modal {
+            transition: opacity 0.2s ease-in-out;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            transform: scale(0.95) translateY(10px);
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="dynamic-bg min-h-screen text-slate-800 antialiased">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 glass shadow-sm">
+        <div class="container mx-auto px-4 md:px-6 h-16 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:scale-105 transition transform">
+                MF Tifor
+            </a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8 font-bold text-[15px]">
+                <a href="#home" class="text-slate-700 hover:text-primary transition">হোম</a>
+                <a href="#guidelines" class="text-slate-700 hover:text-primary transition">গাইডলাইন</a>
+                <a href="#opportunities" class="text-slate-700 hover:text-primary transition">কাজের তালিকা</a>
+                
+                <button onclick="openModal()" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-lg hover:shadow-blue-500/30 transition transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 text-sm font-bold">
+                    <i class="fas fa-paper-plane"></i> কাজ জমা দিন
+                </button>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobileMenuBtn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-700 bg-white/50 rounded-full shadow-sm border border-slate-200 active:scale-90 transition">
+                <i class="fas fa-bars text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobileMenu" class="md:hidden absolute top-16 left-0 w-full bg-white/95 backdrop-blur-xl border-b border-slate-100 shadow-xl transition-all duration-300 origin-top transform scale-y-0 opacity-0 overflow-hidden">
+            <div class="p-5 space-y-3 font-bold text-center">
+                <a href="#home" class="block p-3 rounded-xl bg-slate-50 text-slate-700 active:bg-blue-50">হোম</a>
+                <a href="#guidelines" class="block p-3 rounded-xl bg-slate-50 text-slate-700 active:bg-blue-50">গাইডলাইন</a>
+                <a href="#opportunities" class="block p-3 rounded-xl bg-slate-50 text-slate-700 active:bg-blue-50">কাজের সুযোগ</a>
+                <button onclick="openModal(); toggleMobileMenu()" class="w-full mt-2 py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-lg font-bold">
+                    কাজ জমা দিন
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="pt-32 pb-20 px-4 relative overflow-hidden">
+        <!-- Background Blobs -->
+        <div class="absolute top-20 right-0 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
+        <div class="absolute top-40 left-0 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
+
+        <div class="container mx-auto max-w-4xl text-center relative z-10">
+            <!-- Trust Badge (Bouncing) -->
+            <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 border border-blue-200 shadow-lg text-xs md:text-sm font-extrabold text-blue-700 mb-8 animate-bounce">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                বিশ্বস্ত সোর্স - ১০০% পেমেন্ট গ্যারান্টি 🚀
+            </div>
+            
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-[1.15] text-slate-900 drop-shadow-sm">
+                সহজ কাজ করে <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 animate-pulse-slow">নিশ্চিত ইনকাম করুন</span>
+            </h1>
+            
+            <p class="text-base md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed font-medium bg-white/30 backdrop-blur-sm p-4 rounded-2xl border border-white/50">
+                MF Tifor এর সাথে যুক্ত হয়ে আপনার সোশ্যাল মিডিয়া অ্যাকাউন্ট এবং জিমেইল সেল অথবা ভাড়া দিয়ে ঘরে বসেই আয় করুন। কোনো অভিজ্ঞতা প্রয়োজন নেই।
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center w-full px-2">
+                <button onclick="openModal()" class="w-full sm:w-auto px-8 py-4 bg-slate-900 text-white rounded-xl text-lg font-bold shadow-xl hover:shadow-2xl hover:bg-slate-800 transition transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fas fa-wallet text-yellow-400"></i> জমা দিয়ে পেমেন্ট নিন
+                </button>
+                
+                <a id="heroYoutubeLink" href="#" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-red-600 text-white rounded-xl text-lg font-bold shadow-xl hover:bg-red-700 hover:shadow-red-500/30 transition transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fab fa-youtube"></i> টিউটোরিয়াল দেখুন
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats/Features -->
+    <section id="guidelines" class="py-12 px-4">
+        <div class="container mx-auto max-w-6xl">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Card 1 -->
+                <div class="glass-card p-8 rounded-3xl text-center hover:scale-[1.03] transition duration-500 hover:shadow-xl group">
+                    <div class="w-16 h-16 mx-auto bg-green-100 text-green-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:rotate-12 transition">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">১০০% সেইফ ডিল</h3>
+                    <p class="text-slate-600 mt-2 font-medium">আপনার অ্যাকাউন্টের সম্পূর্ণ নিরাপত্তা এবং স্বচ্ছ ডিল নিশ্চিত করা হয়।</p>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="glass-card p-8 rounded-3xl text-center hover:scale-[1.03] transition duration-500 hover:shadow-xl group">
+                    <div class="w-16 h-16 mx-auto bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:rotate-12 transition">
+                        <i class="fab fa-telegram-plane"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">সহজ যোগাযোগ</h3>
+                    <p class="text-slate-600 mt-2 font-medium">টেলিগ্রাম এবং হোয়াটসঅ্যাপের মাধ্যমে সরাসরি সাপোর্টের ব্যবস্থা।</p>
+                </div>
+                
+                <!-- Card 3 -->
+                <div class="glass-card p-8 rounded-3xl text-center hover:scale-[1.03] transition duration-500 hover:shadow-xl group">
+                    <div class="w-16 h-16 mx-auto bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:rotate-12 transition">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">ইনস্ট্যান্ট পেমেন্ট</h3>
+                    <p class="text-slate-600 mt-2 font-medium">কাজ বুঝিয়ে দেওয়ার সাথে সাথেই বিকাশে পেমেন্ট।</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Opportunities -->
+    <section id="opportunities" class="py-12 px-4 mb-20 relative z-10">
+        <div class="container mx-auto max-w-6xl">
+            <div class="text-center mb-8">
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-2">কাজের তালিকা</h2>
+                <p class="text-slate-600 font-medium">নিচের তালিকা থেকে আপনার পছন্দের কাজটি বেছে নিন</p>
+            </div>
+
+            <!-- Search and Filter Panel -->
+            <div class="glass-card p-5 rounded-2xl shadow-lg mb-8 border border-white/60">
+                <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+                    
+                    <!-- Search Box -->
+                    <div class="relative w-full md:w-1/2 group">
+                        <input type="text" id="searchInput" placeholder="কাজ খুঁজুন (যেমন: Gmail, Facebook)..." 
+                            class="w-full pl-12 pr-4 py-3 bg-white/80 border border-slate-200 focus:border-blue-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 text-slate-800 font-bold shadow-sm transition">
+                        <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 group-hover:text-blue-500 transition"></i>
+                    </div>
+
+                    <!-- Filter Dropdown -->
+                    <div class="flex items-center gap-3 w-full md:w-auto bg-white/80 p-1.5 rounded-xl shadow-sm border border-slate-200">
+                        <select id="statusFilter" class="bg-transparent border-none font-bold text-slate-700 focus:ring-0 cursor-pointer text-sm py-2 px-2 outline-none w-full md:w-auto">
+                            <option value="all">সব দেখুন</option>
+                            <option value="active">🟢 চলমান কাজ</option>
+                            <option value="closed">🔴 বন্ধ কাজ</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Category Tabs -->
+                <div class="flex gap-2 mt-4 overflow-x-auto pb-2 scrollbar-hide justify-center md:justify-start">
+                    <button onclick="setCategory('all')" id="btn-all" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold bg-slate-900 text-white transition shadow-md whitespace-nowrap">সব কাজ</button>
+                    <button onclick="setCategory('sell')" id="btn-sell" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap">সেল (Sell)</button>
+                    <button onclick="setCategory('rent')" id="btn-rent" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap">ভাড়া (Rent)</button>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div id="opportunitiesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Javascript will load content here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Contact -->
+    <section class="bg-slate-900 border-t border-slate-800 py-16 px-4 text-white">
+        <div class="container mx-auto max-w-4xl text-center">
+            <h2 class="text-3xl font-black mb-8">যোগাযোগ করুন</h2>
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                <a id="footerWhatsappLink" href="#" target="_blank" class="flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#128C7E] text-white py-4 px-10 rounded-2xl text-xl font-bold shadow-xl hover:shadow-green-500/30 transition transform hover:-translate-y-1">
+                    <i class="fab fa-whatsapp text-3xl"></i> WhatsApp
+                </a>
+                <a id="footerTelegramLink" href="#" target="_blank" class="flex items-center justify-center gap-3 bg-[#0088cc] hover:bg-[#0077b5] text-white py-4 px-10 rounded-2xl text-xl font-bold shadow-xl hover:shadow-blue-500/30 transition transform hover:-translate-y-1">
+                    <i class="fab fa-telegram-plane text-3xl"></i> Telegram
+                </a>
+            </div>
+            <p class="text-slate-500 text-sm mt-12">&copy; 2026 MF Tifor. All rights reserved.</p>
+        </div>
+    </section>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/70 backdrop-blur-md">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden modal-content flex flex-col max-h-[90vh]">
+            
+            <!-- Header -->
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <span class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-blue-600"><i class="fas fa-paper-plane"></i></span>
+                    কাজ জমা দিন
+                </h3>
+                <!-- Close Button -->
+                <button onclick="closeModal()" class="w-9 h-9 rounded-full bg-slate-50 text-slate-500 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <!-- Scrollable Body -->
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                
+                <!-- NEW: Video Button Container (Updated) -->
+                <div id="videoContainer" class="mb-6 hidden">
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-red-600 shadow-sm shrink-0">
+                                <i class="fab fa-youtube text-lg"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-sm font-bold text-slate-800">কিভাবে জমা দিবেন?</p>
+                                <p class="text-[10px] text-slate-500 font-bold">নিয়মটি জানতে ভিডিও দেখুন</p>
+                            </div>
+                        </div>
+                        <a id="videoLinkBtn" href="#" target="_blank" class="px-4 py-2 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition shadow-md whitespace-nowrap flex items-center gap-2">
+                            <i class="fas fa-play"></i> ভিডিও দেখুন
+                        </a>
+                    </div>
+                </div>
+
+                <form onsubmit="handleSubmit(event)" class="space-y-5">
+                    
+                    <!-- Job Selection -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">কাজের ধরন</label>
+                        <div class="relative">
+                            <select id="jobSelector" onchange="handleJobChange()" class="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-slate-700 appearance-none text-sm transition shadow-sm">
+                                <option value="">এখানে ক্লিক করে সিলেক্ট করুন...</option>
+                                <!-- JS will populate this -->
+                            </select>
+                            <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-500">
+                                <i class="fas fa-chevron-down text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Requirements Text -->
+                    <div id="requirementsBox" class="hidden p-4 bg-amber-50 border border-amber-100 rounded-xl">
+                        <div class="flex items-start gap-2">
+                            <i class="fas fa-exclamation-circle text-amber-500 mt-0.5"></i>
+                            <p class="text-xs text-amber-800 font-bold" id="reqText"></p>
+                        </div>
+                    </div>
+
+                    <!-- Common Inputs -->
+                    <div class="grid grid-cols-1 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">আপনার নাম</label>
+                            <input type="text" id="userName" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold" placeholder="নাম লিখুন">
+                        </div>
+                        <div>
+                            <label id="paymentLabel" class="block text-xs font-bold text-slate-500 mb-1">বিকাশ নাম্বার</label>
+                            <input type="text" id="userContact" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold" placeholder="01XXXXXXXXX">
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Input Area (Textarea) -->
+                    <div id="dynamicInputArea" class="hidden">
+                        <label id="dynamicLabel" class="block text-xs font-bold text-slate-500 mb-1">বিস্তারিত</label>
+                        <textarea id="dynamicText" rows="4" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-mono shadow-inner" placeholder=""></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-base hover:bg-slate-800 shadow-xl hover:shadow-2xl transition transform active:scale-95 flex justify-center items-center gap-2 mt-2">
+                        <span>জমা দিন</span> <i class="fab fa-whatsapp"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // =================================================================
+        // 🛠 MASTER CONTROL PANEL (TEASTER) - সব সেটিং এখানে
+        // =================================================================
+        const MASTER_CONTROL = {
+            admin: {
+                whatsappNumber: "8801571062932", // এডমিনের হোয়াটসঅ্যাপ নাম্বার
+            },
+            socialLinks: {
+                youtube: "https://youtube.com/@mftifor?si=7LBOs8C9pN587s7j",
+                whatsappGroup: "https://wa.me/8801571062932",
+                telegram: "https://t.me/mftiforchannel"
+            },
+            jobs: {
+                gmail: {
+                    id: "gmail_sell",
+                    title: "ফ্রেশ Gmail সেল",
+                    category: "sell",
+                    icon: "📧",
+                    price: "১০ পিচ = ১৪০ টাকা",
+                    date: "চলমান", 
+                    status: "active", 
+                    // ভিডিও লিংক (যেখানে বাটন ক্লিক করলে নিয়ে যাবে)
+                    video: "https://youtu.be/-RNyy0h6wts?si=iPTRqByTtMG4bn7i", 
+                    requirements: ["রিকভারি রিমুভ", "ফ্রেশ আইডি", "পাসওয়ার্ড সঠিক হতে হবে"],
+                    placeholder: "Example:\nuser1@gmail.com pass123\nuser2@gmail.com pass123"
+                },
+                facebook: {
+                    id: "facebook_sell",
+                    title: "Facebook আইডি সেল",
+                    category: "sell",
+                    icon: "👤",
+                    price: "আলোচনা সাপেক্ষে রেট",
+                    date: "চলমান",
+                    status: "active",
+                    video: "https://youtu.be/2aan-2krI14?si=ASAxOEeZbYrT6Oti",
+                    requirements: ["UID এবং Password", "2FA Key থাকতে হবে"],
+                    placeholder: "UID | Password | 2FA Key"
+                },
+                whatsapp: {
+                    id: "whatsapp_rent",
+                    title: "WhatsApp ভাড়া",
+                    category: "rent",
+                    icon: "📞",
+                    price: "আলোচনা সাপেক্ষে রেট",
+                    date: "চলমান",
+                    status: "active",
+                    video: "https://youtu.be/wLKjFMIFfn0?si=lneNC4iltVL4Hprj",
+                    requirements: ["মিনিমাম ১ মাস ব্যবহার করা", "রিয়েল সিম কার্ড"],
+                    placeholder: "আপনার হোয়াটসঅ্যাপ নাম্বারটি এখানে লিখুন..."
+                },
+                other: {
+                    id: "other",
+                    title: "অন্যান্য / সাপোর্ট",
+                    category: "all",
+                    icon: "📦",
+                    price: "--",
+                    date: "সবসময়",
+                    status: "active",
+                    video: "", 
+                    requirements: [],
+                    placeholder: "আপনার প্রশ্ন বা অফার বিস্তারিত লিখুন..."
+                }
+            }
+        };
+
+        // =================================================================
+        // ⚙️ SYSTEM LOGIC
+        // =================================================================
+
+        let currentCategory = 'all';
+        let searchTerm = '';
+        let statusFilterValue = 'all';
+
+        // 2. Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set Global Links
+            document.getElementById('heroYoutubeLink').href = MASTER_CONTROL.socialLinks.youtube;
+            document.getElementById('footerWhatsappLink').href = MASTER_CONTROL.socialLinks.whatsappGroup;
+            document.getElementById('footerTelegramLink').href = MASTER_CONTROL.socialLinks.telegram;
+
+            // Render Job List
+            renderJobs();
+            
+            // Populate Modal Select
+            populateJobSelect();
+        });
+
+        // 3. Render Jobs Grid with Search & Filter
+        function renderJobs() {
+            const grid = document.getElementById('opportunitiesGrid');
+            const jobs = Object.values(MASTER_CONTROL.jobs);
+            
+            // Filter Logic
+            const filteredJobs = jobs.filter(job => {
+                // 1. Category Filter
+                const categoryMatch = currentCategory === 'all' || job.category === currentCategory || job.category === 'all';
+                // 2. Search Filter
+                const searchLower = searchTerm.toLowerCase();
+                const searchMatch = job.title.toLowerCase().includes(searchLower) || 
+                                    (job.requirements && job.requirements.some(r => r.toLowerCase().includes(searchLower)));
+                // 3. Status Filter
+                const statusMatch = statusFilterValue === 'all' || job.status === statusFilterValue;
+
+                return categoryMatch && searchMatch && statusMatch;
+            });
+
+            // Clear current
+            grid.innerHTML = '';
+
+            if (filteredJobs.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-16 text-center opacity-60">
+                        <i class="fas fa-search text-4xl text-slate-300 mb-4"></i>
+                        <p class="text-slate-500 font-bold">কোনো কাজ পাওয়া যায়নি</p>
+                    </div>`;
+                return;
+            }
+
+            filteredJobs.forEach(job => {
+                if (job.id === 'other') return; // Skip 'other' in grid
+
+                const isClosed = job.status === 'closed';
+                
+                const card = document.createElement('div');
+                card.className = `glass-card p-6 rounded-3xl relative group transition duration-300 hover:-translate-y-2 border-t-4 ${isClosed ? 'border-red-400 grayscale opacity-80' : 'border-blue-500 hover:shadow-2xl'}`;
+                
+                card.innerHTML = `
+                    <!-- Status Badge -->
+                    <div class="absolute top-4 right-4">
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm ${isClosed ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">
+                            ${isClosed ? 'বন্ধ' : '● চলমান'}
+                        </span>
+                    </div>
+
+                    <div class="flex flex-col mb-4">
+                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-md mb-4 text-slate-700">
+                            ${job.icon}
+                        </div>
+                        <h3 class="font-bold text-xl text-slate-800 mb-1 leading-tight">${job.title}</h3>
+                        <p class="text-sm text-blue-600 font-extrabold">${job.price}</p>
+                    </div>
+                    
+                    <div class="space-y-3 mb-6 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                        <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
+                            <i class="far fa-clock text-blue-400"></i> মেয়াদ: ${job.date}
+                        </div>
+                        <div class="flex flex-wrap gap-1">
+                            ${job.requirements.slice(0, 3).map(req => `<span class="px-2 py-1 bg-white text-slate-600 text-[10px] font-bold rounded border border-slate-200 shadow-sm">${req}</span>`).join('')}
+                        </div>
+                    </div>
+
+                    <button onclick="openModalWithJob('${job.id}')" ${isClosed ? 'disabled' : ''} 
+                        class="w-full py-3.5 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 ${isClosed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-slate-900 text-white hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-blue-500/30'}">
+                        ${isClosed ? 'বর্তমানে বন্ধ' : 'কাজটি করুন <i class="fas fa-arrow-right"></i>'}
+                    </button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 4. Modal & Form Logic
+        const modal = document.getElementById('uploadModal');
+        const jobSelect = document.getElementById('jobSelector');
+        const videoContainer = document.getElementById('videoContainer');
+        const videoLinkBtn = document.getElementById('videoLinkBtn');
+        const dynamicArea = document.getElementById('dynamicInputArea');
+        const dynamicLabel = document.getElementById('dynamicLabel');
+        const dynamicText = document.getElementById('dynamicText');
+        const reqBox = document.getElementById('requirementsBox');
+        
+        function populateJobSelect() {
+            Object.values(MASTER_CONTROL.jobs).forEach(job => {
+                const option = document.createElement('option');
+                option.value = job.id;
+                option.text = `${job.icon} ${job.title}`;
+                jobSelect.appendChild(option);
+            });
+        }
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.add('active'), 10);
+            resetForm();
+        }
+
+        function closeModal() {
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                resetForm(); 
+            }, 200);
+        }
+
+        function openModalWithJob(jobId) {
+            openModal();
+            jobSelect.value = jobId;
+            handleJobChange();
+        }
+
+        function resetForm() {
+            videoContainer.classList.add('hidden');
+            dynamicArea.classList.add('hidden');
+            reqBox.classList.add('hidden');
+            jobSelect.value = "";
+        }
+
+        function handleJobChange() {
+            const jobId = jobSelect.value;
+            if (!jobId) {
+                resetForm();
+                return;
+            }
+
+            // Find Job Data
+            const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
+            
+            if (jobData) {
+                // 1. Video Button Logic
+                if (jobData.video) {
+                    videoContainer.classList.remove('hidden');
+                    videoLinkBtn.href = jobData.video;
+                } else {
+                    videoContainer.classList.add('hidden');
+                }
+
+                // 2. Dynamic Fields
+                dynamicArea.classList.remove('hidden');
+                dynamicText.placeholder = jobData.placeholder;
+                dynamicText.value = ""; // Clear prev
+                
+                // 3. Payment/Contact Label Update
+                const contactLabel = document.getElementById('paymentLabel');
+                const contactInput = document.getElementById('userContact');
+                
+                if (jobData.id === 'whatsapp_rent') {
+                    contactLabel.innerText = "WhatsApp নাম্বার";
+                    contactInput.placeholder = "আপনার নাম্বার দিন";
+                    dynamicLabel.innerText = "মেসেজ (অপশনাল)";
+                } else {
+                    contactLabel.innerText = "বিকাশ নাম্বার";
+                    contactInput.placeholder = "01XXXXXXXXX";
+                    dynamicLabel.innerText = jobData.id === 'other' ? "বিস্তারিত" : "লিস্ট পেস্ট করুন";
+                }
+
+                // 4. Requirements Show
+                if (jobData.requirements.length > 0) {
+                    reqBox.classList.remove('hidden');
+                    document.getElementById('reqText').innerText = "অবশ্যই দেখুন: " + jobData.requirements.join(", ");
+                } else {
+                    reqBox.classList.add('hidden');
+                }
+            }
+        }
+
+        function handleSubmit(e) {
+            e.preventDefault();
+            const jobId = jobSelect.value;
+            if (!jobId) return alert('দয়া করে একটি কাজ সিলেক্ট করুন');
+
+            const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
+            const name = document.getElementById('userName').value;
+            const contact = document.getElementById('userContact').value;
+            const details = document.getElementById('dynamicText').value;
+
+            // Format WhatsApp Message
+            let msg = `*নতুন কাজ জমা* %0A`;
+            msg += `------------------ %0A`;
+            msg += `কাজ: ${jobData.title} %0A`;
+            msg += `নাম: ${name} %0A`;
+            msg += `বিকাশ: ${contact} %0A`;
+            
+            if (details) {
+                msg += `%0A বিস্তারিত/লিস্ট: %0A${encodeURIComponent(details)}`;
+            }
+
+            // Open WhatsApp
+            window.open(`https://wa.me/${MASTER_CONTROL.admin.whatsappNumber}?text=${msg}`, '_blank');
+            closeModal();
+        }
+
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        function toggleMobileMenu() {
+            const isOpen = mobileMenu.classList.contains('scale-y-100');
+            if (isOpen) {
+                mobileMenu.classList.remove('scale-y-100', 'opacity-100');
+                mobileMenu.classList.add('scale-y-0', 'opacity-0');
+                menuBtn.innerHTML = '<i class="fas fa-bars text-lg"></i>';
+            } else {
+                mobileMenu.classList.remove('scale-y-0', 'opacity-0');
+                mobileMenu.classList.add('scale-y-100', 'opacity-100');
+                menuBtn.innerHTML = '<i class="fas fa-times text-lg"></i>';
+            }
+        }
+        menuBtn.addEventListener('click', toggleMobileMenu);
+
+        // Filter Function (Category)
+        function setCategory(type) {
+            currentCategory = type;
+            
+            // Button Styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-900', 'text-white');
+                btn.classList.add('text-slate-600', 'bg-white', 'hover:bg-slate-100');
+            });
+            
+            const activeBtn = document.getElementById(`btn-${type}`);
+            activeBtn.classList.remove('text-slate-600', 'bg-white', 'hover:bg-slate-100');
+            activeBtn.classList.add('bg-slate-900', 'text-white');
+
+            renderJobs();
+        }
+
+        // Search & Status Listeners
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            renderJobs();
+        });
+
+        document.getElementById('statusFilter').addEventListener('change', (e) => {
+            statusFilterValue = e.target.value;
+            renderJobs();
+        });
+
+        // NOTE: Modal Backdrop Click Listener REMOVED to prevent closing when clicking outside
+
+    </script>
+</body>
+</html>
