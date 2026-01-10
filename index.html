@@ -3,8 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MF Tifor</title>
+    <meta name="description" content="MF Tifor - Trusted Buy & Sell Platform for Social Media Accounts">
+    <title>MF Tifor - Trusted Buy & Sell Platform</title>
     
+    <!-- Resource Hints for Speed -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -19,13 +25,16 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#4F46E5', // Indigo 600
-                        secondary: '#9333EA', // Purple 600
+                        primary: '#4F46E5', 
+                        secondary: '#9333EA', 
+                    },
+                    fontFamily: {
+                        sans: ['Hind Siliguri', 'sans-serif'],
                     },
                     animation: {
                         'blob': 'blob 10s infinite',
                         'bounce-slow': 'bounce 3s infinite',
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'pulse-slow': 'pulse 3s infinite',
                     },
                     keyframes: {
                         blob: {
@@ -46,13 +55,17 @@
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Dynamic Background Animation */
+        /* Optimized Animations with will-change to reduce repaint */
+        .animate-blob {
+            will-change: transform;
+        }
+
+        /* Dynamic Background */
         .dynamic-bg {
             background: linear-gradient(-45deg, #fdfbfb, #e0c3fc, #e0eafc, #f5f7fa);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
         }
-
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -61,77 +74,141 @@
         
         /* Glassmorphism */
         .glass {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px); 
+            -webkit-backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.6);
         }
-
         .glass-card {
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.95);
             border: 1px solid rgba(255, 255, 255, 1);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-            backdrop-filter: blur(4px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
         }
         
-        /* Modal Transition */
+        /* Modal Transition - Optimized */
         .modal {
-            transition: opacity 0.2s ease-in-out;
+            transition: opacity 0.2s ease-out, visibility 0.2s;
             opacity: 0;
-            pointer-events: none;
+            visibility: hidden;
             z-index: 1000;
         }
         .modal.active {
             opacity: 1;
+            visibility: visible;
             pointer-events: auto;
         }
         .modal-content {
             transform: scale(0.95) translateY(10px);
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform;
         }
         .modal.active .modal-content {
             transform: scale(1) translateY(0);
         }
+
+        /* Chat Widget */
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        .chat-box {
+            width: 350px;
+            height: 500px;
+            max-height: 80vh;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin-bottom: 15px;
+            transform-origin: bottom right;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: scale(0) translateY(20px);
+            pointer-events: none;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        .chat-box.open {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: all;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8fafc;
+        }
+        .chat-bubble {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            line-height: 1.4;
+            animation: fadeIn 0.3s ease;
+        }
+        .chat-bubble.bot {
+            background: white;
+            color: #334155;
+            border-bottom-left-radius: 2px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-right: auto;
+        }
+        .chat-bubble.user {
+            background: linear-gradient(to right, #4F46E5, #9333EA);
+            color: white;
+            border-bottom-right-radius: 2px;
+            margin-left: auto;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
         
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="dynamic-bg min-h-screen text-slate-800 antialiased">
+<body class="dynamic-bg min-h-screen text-slate-800 antialiased selection:bg-purple-100 selection:text-purple-700">
 
     <!-- Navbar -->
-    <nav class="fixed w-full z-50 glass shadow-sm">
+    <nav class="fixed w-full z-50 glass shadow-sm transition-all duration-300">
         <div class="container mx-auto px-4 md:px-6 h-16 flex justify-between items-center">
-            <!-- Logo -->
             <a href="#" class="text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:scale-105 transition transform">
                 MF Tifor
             </a>
             
-            <!-- Desktop Menu -->
             <div class="hidden md:flex items-center space-x-8 font-bold text-[15px]">
-                <a href="#home" class="text-slate-700 hover:text-primary transition">হোম</a>
-                <a href="#guidelines" class="text-slate-700 hover:text-primary transition">গাইডলাইন</a>
-                <a href="#opportunities" class="text-slate-700 hover:text-primary transition">কাজের তালিকা</a>
+                <a href="#home" class="text-slate-700 hover:text-primary transition relative group">
+                    হোম <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
+                <a href="#opportunities" class="text-slate-700 hover:text-primary transition relative group">
+                    সার্ভিস তালিকা <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+                </a>
                 
                 <button onclick="openModal()" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-lg hover:shadow-blue-500/30 transition transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 text-sm font-bold">
                     <i class="fas fa-paper-plane"></i> কাজ জমা দিন
                 </button>
             </div>
 
-            <!-- Mobile Menu Button -->
-            <button id="mobileMenuBtn" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-700 bg-white/50 rounded-full shadow-sm border border-slate-200 active:scale-90 transition">
+            <button id="mobileMenuBtn" aria-label="Menu" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-700 bg-white/50 rounded-full shadow-sm border border-slate-200 active:scale-90 transition">
                 <i class="fas fa-bars text-lg"></i>
             </button>
         </div>
 
-        <!-- Mobile Menu Dropdown -->
         <div id="mobileMenu" class="md:hidden absolute top-16 left-0 w-full bg-white/95 backdrop-blur-xl border-b border-slate-100 shadow-xl transition-all duration-300 origin-top transform scale-y-0 opacity-0 overflow-hidden">
             <div class="p-5 space-y-3 font-bold text-center">
-                <a href="#home" class="block p-3 rounded-xl bg-slate-50 text-slate-700 active:bg-blue-50">হোম</a>
-                <a href="#guidelines" class="block p-3 rounded-xl bg-slate-50 text-slate-700 active:bg-blue-50">গাইডলাইন</a>
-                <a href="#opportunities" class="block p-3 rounded-xl bg-slate-50 text-slate-700 active:bg-blue-50">কাজের সুযোগ</a>
+                <a href="#home" onclick="toggleMobileMenu()" class="block p-3 rounded-xl bg-slate-50 text-slate-700 active:bg-blue-50">হোম</a>
+                <a href="#opportunities" onclick="toggleMobileMenu()" class="block p-3 rounded-xl bg-slate-50 text-slate-700 active:bg-blue-50">সার্ভিস তালিকা</a>
                 <button onclick="openModal(); toggleMobileMenu()" class="w-full mt-2 py-3.5 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-lg font-bold">
                     কাজ জমা দিন
                 </button>
@@ -141,30 +218,29 @@
 
     <!-- Hero Section -->
     <section id="home" class="pt-32 pb-20 px-4 relative overflow-hidden">
-        <!-- Background Blobs -->
+        <!-- Optimized Blobs -->
         <div class="absolute top-20 right-0 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
         <div class="absolute top-40 left-0 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
 
         <div class="container mx-auto max-w-4xl text-center relative z-10">
-            <!-- Trust Badge (Bouncing) -->
             <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 border border-blue-200 shadow-lg text-xs md:text-sm font-extrabold text-blue-700 mb-8 animate-bounce">
                 <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
                 বিশ্বস্ত সোর্স - ১০০% পেমেন্ট গ্যারান্টি 🚀
             </div>
             
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-[1.15] text-slate-900 drop-shadow-sm">
-                সহজ কাজ করে <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 animate-pulse-slow">নিশ্চিত ইনকাম করুন</span>
+                অনলাইনে ইনকাম এবং <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">অ্যাকাউন্ট কেনা-বেচা</span>
             </h1>
             
             <p class="text-base md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed font-medium bg-white/30 backdrop-blur-sm p-4 rounded-2xl border border-white/50">
-                MF Tifor এর সাথে যুক্ত হয়ে আপনার সোশ্যাল মিডিয়া অ্যাকাউন্ট এবং জিমেইল সেল অথবা ভাড়া দিয়ে ঘরে বসেই আয় করুন। কোনো অভিজ্ঞতা প্রয়োজন নেই।
+                MF Tifor এর সাথে যুক্ত হয়ে সোশ্যাল মিডিয়া অ্যাকাউন্ট কিনুন অথবা আপনার অ্যাকাউন্ট বিক্রি করে আয় করুন।
             </p>
 
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center w-full px-2">
-                <button onclick="openModal()" class="w-full sm:w-auto px-8 py-4 bg-slate-900 text-white rounded-xl text-lg font-bold shadow-xl hover:shadow-2xl hover:bg-slate-800 transition transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2">
-                    <i class="fas fa-wallet text-yellow-400"></i> জমা দিয়ে পেমেন্ট নিন
-                </button>
+                <a href="#opportunities" class="w-full sm:w-auto px-8 py-4 bg-slate-900 text-white rounded-xl text-lg font-bold shadow-xl hover:shadow-2xl hover:bg-slate-800 transition transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fas fa-bolt text-yellow-400"></i> শুরু করুন
+                </a>
                 
                 <a id="heroYoutubeLink" href="#" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-red-600 text-white rounded-xl text-lg font-bold shadow-xl hover:bg-red-700 hover:shadow-red-500/30 transition transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2">
                     <i class="fab fa-youtube"></i> টিউটোরিয়াল দেখুন
@@ -173,85 +249,45 @@
         </div>
     </section>
 
-    <!-- Stats/Features -->
-    <section id="guidelines" class="py-12 px-4">
-        <div class="container mx-auto max-w-6xl">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Card 1 -->
-                <div class="glass-card p-8 rounded-3xl text-center hover:scale-[1.03] transition duration-500 hover:shadow-xl group">
-                    <div class="w-16 h-16 mx-auto bg-green-100 text-green-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:rotate-12 transition">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800">১০০% সেইফ ডিল</h3>
-                    <p class="text-slate-600 mt-2 font-medium">আপনার অ্যাকাউন্টের সম্পূর্ণ নিরাপত্তা এবং স্বচ্ছ ডিল নিশ্চিত করা হয়।</p>
-                </div>
-                
-                <!-- Card 2 -->
-                <div class="glass-card p-8 rounded-3xl text-center hover:scale-[1.03] transition duration-500 hover:shadow-xl group">
-                    <div class="w-16 h-16 mx-auto bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:rotate-12 transition">
-                        <i class="fab fa-telegram-plane"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800">সহজ যোগাযোগ</h3>
-                    <p class="text-slate-600 mt-2 font-medium">টেলিগ্রাম এবং হোয়াটসঅ্যাপের মাধ্যমে সরাসরি সাপোর্টের ব্যবস্থা।</p>
-                </div>
-                
-                <!-- Card 3 -->
-                <div class="glass-card p-8 rounded-3xl text-center hover:scale-[1.03] transition duration-500 hover:shadow-xl group">
-                    <div class="w-16 h-16 mx-auto bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center text-3xl mb-4 group-hover:rotate-12 transition">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-slate-800">ইনস্ট্যান্ট পেমেন্ট</h3>
-                    <p class="text-slate-600 mt-2 font-medium">কাজ বুঝিয়ে দেওয়ার সাথে সাথেই বিকাশে পেমেন্ট।</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Opportunities -->
+    <!-- Service List -->
     <section id="opportunities" class="py-12 px-4 mb-20 relative z-10">
         <div class="container mx-auto max-w-6xl">
             <div class="text-center mb-8">
-                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-2">কাজের তালিকা</h2>
-                <p class="text-slate-600 font-medium">নিচের তালিকা থেকে আপনার পছন্দের কাজটি বেছে নিন</p>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-2">সার্ভিস তালিকা</h2>
+                <p class="text-slate-600 font-medium">নিচের অপশনগুলো থেকে কিনুন অথবা সেল করুন</p>
             </div>
 
-            <!-- Search and Filter Panel -->
             <div class="glass-card p-5 rounded-2xl shadow-lg mb-8 border border-white/60">
                 <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
-                    
-                    <!-- Search Box -->
                     <div class="relative w-full md:w-1/2 group">
-                        <input type="text" id="searchInput" placeholder="কাজ খুঁজুন (যেমন: Gmail, Facebook)..." 
+                        <input type="text" id="searchInput" placeholder="খুঁজুন (যেমন: Gmail, Facebook)..." 
                             class="w-full pl-12 pr-4 py-3 bg-white/80 border border-slate-200 focus:border-blue-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 text-slate-800 font-bold shadow-sm transition">
                         <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 group-hover:text-blue-500 transition"></i>
                     </div>
 
-                    <!-- Filter Dropdown -->
                     <div class="flex items-center gap-3 w-full md:w-auto bg-white/80 p-1.5 rounded-xl shadow-sm border border-slate-200">
                         <select id="statusFilter" class="bg-transparent border-none font-bold text-slate-700 focus:ring-0 cursor-pointer text-sm py-2 px-2 outline-none w-full md:w-auto">
                             <option value="all">সব দেখুন</option>
-                            <option value="active">🟢 চলমান কাজ</option>
-                            <option value="closed">🔴 বন্ধ কাজ</option>
+                            <option value="active">🟢 এক্টিভ</option>
+                            <option value="closed">🔴 বন্ধ</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- Category Tabs -->
                 <div class="flex gap-2 mt-4 overflow-x-auto pb-2 scrollbar-hide justify-center md:justify-start">
-                    <button onclick="setCategory('all')" id="btn-all" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold bg-slate-900 text-white transition shadow-md whitespace-nowrap">সব কাজ</button>
-                    <button onclick="setCategory('sell')" id="btn-sell" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap">সেল (Sell)</button>
-                    <button onclick="setCategory('rent')" id="btn-rent" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap">ভাড়া (Rent)</button>
+                    <button onclick="setCategory('all')" id="btn-all" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold bg-slate-900 text-white transition shadow-md whitespace-nowrap">সব</button>
+                    <button onclick="setCategory('hybrid')" id="btn-hybrid" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap">বাই & সেল</button>
+                    <button onclick="setCategory('rent')" id="btn-rent" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap">ভাড়া</button>
                 </div>
             </div>
 
-            <!-- Grid -->
             <div id="opportunitiesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Javascript will load content here -->
             </div>
         </div>
     </section>
 
-    <!-- Footer Contact -->
+    <!-- Footer -->
     <section class="bg-slate-900 border-t border-slate-800 py-16 px-4 text-white">
         <div class="container mx-auto max-w-4xl text-center">
             <h2 class="text-3xl font-black mb-8">যোগাযোগ করুন</h2>
@@ -267,26 +303,48 @@
         </div>
     </section>
 
-    <!-- Upload Modal -->
+    <!-- ================= MODALS ================= -->
+
+    <!-- CHOICE MODAL -->
+    <div id="choiceModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden modal-content p-6 text-center relative">
+            <button onclick="closeChoiceModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                <i class="fas fa-exchange-alt"></i>
+            </div>
+            <h3 class="text-xl font-black text-slate-800 mb-2">কি করতে চান?</h3>
+            <p class="text-slate-500 text-sm mb-6 font-medium">নিচের যে কোনো একটি অপশন বেছে নিন</p>
+            <div class="space-y-3">
+                <button onclick="handleChoice('buy')" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-lg hover:shadow-emerald-500/30 transition transform active:scale-95 flex items-center justify-center gap-3">
+                    <i class="fas fa-shopping-cart"></i> কিনতে চাই (Buy)
+                </button>
+                <button onclick="handleChoice('sell')" class="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold shadow-lg hover:shadow-slate-500/30 transition transform active:scale-95 flex items-center justify-center gap-3">
+                    <i class="fas fa-wallet"></i> বিক্রি করতে চাই (Sell)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SELL/UPLOAD MODAL -->
     <div id="uploadModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/70 backdrop-blur-md">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden modal-content flex flex-col max-h-[90vh]">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden modal-content flex flex-col max-h-[90vh] relative">
             
             <!-- Header -->
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
                 <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <span class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-blue-600"><i class="fas fa-paper-plane"></i></span>
-                    কাজ জমা দিন
+                    কাজ জমা দিন (Sell)
                 </h3>
-                <!-- Close Button -->
                 <button onclick="closeModal()" class="w-9 h-9 rounded-full bg-slate-50 text-slate-500 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
             
-            <!-- Scrollable Body -->
+            <!-- Body -->
             <div class="p-6 overflow-y-auto custom-scrollbar">
                 
-                <!-- NEW: Video Button Container (Updated) -->
                 <div id="videoContainer" class="mb-6 hidden">
                     <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-center justify-between gap-4">
                         <div class="flex items-center gap-3">
@@ -304,15 +362,13 @@
                     </div>
                 </div>
 
-                <form onsubmit="handleSubmit(event)" class="space-y-5">
+                <form onsubmit="handleSellSubmit(event)" class="space-y-5" autocomplete="off">
                     
-                    <!-- Job Selection -->
                     <div>
                         <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">কাজের ধরন</label>
                         <div class="relative">
-                            <select id="jobSelector" onchange="handleJobChange()" class="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-slate-700 appearance-none text-sm transition shadow-sm">
+                            <select id="jobSelector" onchange="handleJobChange()" class="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-slate-700 appearance-none text-sm transition shadow-sm cursor-pointer">
                                 <option value="">এখানে ক্লিক করে সিলেক্ট করুন...</option>
-                                <!-- JS will populate this -->
                             </select>
                             <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-500">
                                 <i class="fas fa-chevron-down text-xs"></i>
@@ -320,7 +376,6 @@
                         </div>
                     </div>
 
-                    <!-- Dynamic Requirements Text -->
                     <div id="requirementsBox" class="hidden p-4 bg-amber-50 border border-amber-100 rounded-xl">
                         <div class="flex items-start gap-2">
                             <i class="fas fa-exclamation-circle text-amber-500 mt-0.5"></i>
@@ -328,25 +383,53 @@
                         </div>
                     </div>
 
-                    <!-- Common Inputs -->
                     <div class="grid grid-cols-1 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-500 mb-1">আপনার নাম</label>
-                            <input type="text" id="userName" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold" placeholder="নাম লিখুন">
+                            <input type="text" id="userName" required autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold" placeholder="নাম লিখুন">
                         </div>
                         <div>
                             <label id="paymentLabel" class="block text-xs font-bold text-slate-500 mb-1">বিকাশ নাম্বার</label>
-                            <input type="text" id="userContact" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold" placeholder="01XXXXXXXXX">
+                            <!-- Uses Debounced Validation -->
+                            <input type="tel" id="userContact" oninput="debouncedValidate()" required autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold transition duration-200" placeholder="01XXXXXXXXX">
                         </div>
                     </div>
 
-                    <!-- Dynamic Input Area (Textarea) -->
                     <div id="dynamicInputArea" class="hidden">
-                        <label id="dynamicLabel" class="block text-xs font-bold text-slate-500 mb-1">বিস্তারিত</label>
-                        <textarea id="dynamicText" rows="4" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-mono shadow-inner" placeholder=""></textarea>
+                        <div class="flex flex-wrap justify-between items-end mb-2 gap-2">
+                            <div class="flex items-center gap-2">
+                                <label id="dynamicLabel" class="block text-xs font-bold text-slate-500">লিস্ট পেস্ট করুন</label>
+                                <span id="lineCountDisplay" class="text-[10px] font-black px-2 py-0.5 rounded bg-slate-100 text-slate-600">Total: 0</span>
+                            </div>
+                            
+                            <!-- Auto-Format Button (Hidden for Facebook now) -->
+                            <button type="button" onclick="performAutoFormat()" id="autoFormatBtn" class="hidden text-[10px] px-3 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-lg font-bold shadow-md hover:shadow-lg transition transform hover:scale-105 flex items-center gap-1">
+                                <i class="fas fa-magic"></i> অটো-সাজিয়ে নিন (Auto)
+                            </button>
+                        </div>
+                        
+                        <div class="relative">
+                            <!-- Uses Debounced Validation to prevent lag -->
+                            <textarea id="dynamicText" rows="6" oninput="debouncedValidate()" autocomplete="off" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-mono shadow-inner transition whitespace-pre overflow-x-auto" placeholder=""></textarea>
+                        </div>
+                        
+                        <!-- Validation Feedback -->
+                        <div id="validationFeedback" class="mt-3 hidden p-3 bg-slate-50 rounded-lg border border-slate-200">
+                           <!-- JS will populate -->
+                        </div>
+                        
+                        <!-- Duplicates List -->
+                        <div id="duplicateErrorBox" class="mt-2 hidden bg-red-50 border border-red-200 rounded-xl p-3">
+                            <p class="text-xs font-bold text-red-600 mb-2 border-b border-red-100 pb-1 flex items-center gap-1">
+                                <i class="fas fa-exclamation-triangle"></i> নিচের ডুপ্লিকেটগুলো ডিলিট করুন:
+                            </p>
+                            <ul id="duplicateList" class="list-disc list-inside text-[10px] text-red-700 font-mono space-y-1 max-h-24 overflow-y-auto">
+                                <!-- JS Populates this -->
+                            </ul>
+                        </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-base hover:bg-slate-800 shadow-xl hover:shadow-2xl transition transform active:scale-95 flex justify-center items-center gap-2 mt-2">
+                    <button type="submit" id="sellSubmitBtn" disabled class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-base hover:bg-slate-800 shadow-xl hover:shadow-2xl transition transform active:scale-95 flex justify-center items-center gap-2 mt-2 opacity-50 cursor-not-allowed">
                         <span>জমা দিন</span> <i class="fab fa-whatsapp"></i>
                     </button>
                 </form>
@@ -354,14 +437,123 @@
         </div>
     </div>
 
+    <!-- BUY MODAL -->
+    <div id="buyModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/70 backdrop-blur-md">
+        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden modal-content flex flex-col max-h-[95vh]">
+            
+            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-5 text-white flex justify-between items-center">
+                <div>
+                    <h3 class="text-lg font-black flex items-center gap-2">
+                        <i class="fas fa-shopping-cart"></i> অর্ডার ফর্ম
+                    </h3>
+                    <p class="text-xs text-emerald-100 font-medium">অ্যাকাউন্ট কিনতে তথ্য দিন</p>
+                </div>
+                <button onclick="closeBuyModal()" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto custom-scrollbar">
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-6">
+                    <div class="flex justify-between items-center mb-3 pb-3 border-b border-slate-200">
+                        <span class="text-slate-500 text-xs font-bold uppercase">Product</span>
+                        <span class="text-slate-800 font-bold" id="buyProductName">--</span>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">কয় পিস নিবেন? (Quantity)</label>
+                        <input type="number" id="buyQuantity" min="1" value="" placeholder="যেমন: 50" class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl font-bold text-lg text-slate-800 focus:border-emerald-500 outline-none">
+                    </div>
+                </div>
+
+                <form onsubmit="handleBuySubmit(event)" class="space-y-4" autocomplete="off">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">আপনার নাম</label>
+                        <input type="text" id="buyerName" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold" placeholder="আপনার নাম লিখুন">
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl flex items-start gap-2">
+                        <i class="fas fa-info-circle text-blue-500 mt-0.5 text-xs"></i>
+                        <p class="text-[11px] text-blue-800 font-bold">
+                            অর্ডার কনফার্ম করার পর হোয়াটসঅ্যাপে আমাদের সাথে কথা বলে পেমেন্ট এবং ডেলিভারি বুঝে নিবেন।
+                        </p>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold text-base hover:bg-emerald-700 shadow-xl hover:shadow-emerald-500/30 transition transform active:scale-95 flex justify-center items-center gap-2 mt-2">
+                        <span>অর্ডার করুন</span> <i class="fab fa-whatsapp text-lg"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI CHAT WIDGET -->
+    <div class="chat-widget">
+        <div id="chatBox" class="chat-box">
+            <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-4 flex items-center justify-between text-white shadow-md">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                        <i class="fas fa-robot text-lg"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-sm">MF Tifor AI</h4>
+                        <p class="text-[10px] text-blue-100 flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> Online</p>
+                    </div>
+                </div>
+                <button onclick="toggleChat()" class="text-white/80 hover:text-white"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div id="chatMessages" class="chat-messages custom-scrollbar"></div>
+
+            <div class="p-3 bg-white border-t border-slate-100 flex gap-2">
+                <input type="text" id="chatInput" onkeypress="handleChatEnter(event)" placeholder="প্রশ্ন করুন..." class="flex-1 bg-slate-100 border-none rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-200 outline-none font-medium">
+                <button onclick="sendUserMessage()" class="w-10 h-10 bg-purple-600 text-white rounded-xl flex items-center justify-center hover:bg-purple-700 transition transform active:scale-95">
+                    <i class="fas fa-paper-plane text-xs"></i>
+                </button>
+            </div>
+        </div>
+
+        <button onclick="toggleChat()" class="w-14 h-14 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-2xl hover:shadow-purple-500/40 transition transform hover:-translate-y-1 active:scale-90 flex items-center justify-center animate-bounce-slow z-50">
+            <i class="fas fa-robot text-2xl"></i>
+        </button>
+    </div>
+
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        const apiKey = ""; // Injected automatically
+
         // =================================================================
-        // 🛠 MASTER CONTROL PANEL (TEASTER) - সব সেটিং এখানে
+        // 🧠 GEMINI API
+        // =================================================================
+        async function callGemini(userPrompt, systemPrompt = "") {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: userPrompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] }
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if (!response.ok) throw new Error('API Error');
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text;
+            } catch (error) {
+                console.error("Gemini Error:", error);
+                return null;
+            }
+        }
+
+        // =================================================================
+        // 🛠 MASTER CONTROL PANEL
         // =================================================================
         const MASTER_CONTROL = {
             admin: {
-                whatsappNumber: "8801571062932", // এডমিনের হোয়াটসঅ্যাপ নাম্বার
+                whatsappNumber: "8801571062932",
+                paymentNumber: "01754838532",
             },
             socialLinks: {
                 youtube: "https://youtube.com/@mftifor?si=7LBOs8C9pN587s7j",
@@ -370,163 +562,205 @@
             },
             jobs: {
                 gmail: {
-                    id: "gmail_sell",
-                    title: "ফ্রেশ Gmail সেল",
-                    category: "sell",
+                    id: "gmail",
+                    title: "Gmail সার্ভিস",
+                    category: "hybrid",
                     icon: "📧",
-                    price: "১০ পিচ = ১৪০ টাকা",
-                    date: "চলমান", 
-                    status: "active", 
-                    // ভিডিও লিংক (যেখানে বাটন ক্লিক করলে নিয়ে যাবে)
-                    video: "https://youtu.be/-RNyy0h6wts?si=iPTRqByTtMG4bn7i", 
-                    requirements: ["রিকভারি রিমুভ", "ফ্রেশ আইডি", "পাসওয়ার্ড সঠিক হতে হবে"],
-                    placeholder: "Example:\nuser1@gmail.com pass123\nuser2@gmail.com pass123"
+                    sellPrice: "১ পিচ = ১৪ টাকা",
+                    sellRequirements: ["রিকভারি রিমুভ", "পাসওয়ার্ড সঠিক"],
+                    sellPlaceholder: "example@gmail.com password123",
+                    sellVideo: "https://youtu.be/-RNyy0h6wts?si=iPTRqByTtMG4bn7i",
+                    hasBuyOption: true,
+                    buyPriceDisplay: "আলোচনা সাপেক্ষে", 
+                    buyName: "Fresh Gmail Account",
+                    status: "active"
                 },
                 facebook: {
-                    id: "facebook_sell",
-                    title: "Facebook আইডি সেল",
-                    category: "sell",
+                    id: "facebook",
+                    title: "Facebook সার্ভিস",
+                    category: "hybrid",
                     icon: "👤",
-                    price: "আলোচনা সাপেক্ষে রেট",
-                    date: "চলমান",
-                    status: "active",
-                    video: "https://youtu.be/2aan-2krI14?si=ASAxOEeZbYrT6Oti",
-                    requirements: ["UID এবং Password", "2FA Key থাকতে হবে"],
-                    placeholder: "UID | Password | 2FA Key"
+                    sellPrice: "১ পিচ ৫ টাকা",
+                    sellRequirements: ["UID, Password, 2FA/Key সঠিক"],
+                    sellPlaceholder: "10001234567890 password123 2FAKEYCODE",
+                    sellVideo: "https://youtu.be/2aan-2krI14?si=ASAxOEeZbYrT6Oti",
+                    hasBuyOption: true,
+                    buyPriceDisplay: "আলোচনা সাপেক্ষে",
+                    buyName: "Facebook Account",
+                    status: "active"
                 },
                 whatsapp: {
                     id: "whatsapp_rent",
                     title: "WhatsApp ভাড়া",
                     category: "rent",
                     icon: "📞",
-                    price: "আলোচনা সাপেক্ষে রেট",
-                    date: "চলমান",
-                    status: "active",
-                    video: "https://youtu.be/wLKjFMIFfn0?si=lneNC4iltVL4Hprj",
-                    requirements: ["মিনিমাম ১ মাস ব্যবহার করা", "রিয়েল সিম কার্ড"],
-                    placeholder: "আপনার হোয়াটসঅ্যাপ নাম্বারটি এখানে লিখুন..."
+                    sellPrice: "আলোচনা সাপেক্ষে",
+                    sellRequirements: ["৪৮ ঘন্টা পর রেফার বোনাস দিবে সাইট টি"],
+                    sellPlaceholder: "আপনার নাম্বারটি লিখুন...",
+                    sellVideo: "https://youtu.be/wLKjFMIFfn0?si=lneNC4iltVL4Hprj",
+                    hasBuyOption: false,
+                    status: "active"
                 },
                 other: {
                     id: "other",
                     title: "অন্যান্য / সাপোর্ট",
                     category: "all",
                     icon: "📦",
-                    price: "--",
-                    date: "সবসময়",
-                    status: "active",
-                    video: "", 
-                    requirements: [],
-                    placeholder: "আপনার প্রশ্ন বা অফার বিস্তারিত লিখুন..."
+                    sellPrice: "--",
+                    sellRequirements: [],
+                    sellPlaceholder: "বিস্তারিত লিখুন...",
+                    hasBuyOption: false,
+                    status: "active"
                 }
             }
         };
 
         // =================================================================
-        // ⚙️ SYSTEM LOGIC
+        // ⚡ UTILITY: DEBOUNCE FUNCTION (For Speed)
+        // =================================================================
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), wait);
+            };
+        }
+
+        // =================================================================
+        // ⚙️ APP LOGIC
         // =================================================================
 
         let currentCategory = 'all';
         let searchTerm = '';
         let statusFilterValue = 'all';
+        let selectedJobIdForChoice = null;
 
-        // 2. Initialize App
+        // Debounced Validator Reference
+        const debouncedValidate = debounce(() => validateForm(), 300);
+
         document.addEventListener('DOMContentLoaded', () => {
-            // Set Global Links
             document.getElementById('heroYoutubeLink').href = MASTER_CONTROL.socialLinks.youtube;
             document.getElementById('footerWhatsappLink').href = MASTER_CONTROL.socialLinks.whatsappGroup;
             document.getElementById('footerTelegramLink').href = MASTER_CONTROL.socialLinks.telegram;
-
-            // Render Job List
             renderJobs();
-            
-            // Populate Modal Select
             populateJobSelect();
+            initBot();
         });
 
-        // 3. Render Jobs Grid with Search & Filter
+        // --- JOB RENDERER ---
         function renderJobs() {
             const grid = document.getElementById('opportunitiesGrid');
             const jobs = Object.values(MASTER_CONTROL.jobs);
             
-            // Filter Logic
             const filteredJobs = jobs.filter(job => {
-                // 1. Category Filter
-                const categoryMatch = currentCategory === 'all' || job.category === currentCategory || job.category === 'all';
-                // 2. Search Filter
+                const categoryMatch = currentCategory === 'all' || 
+                                      (currentCategory === 'hybrid' && job.category === 'hybrid') ||
+                                      (currentCategory === 'rent' && job.category === 'rent') || 
+                                      job.category === currentCategory;
+                                      
                 const searchLower = searchTerm.toLowerCase();
-                const searchMatch = job.title.toLowerCase().includes(searchLower) || 
-                                    (job.requirements && job.requirements.some(r => r.toLowerCase().includes(searchLower)));
-                // 3. Status Filter
+                const searchMatch = job.title.toLowerCase().includes(searchLower);
                 const statusMatch = statusFilterValue === 'all' || job.status === statusFilterValue;
 
                 return categoryMatch && searchMatch && statusMatch;
             });
 
-            // Clear current
             grid.innerHTML = '';
 
             if (filteredJobs.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full py-16 text-center opacity-60">
-                        <i class="fas fa-search text-4xl text-slate-300 mb-4"></i>
-                        <p class="text-slate-500 font-bold">কোনো কাজ পাওয়া যায়নি</p>
-                    </div>`;
+                grid.innerHTML = `<div class="col-span-full py-16 text-center opacity-60"><i class="fas fa-search text-4xl text-slate-300 mb-4"></i><p class="text-slate-500 font-bold">কোনো কাজ পাওয়া যায়নি</p></div>`;
                 return;
             }
 
             filteredJobs.forEach(job => {
-                if (job.id === 'other') return; // Skip 'other' in grid
-
+                if (job.id === 'other') return;
                 const isClosed = job.status === 'closed';
+                let btnText = 'কাজটি করুন <i class="fas fa-arrow-right"></i>';
+                let btnAction = `openModalWithJob('${job.id}')`;
                 
+                if (job.hasBuyOption) {
+                    btnText = 'কিনুন অথবা সেল করুন <i class="fas fa-exchange-alt ml-1"></i>';
+                    btnAction = `openChoiceModal('${job.id}')`;
+                }
+
+                const priceDisplay = job.hasBuyOption ? `Sell: ${job.sellPrice} <br> Buy: ${job.buyPriceDisplay}` : job.sellPrice;
+
                 const card = document.createElement('div');
                 card.className = `glass-card p-6 rounded-3xl relative group transition duration-300 hover:-translate-y-2 border-t-4 ${isClosed ? 'border-red-400 grayscale opacity-80' : 'border-blue-500 hover:shadow-2xl'}`;
                 
                 card.innerHTML = `
-                    <!-- Status Badge -->
                     <div class="absolute top-4 right-4">
-                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm ${isClosed ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">
-                            ${isClosed ? 'বন্ধ' : '● চলমান'}
-                        </span>
+                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm ${isClosed ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">${isClosed ? 'বন্ধ' : '● চলমান'}</span>
                     </div>
-
                     <div class="flex flex-col mb-4">
-                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-md mb-4 text-slate-700">
-                            ${job.icon}
-                        </div>
+                        <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-md mb-4 text-slate-700">${job.icon}</div>
                         <h3 class="font-bold text-xl text-slate-800 mb-1 leading-tight">${job.title}</h3>
-                        <p class="text-sm text-blue-600 font-extrabold">${job.price}</p>
+                        <p class="text-xs text-blue-600 font-bold mt-1 leading-relaxed">${priceDisplay}</p>
                     </div>
-                    
-                    <div class="space-y-3 mb-6 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
-                            <i class="far fa-clock text-blue-400"></i> মেয়াদ: ${job.date}
-                        </div>
-                        <div class="flex flex-wrap gap-1">
-                            ${job.requirements.slice(0, 3).map(req => `<span class="px-2 py-1 bg-white text-slate-600 text-[10px] font-bold rounded border border-slate-200 shadow-sm">${req}</span>`).join('')}
-                        </div>
-                    </div>
-
-                    <button onclick="openModalWithJob('${job.id}')" ${isClosed ? 'disabled' : ''} 
-                        class="w-full py-3.5 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 ${isClosed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-slate-900 text-white hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-blue-500/30'}">
-                        ${isClosed ? 'বর্তমানে বন্ধ' : 'কাজটি করুন <i class="fas fa-arrow-right"></i>'}
-                    </button>
+                    <button onclick="${btnAction}" ${isClosed ? 'disabled' : ''} class="w-full py-3.5 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 ${isClosed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-slate-900 text-white hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-blue-500/30'}">${isClosed ? 'বর্তমানে বন্ধ' : btnText}</button>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        // 4. Modal & Form Logic
-        const modal = document.getElementById('uploadModal');
-        const jobSelect = document.getElementById('jobSelector');
-        const videoContainer = document.getElementById('videoContainer');
-        const videoLinkBtn = document.getElementById('videoLinkBtn');
-        const dynamicArea = document.getElementById('dynamicInputArea');
-        const dynamicLabel = document.getElementById('dynamicLabel');
-        const dynamicText = document.getElementById('dynamicText');
-        const reqBox = document.getElementById('requirementsBox');
+        // --- MODAL HELPERS ---
+        function openChoiceModal(jobId) { selectedJobIdForChoice = jobId; document.getElementById('choiceModal').classList.remove('hidden'); setTimeout(() => document.getElementById('choiceModal').classList.add('active'), 10); }
+        function closeChoiceModal() { document.getElementById('choiceModal').classList.remove('active'); setTimeout(() => document.getElementById('choiceModal').classList.add('hidden'), 200); }
+        function handleChoice(action) { closeChoiceModal(); setTimeout(() => action === 'buy' ? openBuyModal(selectedJobIdForChoice) : openModalWithJob(selectedJobIdForChoice), 300); }
+
+        // --- DATE FORMATTER ---
+        function getBengaliDateTime() {
+            const now = new Date();
+            return now.toLocaleString('bn-BD', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true 
+            });
+        }
+
+        // --- BUY LOGIC ---
+        let currentBuyJob = null;
+        function openBuyModal(jobId) {
+            const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
+            if (!jobData) return;
+            currentBuyJob = jobData;
+            document.getElementById('buyProductName').innerText = jobData.buyName;
+            document.getElementById('buyQuantity').value = "";
+            document.getElementById('buyModal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('buyModal').classList.add('active'), 10);
+        }
+        function closeBuyModal() { document.getElementById('buyModal').classList.remove('active'); setTimeout(() => document.getElementById('buyModal').classList.add('hidden'), 200); }
         
+        function handleBuySubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('buyerName').value;
+            const qty = document.getElementById('buyQuantity').value;
+            const dateTime = getBengaliDateTime();
+
+            let msg = `*অর্ডার রিকোয়েস্ট (Buy)* %0A`;
+            msg += `সময়: ${dateTime} %0A`;
+            msg += `------------------ %0A`;
+            msg += `প্রোডাক্ট: ${currentBuyJob.buyName} %0A`;
+            msg += `পরিমাণ: ${qty} পিস %0A`;
+            msg += `------------------ %0A`;
+            msg += `ক্রেতা: ${name} %0A`;
+            msg += `*আমি কিনতে আগ্রহী। কনফার্ম করুন।*`;
+
+            window.open(`https://wa.me/${MASTER_CONTROL.admin.whatsappNumber}?text=${msg}`, '_blank');
+            closeBuyModal();
+        }
+
+        // --- SELL LOGIC & AUTO FORMAT ---
+        const uploadModal = document.getElementById('uploadModal');
+        const jobSelect = document.getElementById('jobSelector');
+
         function populateJobSelect() {
+            jobSelect.innerHTML = '<option value="">এখানে ক্লিক করে সিলেক্ট করুন...</option>';
             Object.values(MASTER_CONTROL.jobs).forEach(job => {
                 const option = document.createElement('option');
                 option.value = job.id;
@@ -535,111 +769,323 @@
             });
         }
 
-        function openModal() {
-            modal.classList.remove('hidden');
-            setTimeout(() => modal.classList.add('active'), 10);
-            resetForm();
-        }
+        function openModal() { uploadModal.classList.remove('hidden'); setTimeout(() => uploadModal.classList.add('active'), 10); resetSellForm(); }
+        function openModalWithJob(jobId) { openModal(); jobSelect.value = jobId; handleJobChange(); }
+        function closeModal() { uploadModal.classList.remove('active'); setTimeout(() => { uploadModal.classList.add('hidden'); resetSellForm(); }, 200); }
 
-        function closeModal() {
-            modal.classList.remove('active');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-                resetForm(); 
-            }, 200);
-        }
-
-        function openModalWithJob(jobId) {
-            openModal();
-            jobSelect.value = jobId;
-            handleJobChange();
-        }
-
-        function resetForm() {
-            videoContainer.classList.add('hidden');
-            dynamicArea.classList.add('hidden');
-            reqBox.classList.add('hidden');
+        function resetSellForm() {
+            document.getElementById('videoContainer').classList.add('hidden');
+            document.getElementById('dynamicInputArea').classList.add('hidden');
+            document.getElementById('requirementsBox').classList.add('hidden');
+            document.getElementById('validationFeedback').classList.add('hidden');
+            document.getElementById('duplicateErrorBox').classList.add('hidden');
+            document.getElementById('dynamicText').value = "";
+            document.getElementById('lineCountDisplay').innerText = "Total: 0";
+            document.getElementById('sellSubmitBtn').disabled = true;
+            document.getElementById('sellSubmitBtn').classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('userContact').value = "";
+            document.getElementById('userContact').classList.remove('border-red-500', 'focus:border-red-500', 'border-green-500', 'focus:border-green-500');
             jobSelect.value = "";
         }
 
         function handleJobChange() {
             const jobId = jobSelect.value;
-            if (!jobId) {
-                resetForm();
-                return;
-            }
-
-            // Find Job Data
+            if (!jobId) { resetSellForm(); return; }
             const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
             
             if (jobData) {
-                // 1. Video Button Logic
-                if (jobData.video) {
-                    videoContainer.classList.remove('hidden');
-                    videoLinkBtn.href = jobData.video;
-                } else {
-                    videoContainer.classList.add('hidden');
-                }
+                if (jobData.sellVideo) {
+                    document.getElementById('videoContainer').classList.remove('hidden');
+                    document.getElementById('videoLinkBtn').href = jobData.sellVideo;
+                } else document.getElementById('videoContainer').classList.add('hidden');
 
-                // 2. Dynamic Fields
-                dynamicArea.classList.remove('hidden');
-                dynamicText.placeholder = jobData.placeholder;
-                dynamicText.value = ""; // Clear prev
+                const dynArea = document.getElementById('dynamicInputArea');
+                dynArea.classList.remove('hidden');
+                document.getElementById('dynamicText').placeholder = jobData.sellPlaceholder || "";
                 
-                // 3. Payment/Contact Label Update
-                const contactLabel = document.getElementById('paymentLabel');
-                const contactInput = document.getElementById('userContact');
+                // --- OPTIMIZED LOGIC: AUTO FORMAT ONLY FOR GMAIL ---
+                // REMOVED FACEBOOK FROM AUTO-FORMAT
+                const isAuto = (jobId === 'gmail');
+                document.getElementById('autoFormatBtn').classList.toggle('hidden', !isAuto);
                 
-                if (jobData.id === 'whatsapp_rent') {
-                    contactLabel.innerText = "WhatsApp নাম্বার";
-                    contactInput.placeholder = "আপনার নাম্বার দিন";
-                    dynamicLabel.innerText = "মেসেজ (অপশনাল)";
-                } else {
-                    contactLabel.innerText = "বিকাশ নাম্বার";
-                    contactInput.placeholder = "01XXXXXXXXX";
-                    dynamicLabel.innerText = jobData.id === 'other' ? "বিস্তারিত" : "লিস্ট পেস্ট করুন";
-                }
-
-                // 4. Requirements Show
-                if (jobData.requirements.length > 0) {
-                    reqBox.classList.remove('hidden');
-                    document.getElementById('reqText').innerText = "অবশ্যই দেখুন: " + jobData.requirements.join(", ");
-                } else {
-                    reqBox.classList.add('hidden');
-                }
+                document.getElementById('paymentLabel').innerText = (jobId === 'whatsapp_rent') ? "WhatsApp নাম্বার" : "বিকাশ নাম্বার";
+                
+                if (jobData.sellRequirements.length > 0) {
+                    document.getElementById('requirementsBox').classList.remove('hidden');
+                    document.getElementById('reqText').innerText = "অবশ্যই দেখুন: " + jobData.sellRequirements.join(", ");
+                } else document.getElementById('requirementsBox').classList.add('hidden');
+                
+                validateForm();
             }
         }
 
-        function handleSubmit(e) {
+        // =================================================================
+        // 🔥 OPTIMIZED AUTO-FORMAT (Simplified for Speed)
+        // =================================================================
+        function performAutoFormat() {
+            const jobId = jobSelect.value;
+            const input = document.getElementById('dynamicText');
+            let text = input.value;
+            
+            if (!text.trim()) return alert("দয়া করে আগে কিছু লিখুন।");
+
+            let formattedLines = [];
+
+            // ONLY GMAIL LOGIC REMAINING
+            if (jobId === 'gmail') {
+                 let cleanText = text.replace(/[,;|]/g, ' ').replace(/\s+/g, ' ').trim();
+                 const tokens = cleanText.split(' ');
+                 for (let i = 0; i < tokens.length; i++) {
+                    const token = tokens[i];
+                    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(token)) {
+                        if (i + 1 < tokens.length) {
+                            formattedLines.push(`${token} ${tokens[i+1]}`);
+                            i++; 
+                        } else {
+                            formattedLines.push(`${token} ???`);
+                        }
+                    }
+                }
+            } 
+            // FACEBOOK LOGIC REMOVED FOR SPEED & USER REQUEST
+
+            if (formattedLines.length > 0) {
+                input.value = formattedLines.join('\n');
+                validateForm();
+            } else {
+                alert("ফরম্যাট করার মতো কোনো ডাটা পাওয়া যায়নি।");
+            }
+        }
+
+        // --- UNIFIED VALIDATION FUNCTION ---
+        let globalUniqueCount = 0;
+
+        function validateForm() {
+            const jobId = jobSelect.value;
+            const contact = document.getElementById('userContact').value;
+            const contactInput = document.getElementById('userContact');
+            
+            // 1. Contact Validation
+            let bkashValid = true;
+            if (jobId !== 'whatsapp_rent' && jobId !== '') { 
+                const bkashRegex = /^01\d{9}$/;
+                if (!bkashRegex.test(contact)) {
+                    bkashValid = false;
+                    if(contact.length > 0) {
+                        contactInput.classList.add('border-red-500', 'focus:border-red-500');
+                        contactInput.classList.remove('border-green-500', 'focus:border-green-500');
+                    } else {
+                        contactInput.classList.remove('border-red-500', 'focus:border-red-500', 'border-green-500', 'focus:border-green-500');
+                    }
+                } else {
+                     contactInput.classList.remove('border-red-500', 'focus:border-red-500');
+                     contactInput.classList.add('border-green-500', 'focus:border-green-500');
+                }
+            } else {
+                contactInput.classList.remove('border-red-500', 'focus:border-red-500', 'border-green-500', 'focus:border-green-500');
+            }
+
+            // 2. List Validation
+            const text = document.getElementById('dynamicText').value;
+            const lines = text.split('\n').filter(line => line.trim() !== '');
+            const feedback = document.getElementById('validationFeedback');
+            const dupBox = document.getElementById('duplicateErrorBox');
+            const dupList = document.getElementById('duplicateList');
+            const submitBtn = document.getElementById('sellSubmitBtn');
+            
+            let listValid = true;
+            globalUniqueCount = 0;
+            let foundDuplicates = [];
+            
+            if (lines.length === 0) {
+                listValid = false;
+                feedback.classList.add('hidden');
+                dupBox.classList.add('hidden');
+                document.getElementById('lineCountDisplay').innerText = "Total: 0";
+            } else if (jobId === 'gmail' || jobId === 'facebook') {
+                const identifiers = new Set();
+                let invalidFormat = 0;
+                
+                lines.forEach(line => {
+                    const parts = line.trim().split(/\s+/);
+                    let id = '';
+                    let isValidLine = false;
+
+                    if (jobId === 'gmail') {
+                        if (parts.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parts[0])) {
+                             id = parts[0]; 
+                             isValidLine = true;
+                        } else {
+                            invalidFormat++;
+                        }
+                    } else if (jobId === 'facebook') {
+                         if (parts.length >= 2 && /^\d+$/.test(parts[0])) { 
+                             id = parts[0]; 
+                             isValidLine = true;
+                         } else {
+                            invalidFormat++;
+                         }
+                    }
+                    
+                    if (isValidLine) {
+                        if (identifiers.has(id)) {
+                            foundDuplicates.push(id);
+                        } else {
+                            identifiers.add(id);
+                        }
+                    }
+                });
+
+                globalUniqueCount = identifiers.size;
+
+                if (foundDuplicates.length > 0) {
+                    listValid = false; 
+                    dupList.innerHTML = foundDuplicates.map(d => `<li>❌ Duplicate: ${d}</li>`).join('');
+                    dupBox.classList.remove('hidden');
+                } else {
+                    dupBox.classList.add('hidden');
+                }
+
+                if (invalidFormat > 0 || foundDuplicates.length > 0) {
+                    listValid = false;
+                    let msg = '';
+                    if (invalidFormat > 0) msg += `<div class="text-red-600 mb-1">❌ ${invalidFormat} টি লাইনের ফরম্যাট ভুল।</div>`;
+                    if (foundDuplicates.length > 0) msg += `<div class="text-red-600 mb-1">❌ ${foundDuplicates.length} টি ডুপ্লিকেট নিচে দেখানো হয়েছে।</div>`;
+                    
+                    feedback.innerHTML = `<div class="text-xs font-bold">${msg} <span class="text-slate-500 font-normal">অনুগ্রহ করে ঠিক করুন।</span></div>`;
+                    feedback.classList.remove('hidden');
+                } else {
+                    feedback.innerHTML = `<div class="text-emerald-600 text-xs font-bold"><i class="fas fa-check"></i> ${globalUniqueCount} টি আইডি সঠিক আছে (Unique)!</div>`;
+                    feedback.classList.remove('hidden');
+                }
+                
+                document.getElementById('lineCountDisplay').innerText = `Valid: ${globalUniqueCount}`;
+            } else {
+                listValid = true;
+                globalUniqueCount = lines.length;
+                document.getElementById('lineCountDisplay').innerText = `Total: ${lines.length}`;
+                feedback.classList.add('hidden');
+                dupBox.classList.add('hidden');
+            }
+
+            // 3. Final Submit Button State
+            let finalCondition = false;
+            if (jobId === 'whatsapp_rent' || jobId === 'other') {
+                 finalCondition = (lines.length > 0 && contact.length > 0);
+            } else {
+                 finalCondition = (bkashValid && listValid && lines.length > 0 && foundDuplicates.length === 0);
+            }
+
+            if (finalCondition) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        function handleSellSubmit(e) {
             e.preventDefault();
             const jobId = jobSelect.value;
-            if (!jobId) return alert('দয়া করে একটি কাজ সিলেক্ট করুন');
-
             const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
             const name = document.getElementById('userName').value;
             const contact = document.getElementById('userContact').value;
             const details = document.getElementById('dynamicText').value;
+            const countToSend = (jobId === 'gmail' || jobId === 'facebook') ? globalUniqueCount : details.split('\n').filter(l => l.trim() !== '').length;
+            
+            const dateTime = getBengaliDateTime();
 
-            // Format WhatsApp Message
-            let msg = `*নতুন কাজ জমা* %0A`;
+            let msg = `*নতুন কাজ জমা (Sell)* %0A`;
+            msg += `সময়: ${dateTime} %0A`;
             msg += `------------------ %0A`;
             msg += `কাজ: ${jobData.title} %0A`;
             msg += `নাম: ${name} %0A`;
-            msg += `বিকাশ: ${contact} %0A`;
-            
-            if (details) {
-                msg += `%0A বিস্তারিত/লিস্ট: %0A${encodeURIComponent(details)}`;
-            }
+            msg += `পেমেন্ট নাম্বার: ${contact} %0A`;
+            if (jobId === 'gmail' || jobId === 'facebook') msg += `মোট পরিমাণ (Unique): ${countToSend} পিস %0A`;
+            msg += `------------------ %0A`;
+            if (details) msg += `লিস্ট:%0A${encodeURIComponent(details)}`;
 
-            // Open WhatsApp
             window.open(`https://wa.me/${MASTER_CONTROL.admin.whatsappNumber}?text=${msg}`, '_blank');
             closeModal();
         }
 
-        // Mobile Menu Toggle
+        // =================================================================
+        // 🤖 UPGRADED CHAT BOT
+        // =================================================================
+        const chatBox = document.getElementById('chatBox');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        let isChatOpen = false;
+
+        function toggleChat() {
+            isChatOpen = !isChatOpen;
+            chatBox.classList.toggle('open', isChatOpen);
+        }
+
+        function addMessage(text, sender, isHtml = false) {
+            const div = document.createElement('div');
+            div.className = `chat-bubble ${sender}`;
+            if (isHtml) div.innerHTML = text; else div.innerText = text;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function initBot() {
+            setTimeout(() => addMessage("আসসালামু আলাইকুম! MF Tifor এ আপনাকে স্বাগতম। আমি কিভাবে সাহায্য করতে পারি?", 'bot'), 1000);
+        }
+
+        function handleChatEnter(e) { if (e.key === 'Enter') sendUserMessage(); }
+
+        function sendUserMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            addMessage(text, 'user');
+            chatInput.value = '';
+            
+            const loader = document.createElement('div');
+            loader.className = 'chat-bubble bot';
+            loader.id = 'bot-loader';
+            loader.innerHTML = '<span class="animate-pulse">...</span>';
+            chatMessages.appendChild(loader);
+            
+            processBotResponse(text);
+        }
+
+        async function processBotResponse(input) {
+            const jobList = Object.values(MASTER_CONTROL.jobs).map(j => 
+                `- ${j.title}: Sell Price=${j.sellPrice}, Buy=${j.hasBuyOption ? j.buyPriceDisplay : 'N/A'}`
+            ).join('\n');
+
+            const systemPrompt = `You are the Support Assistant for 'MF Tifor', a trusted Buy & Sell platform.
+            
+            WEBSITE KNOWLEDGE BASE:
+            1. Admin WhatsApp: ${MASTER_CONTROL.admin.whatsappNumber}.
+            2. Payment/Bkash: ${MASTER_CONTROL.admin.paymentNumber}.
+            3. Services Available:
+            ${jobList}
+            4. Rules: Payment is guaranteed. For selling, click 'কাজ জমা দিন'. For buying, click 'কিনুন' or contact WhatsApp.
+            
+            INSTRUCTIONS:
+            - Language: Bengali (Bangla) ONLY.
+            - Tone: Helpful, Polite, and CONCISE (Short answers).
+            - Goal: Answer questions about prices, how to sell, how to buy, or contact info.
+            
+            User Question: ${input}`;
+
+            const reply = await callGemini(input, systemPrompt);
+            document.getElementById('bot-loader').remove();
+            
+            if (reply) {
+                addMessage(reply, 'bot');
+            } else {
+                addMessage("দুঃখিত, বিষয়টি বুঝতে পারিনি। অ্যাডমিনের সাথে হোয়াটসঅ্যাপে কথা বলুন।", 'bot');
+            }
+        }
+
+        // Mobile Menu
         const menuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
-        
         function toggleMobileMenu() {
             const isOpen = mobileMenu.classList.contains('scale-y-100');
             if (isOpen) {
@@ -654,35 +1100,17 @@
         }
         menuBtn.addEventListener('click', toggleMobileMenu);
 
-        // Filter Function (Category)
+        // Filters
         function setCategory(type) {
             currentCategory = type;
-            
-            // Button Styles
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-slate-900', 'text-white');
-                btn.classList.add('text-slate-600', 'bg-white', 'hover:bg-slate-100');
+                btn.className = 'filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap';
             });
-            
-            const activeBtn = document.getElementById(`btn-${type}`);
-            activeBtn.classList.remove('text-slate-600', 'bg-white', 'hover:bg-slate-100');
-            activeBtn.classList.add('bg-slate-900', 'text-white');
-
+            document.getElementById(`btn-${type}`).className = 'filter-btn px-6 py-2.5 rounded-xl text-sm font-bold bg-slate-900 text-white transition shadow-md whitespace-nowrap';
             renderJobs();
         }
-
-        // Search & Status Listeners
-        document.getElementById('searchInput').addEventListener('input', (e) => {
-            searchTerm = e.target.value;
-            renderJobs();
-        });
-
-        document.getElementById('statusFilter').addEventListener('change', (e) => {
-            statusFilterValue = e.target.value;
-            renderJobs();
-        });
-
-        // NOTE: Modal Backdrop Click Listener REMOVED to prevent closing when clicking outside
+        document.getElementById('searchInput').addEventListener('input', (e) => { searchTerm = e.target.value; renderJobs(); });
+        document.getElementById('statusFilter').addEventListener('change', (e) => { statusFilterValue = e.target.value; renderJobs(); });
 
     </script>
 </body>
