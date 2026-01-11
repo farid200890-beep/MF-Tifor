@@ -345,6 +345,7 @@
                     <button onclick="setCategory('all')" id="btn-all" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold bg-slate-900 text-white transition shadow-md whitespace-nowrap">সব</button>
                     <button onclick="setCategory('hybrid')" id="btn-hybrid" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap">বাই & সেল</button>
                     <button onclick="setCategory('rent')" id="btn-rent" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap">ভাড়া</button>
+                    <button onclick="setCategory('vpn')" id="btn-vpn" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap"><i class="fas fa-shield-alt"></i> VPN</button>
                 </div>
             </div>
 
@@ -516,15 +517,43 @@
             </div>
             
             <div class="p-6 overflow-y-auto custom-scrollbar">
+                
+                <!-- NEW VIDEO CONTAINER FOR BUY -->
+                <div id="buyVideoContainer" class="mb-4 hidden">
+                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 flex items-center justify-between gap-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-red-600 shadow-sm shrink-0">
+                                <i class="fab fa-youtube text-sm"></i>
+                            </div>
+                            <div class="text-left">
+                                <p class="text-xs font-bold text-slate-800">ভিডিও দেখুন</p>
+                                <p class="text-[10px] text-slate-500 font-bold">কিভাবে কিনবেন?</p>
+                            </div>
+                        </div>
+                        <a id="buyVideoLinkBtn" href="#" target="_blank" class="px-3 py-1.5 bg-red-600 text-white text-[10px] font-bold rounded-lg hover:bg-red-700 transition shadow-md whitespace-nowrap flex items-center gap-1">
+                            <i class="fas fa-play"></i> দেখুন
+                        </a>
+                    </div>
+                </div>
+
                 <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-6">
                     <div class="flex justify-between items-center mb-3 pb-3 border-b border-slate-200">
                         <span class="text-slate-500 text-xs font-bold uppercase">Product</span>
+                        
+                        <!-- Static Product Name -->
                         <span class="text-slate-800 font-bold" id="buyProductName">--</span>
+                        
+                        <!-- VPN Selector (Hidden by default) -->
+                        <div id="buyVpnSelectContainer" class="hidden w-1/2">
+                            <select id="buyVpnSelect" class="w-full bg-white border border-slate-300 text-slate-800 text-xs font-bold rounded-lg focus:ring-emerald-500 focus:border-emerald-500 p-2 outline-none">
+                                <!-- Options populated via JS -->
+                            </select>
+                        </div>
                     </div>
                     
                     <div>
                         <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">কয় পিস নিবেন? (Quantity)</label>
-                        <input type="number" id="buyQuantity" min="1" value="" placeholder="যেমন: 50" class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl font-bold text-lg text-slate-800 focus:border-emerald-500 outline-none appearance-none">
+                        <input type="number" id="buyQuantity" min="1" value="" placeholder="যেমন: 1" class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl font-bold text-lg text-slate-800 focus:border-emerald-500 outline-none appearance-none">
                     </div>
                 </div>
 
@@ -532,6 +561,12 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">আপনার নাম</label>
                         <input type="text" id="buyerName" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold appearance-none" placeholder="আপনার নাম লিখুন">
+                    </div>
+
+                    <!-- New Phone Number Field -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">হোয়াটসঅ্যাপ নাম্বার</label>
+                        <input type="tel" id="buyerPhone" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold appearance-none" placeholder="01XXXXXXXXX">
                     </div>
 
                     <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl flex items-start gap-2">
@@ -542,7 +577,7 @@
                     </div>
 
                     <button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold text-base hover:bg-emerald-700 shadow-xl hover:shadow-emerald-500/30 transition transform active:scale-95 flex justify-center items-center gap-2 mt-2 cursor-pointer">
-                        <span>অর্ডার করুন</span> <i class="fab fa-whatsapp text-lg"></i>
+                        <span>জমা দিন</span> <i class="fab fa-whatsapp text-lg"></i>
                     </button>
                 </form>
             </div>
@@ -587,14 +622,20 @@
         // =================================================================
         const MASTER_CONTROL = {
             admin: {
-                whatsappNumber: "8801571062932",
+                whatsappNumber: "8801754838532",
                 paymentNumber: "01754838532",
             },
             socialLinks: {
                 youtube: "https://youtube.com/@mftifor?si=7LBOs8C9pN587s7j",
-                whatsappGroup: "https://wa.me/8801571062932",
+                whatsappGroup: "https://wa.me/8801754838532",
                 telegram: "https://t.me/mftiforchannel"
             },
+            // VPN LIST FOR DROPDOWN
+            vpnList: [
+                "Express VPN", "Nord VPN", "PIA VPN", "Surfshark", "Hotspot Shield",
+                "HMA VPN", "IP Vanish", "Pure VPN", "Turbo VPN", "Avast Seculine",
+                "Sky VPN", "X VPN", "Panda VPN", "Cyberghost", "Vypr VPN"
+            ],
             jobs: {
                 gmail: {
                     id: "gmail",
@@ -604,7 +645,8 @@
                     sellPrice: "১ পিচ = ১৬ টাকা",
                     sellRequirements: ["রিকভারি রিমুভ", "পাসওয়ার্ড সঠিক"],
                     sellPlaceholder: "example@gmail.com password123",
-                    sellVideo: "https://youtu.be/-RNyy0h6wts?si=iPTRqByTtMG4bn7i",
+                    // UPDATED LINK
+                    sellVideo: "https://youtu.be/QEjMeRXpfjk?si=ZQ2VpX7xfYUbBa5r",
                     hasBuyOption: true,
                     buyPriceDisplay: "আলোচনা সাপেক্ষে", 
                     buyName: "Fresh Gmail Account",
@@ -646,6 +688,18 @@
                     sellPlaceholder: "বিস্তারিত লিখুন...",
                     hasBuyOption: false,
                     status: "active"
+                },
+                // ================= SINGLE VPN BUNDLE CARD =================
+                all_vpn_promo: { 
+                    id: "all_vpn_promo", 
+                    title: "All VPN Premium (7 Days)", 
+                    category: "vpn", 
+                    icon: "🛡️", 
+                    sellPrice: null, 
+                    buyPriceDisplay: "৩০ টাকা (৭ দিন)", 
+                    buyName: "VPN Service", 
+                    type: "vpn_bundle", // Special type to trigger dropdown
+                    status: "active" 
                 }
             }
         };
@@ -721,6 +775,7 @@
                 const categoryMatch = currentCategory === 'all' || 
                                       (currentCategory === 'hybrid' && job.category === 'hybrid') ||
                                       (currentCategory === 'rent' && job.category === 'rent') || 
+                                      (currentCategory === 'vpn' && job.category === 'vpn') || // VPN Filter Support
                                       job.category === currentCategory;
                                       
                 const searchLower = searchTerm.toLowerCase();
@@ -740,15 +795,26 @@
             filteredJobs.forEach(job => {
                 if (job.id === 'other') return;
                 const isClosed = job.status === 'closed';
+                
                 let btnText = 'কাজটি করুন <i class="fas fa-arrow-right"></i>';
                 let btnAction = `openModalWithJob('${job.id}')`;
                 
-                if (job.hasBuyOption) {
+                // Logic for Buttons
+                if (job.type === 'buy_only' || job.type === 'vpn_bundle') {
+                     btnText = 'কিনুন (Buy) <i class="fas fa-shopping-cart ml-1"></i>';
+                     btnAction = `openBuyModal('${job.id}')`;
+                } else if (job.hasBuyOption) {
                     btnText = 'কিনুন অথবা সেল করুন <i class="fas fa-exchange-alt ml-1"></i>';
                     btnAction = `openChoiceModal('${job.id}')`;
                 }
 
-                const priceDisplay = job.hasBuyOption ? `Sell: ${job.sellPrice} <br> Buy: ${job.buyPriceDisplay}` : job.sellPrice;
+                // Price Display Logic
+                let priceDisplay = job.sellPrice;
+                if (job.type === 'buy_only' || job.type === 'vpn_bundle') {
+                    priceDisplay = `দাম: ${job.buyPriceDisplay}`;
+                } else if (job.hasBuyOption) {
+                    priceDisplay = `Sell: ${job.sellPrice} <br> Buy: ${job.buyPriceDisplay}`;
+                }
 
                 const card = document.createElement('div');
                 card.className = `glass-card p-6 rounded-3xl relative group transition duration-300 hover:-translate-y-2 border-t-4 ${isClosed ? 'border-red-400 grayscale opacity-80' : 'border-blue-500 hover:shadow-2xl'}`;
@@ -784,8 +850,38 @@
             const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
             if (!jobData) return;
             currentBuyJob = jobData;
-            document.getElementById('buyProductName').innerText = jobData.buyName;
+            
+            // Reset fields
             document.getElementById('buyQuantity').value = "";
+            document.getElementById('buyerName').value = "";
+            document.getElementById('buyerPhone').value = "";
+            
+            // Logic for VPN Bundle Dropdown
+            const staticNameEl = document.getElementById('buyProductName');
+            const vpnSelectContainer = document.getElementById('buyVpnSelectContainer');
+            const vpnSelect = document.getElementById('buyVpnSelect');
+
+            if (jobData.type === 'vpn_bundle') {
+                staticNameEl.classList.add('hidden');
+                vpnSelectContainer.classList.remove('hidden');
+                
+                // Populate Dropdown
+                vpnSelect.innerHTML = MASTER_CONTROL.vpnList.map(vpn => `<option value="${vpn}">${vpn}</option>`).join('');
+            } else {
+                staticNameEl.classList.remove('hidden');
+                vpnSelectContainer.classList.add('hidden');
+                staticNameEl.innerText = jobData.buyName;
+            }
+            
+            // Video Logic for Buy Modal
+            const buyVideoContainer = document.getElementById('buyVideoContainer');
+            if(jobData.sellVideo) {
+                buyVideoContainer.classList.remove('hidden');
+                document.getElementById('buyVideoLinkBtn').href = jobData.sellVideo;
+            } else {
+                buyVideoContainer.classList.add('hidden');
+            }
+
             document.getElementById('buyModal').classList.remove('hidden');
             setTimeout(() => document.getElementById('buyModal').classList.add('active'), 10);
         }
@@ -794,10 +890,23 @@
         function handleBuySubmit(e) {
             e.preventDefault();
             const name = document.getElementById('buyerName').value;
+            const phone = document.getElementById('buyerPhone').value;
             const qty = document.getElementById('buyQuantity').value;
+            let productName = currentBuyJob.buyName;
+
+            // Get VPN name if dropdown is active
+            if (currentBuyJob.type === 'vpn_bundle') {
+                productName = document.getElementById('buyVpnSelect').value;
+            }
             
-            if(!name || !qty) {
+            if(!name || !qty || !phone) {
                 showToast("অনুগ্রহ করে সব তথ্য দিন", "error");
+                return;
+            }
+
+            // Phone Validation
+            if (!/^01\d{9}$/.test(phone)) {
+                showToast("সঠিক মোবাইল নাম্বার দিন (১১ ডিজিট)", "error");
                 return;
             }
 
@@ -805,11 +914,12 @@
             let msg = `*অর্ডার রিকোয়েস্ট (Buy)* %0A`;
             msg += `সময়: ${dateTime} %0A`;
             msg += `------------------ %0A`;
-            msg += `প্রোডাক্ট: ${currentBuyJob.buyName} %0A`;
+            msg += `প্রোডাক্ট: ${productName} %0A`;
             msg += `পরিমাণ: ${qty} পিস %0A`;
             msg += `------------------ %0A`;
             msg += `ক্রেতা: ${name} %0A`;
-            msg += `*আমি কিনতে আগ্রহী। কনফার্ম করুন।*`;
+            msg += `নাম্বার: ${phone} %0A`;
+            msg += `*আমি নিতে চাই। জমা দিন।*`;
 
             showToast("হোয়াটসঅ্যাপ ওপেন হচ্ছে...", "success");
             setTimeout(() => {
@@ -825,6 +935,7 @@
         function populateJobSelect() {
             jobSelect.innerHTML = '<option value="">এখানে ক্লিক করে সিলেক্ট করুন...</option>';
             Object.values(MASTER_CONTROL.jobs).forEach(job => {
+                if(job.type === 'buy_only' || job.type === 'vpn_bundle') return; // Don't show Buy Only jobs in Sell form
                 const option = document.createElement('option');
                 option.value = job.id;
                 option.text = `${job.icon} ${job.title}`;
@@ -1106,6 +1217,7 @@
             if (lowerText.match(/price|dam|rate|cost|দাম|রেট|কত/)) {
                 if (lowerText.includes('gmail')) return `${jobs.gmail.title}: ${jobs.gmail.sellPrice}। আমাদের রেট ফিক্সড।`;
                 if (lowerText.includes('facebook') || lowerText.includes('fb')) return `${jobs.facebook.title}: ${jobs.facebook.sellPrice}।`;
+                if (lowerText.includes('vpn')) return "সব VPN এর দাম ৩০ টাকা (৭ দিনের জন্য)।";
                 return "সব সার্ভিসের দাম জানতে 'সার্ভিস তালিকা' চেক করুন অথবা নির্দিষ্ট সার্ভিসের নাম লিখুন (যেমন: Gmail দাম)।";
             }
             
