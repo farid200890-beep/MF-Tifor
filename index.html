@@ -166,6 +166,11 @@
         }
         .modal.active .modal-content { transform: scale(1) translateY(0); }
 
+        /* Shop Closed Popup */
+        #shopClosedPopup {
+            z-index: 10001;
+        }
+
         /* Chat Widget */
         .chat-widget {
             position: fixed;
@@ -240,6 +245,13 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* No arrows in number input */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
     </style>
 </head>
 <body class="dynamic-bg min-h-screen text-slate-800 antialiased selection:bg-purple-100 selection:text-purple-700">
@@ -262,7 +274,7 @@
                     সার্ভিস তালিকা <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
                 </a>
                 
-                <button onclick="openModal()" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-lg hover:shadow-blue-500/30 transition transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 text-sm font-bold cursor-pointer">
+                <button onclick="attemptAction('upload')" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-lg hover:shadow-blue-500/30 transition transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 text-sm font-bold cursor-pointer">
                     <i class="fas fa-paper-plane"></i> কাজ জমা দিন
                 </button>
             </div>
@@ -277,7 +289,7 @@
             <div class="p-5 space-y-3 font-bold text-center">
                 <a href="#home" onclick="toggleMobileMenu()" class="block p-4 rounded-xl bg-slate-50 text-slate-700 active:bg-blue-50">হোম</a>
                 <a href="#opportunities" onclick="toggleMobileMenu()" class="block p-4 rounded-xl bg-slate-50 text-slate-700 active:bg-blue-50">সার্ভিস তালিকা</a>
-                <button onclick="openModal(); toggleMobileMenu()" class="w-full mt-2 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-lg font-bold">
+                <button onclick="attemptAction('upload'); toggleMobileMenu()" class="w-full mt-2 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-lg font-bold">
                     কাজ জমা দিন
                 </button>
             </div>
@@ -290,9 +302,16 @@
         <div class="absolute top-40 left-0 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
 
         <div class="container mx-auto max-w-4xl text-center relative z-10">
-            <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 border border-blue-200 shadow-lg text-xs md:text-sm font-extrabold text-blue-700 mb-8 animate-bounce">
+            <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 border border-blue-200 shadow-lg text-xs md:text-sm font-extrabold text-blue-700 mb-6 animate-bounce">
                 <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
                 বিশ্বস্ত সোর্স - ১০০% পেমেন্ট গ্যারান্টি 🚀
+            </div>
+            
+            <!-- NEW NOTICE ADDED HERE -->
+            <div class="mb-6 flex justify-center">
+                <p class="text-base md:text-xl font-bold text-slate-800 bg-white/60 backdrop-blur-md py-3 px-8 rounded-2xl shadow-sm border border-slate-200/50 flex items-center gap-2">
+                    <i class="fas fa-clock text-blue-600"></i> সকাল ০৫:০০ টা থেকে রাত ১০:০০ টা পর্যন্ত ওয়েবসাইট এ সকল কেনাবেচা করতে পারবেন
+                </p>
             </div>
             
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-[1.15] text-slate-900 drop-shadow-sm">
@@ -322,6 +341,10 @@
             <div class="text-center mb-8">
                 <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-2">সার্ভিস তালিকা</h2>
                 <p class="text-slate-600 font-medium">নিচের অপশনগুলো থেকে কিনুন অথবা সেল করুন</p>
+                <!-- Shop Status Indicator -->
+                <div id="shopStatusBanner" class="mt-4 inline-block px-4 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500">
+                    লোডিং...
+                </div>
             </div>
 
             <div class="glass-card p-5 rounded-2xl shadow-lg mb-8 border border-white/60">
@@ -344,7 +367,7 @@
                 <div class="flex gap-2 mt-4 overflow-x-auto pb-2 scrollbar-hide justify-center md:justify-start">
                     <button onclick="setCategory('all')" id="btn-all" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold bg-slate-900 text-white transition shadow-md whitespace-nowrap">সব</button>
                     <button onclick="setCategory('hybrid')" id="btn-hybrid" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap">বাই & সেল</button>
-                    <button onclick="setCategory('rent')" id="btn-rent" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap">ভাড়া</button>
+                    <button onclick="setCategory('mail')" id="btn-mail" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap"><i class="fas fa-envelope"></i> Mails</button>
                     <button onclick="setCategory('vpn')" id="btn-vpn" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap"><i class="fas fa-shield-alt"></i> VPN</button>
                 </div>
             </div>
@@ -372,6 +395,23 @@
     </section>
 
     <!-- ================= MODALS ================= -->
+
+    <!-- SHOP CLOSED POPUP -->
+    <div id="shopClosedPopup" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/80 backdrop-blur-md">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden modal-content p-8 text-center relative z-50">
+            <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 animate-pulse">
+                <i class="fas fa-store-slash"></i>
+            </div>
+            <h3 class="text-2xl font-black text-slate-800 mb-2">দোকান এখন বন্ধ!</h3>
+            <p class="text-slate-500 font-bold mb-6">
+                কেনা-বেচার সময়:<br>
+                <span class="text-emerald-600">সকাল ০৫:০০ টা</span> থেকে <span class="text-red-500">রাত ১০:০০ টা</span> পর্যন্ত (BD Time)।
+            </p>
+            <button onclick="closeClosedPopup()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition">
+                ঠিক আছে
+            </button>
+        </div>
+    </div>
 
     <!-- CHOICE MODAL -->
     <div id="choiceModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm">
@@ -458,8 +498,8 @@
                         </div>
                         <div>
                             <label id="paymentLabel" class="block text-xs font-bold text-slate-500 mb-1">বিকাশ নাম্বার</label>
-                            <!-- Uses Debounced Validation -->
-                            <input type="tel" id="userContact" oninput="debouncedValidate()" required autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold transition duration-200 appearance-none" placeholder="01XXXXXXXXX">
+                            <!-- Decimal blocked via pattern and onkeypress -->
+                            <input type="tel" id="userContact" oninput="debouncedValidate()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold transition duration-200 appearance-none" placeholder="01XXXXXXXXX">
                         </div>
                     </div>
 
@@ -476,7 +516,6 @@
                         </div>
                         
                         <div class="relative">
-                            <!-- Uses Debounced Validation to prevent lag -->
                             <textarea id="dynamicText" rows="6" oninput="debouncedValidate()" autocomplete="off" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-mono shadow-inner transition whitespace-pre overflow-x-auto appearance-none" placeholder=""></textarea>
                         </div>
                         
@@ -518,7 +557,6 @@
             
             <div class="p-6 overflow-y-auto custom-scrollbar">
                 
-                <!-- NEW VIDEO CONTAINER FOR BUY -->
                 <div id="buyVideoContainer" class="mb-4 hidden">
                     <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 flex items-center justify-between gap-3">
                         <div class="flex items-center gap-3">
@@ -543,17 +581,26 @@
                         <!-- Static Product Name -->
                         <span class="text-slate-800 font-bold" id="buyProductName">--</span>
                         
-                        <!-- VPN Selector (Hidden by default) -->
-                        <div id="buyVpnSelectContainer" class="hidden w-1/2">
-                            <select id="buyVpnSelect" class="w-full bg-white border border-slate-300 text-slate-800 text-xs font-bold rounded-lg focus:ring-emerald-500 focus:border-emerald-500 p-2 outline-none">
+                        <!-- VPN/Mail Selector (Hidden by default) -->
+                        <div id="buyVariableSelectContainer" class="hidden w-2/3">
+                            <select id="buyVariableSelect" onchange="updateBuyTotal()" class="w-full bg-white border border-slate-300 text-slate-800 text-xs font-bold rounded-lg focus:ring-emerald-500 focus:border-emerald-500 p-2 outline-none">
                                 <!-- Options populated via JS -->
                             </select>
                         </div>
                     </div>
                     
                     <div>
-                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">কয় পিস নিবেন? (Quantity)</label>
-                        <input type="number" id="buyQuantity" min="1" value="" placeholder="যেমন: 1" class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl font-bold text-lg text-slate-800 focus:border-emerald-500 outline-none appearance-none">
+                        <div class="flex justify-between items-center mb-1">
+                             <label class="block text-[10px] font-bold text-slate-500 uppercase">পরিমাণ (Quantity)</label>
+                             <span id="buyUnitPriceDisplay" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md"></span>
+                        </div>
+                        <!-- Decimal blocked -->
+                        <input type="number" id="buyQuantity" min="1" step="1" value="" oninput="updateBuyTotal()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="যেমন: 1" class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl font-bold text-lg text-slate-800 focus:border-emerald-500 outline-none appearance-none">
+                    </div>
+
+                    <!-- Total Price Display -->
+                    <div id="buyTotalDisplayBox" class="mt-3 p-2 bg-emerald-100 border border-emerald-200 rounded-lg text-center hidden">
+                         <p class="text-xs text-emerald-800 font-bold">মোট দাম: <span id="buyTotalPrice" class="text-lg">0</span> টাকা</p>
                     </div>
                 </div>
 
@@ -563,10 +610,9 @@
                         <input type="text" id="buyerName" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold appearance-none" placeholder="আপনার নাম লিখুন">
                     </div>
 
-                    <!-- New Phone Number Field -->
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">হোয়াটসঅ্যাপ নাম্বার</label>
-                        <input type="tel" id="buyerPhone" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold appearance-none" placeholder="01XXXXXXXXX">
+                        <input type="tel" id="buyerPhone" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold appearance-none" placeholder="01XXXXXXXXX">
                     </div>
 
                     <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl flex items-start gap-2">
@@ -630,26 +676,47 @@
                 whatsappGroup: "https://wa.me/8801754838532",
                 telegram: "https://t.me/mftiforchannel"
             },
-            // VPN LIST FOR DROPDOWN
+            // VPN LIST (Standard Price 30 Taka)
             vpnList: [
                 "Express VPN", "Nord VPN", "PIA VPN", "Surfshark", "Hotspot Shield",
                 "HMA VPN", "IP Vanish", "Pure VPN", "Turbo VPN", "Avast Seculine",
                 "Sky VPN", "X VPN", "Panda VPN", "Cyberghost", "Vypr VPN"
             ],
+            // JOBS CONFIGURATION
+            // status: "active" for Open, "closed" for Closed
+            // NOTE: Order of keys roughly determines render order, but sort logic overrides based on active/closed
             jobs: {
                 gmail: {
                     id: "gmail",
                     title: "Gmail সার্ভিস",
                     category: "hybrid",
                     icon: "📧",
-                    sellPrice: "১ পিচ = ১৮ টাকা",
+                    // Numeric price for calculations
+                    sellPriceUnit: 18, 
+                    sellPriceDisplay: "১ পিচ = ১৮ টাকা",
                     sellRequirements: ["রিকভারি রিমুভ", "পাসওয়ার্ড সঠিক"],
                     sellPlaceholder: "example@gmail.com password123",
-                    // UPDATED LINK
                     sellVideo: "https://youtu.be/QEjMeRXpfjk?si=ZQ2VpX7xfYUbBa5r",
                     hasBuyOption: true,
+                    buyPriceUnit: 0, // 0 means negotiable or unknown
                     buyPriceDisplay: "আলোচনা সাপেক্ষে", 
                     buyName: "Fresh Gmail Account",
+                    status: "active"
+                },
+                // NEW SECTION: MICROSOFT & EDU MAILS
+                microsoft_mails: {
+                    id: "microsoft_mails",
+                    title: "Microsoft & Edu Mails",
+                    category: "mail", 
+                    icon: "📫",
+                    type: "variable_product", 
+                    options: {
+                        edumail: { name: "Edu Mail", price: 1.5, status: "active" }, 
+                        hotmail: { name: "Hotmail", price: 1, status: "active" },   
+                        outlook: { name: "Outlook Mail", price: 0.60, status: "active" } 
+                    },
+                    sellPrice: null, 
+                    buyPriceDisplay: "Edu: ১.৫ ৳ | Hot: ১ ৳ | Outlook: ০.৬০ ৳", 
                     status: "active"
                 },
                 facebook: {
@@ -657,21 +724,37 @@
                     title: "Facebook সার্ভিস",
                     category: "hybrid",
                     icon: "👤",
-                    sellPrice: "আপাতত বন্ধ আছে",
+                    sellPriceUnit: 0,
+                    sellPriceDisplay: "আপাতত বন্ধ রয়েছে চালু হলে এখানেই দেখতে পাবেন!",
                     sellRequirements: ["UID, Password, 2FA/Key সঠিক"],
                     sellPlaceholder: "10001234567890 password123 2FAKEYCODE",
                     sellVideo: "https://youtu.be/2aan-2krI14?si=ASAxOEeZbYrT6Oti",
                     hasBuyOption: true,
+                    buyPriceUnit: 0,
                     buyPriceDisplay: "আলোচনা সাপেক্ষে",
                     buyName: "Facebook Account",
-                    status: "active"
+                    status: "closed"
+                },
+                // REORDERED: VPN Bundle moved BEFORE WhatsApp
+                all_vpn_promo: { 
+                    id: "all_vpn_promo", 
+                    title: "All VPN Premium (7 Days)", 
+                    category: "vpn", 
+                    icon: "🛡️", 
+                    sellPrice: null, 
+                    buyPriceUnit: 30, // Fixed price
+                    buyPriceDisplay: "৩০ টাকা (৭ দিন)", 
+                    buyName: "VPN Service", 
+                    type: "vpn_bundle", 
+                    status: "active" 
                 },
                 whatsapp: {
                     id: "whatsapp_rent",
                     title: "WhatsApp ভাড়া",
                     category: "rent",
                     icon: "📞",
-                    sellPrice: "আলোচনা সাপেক্ষে",
+                    sellPriceUnit: 0,
+                    sellPriceDisplay: "আলোচনা সাপেক্ষে",
                     sellRequirements: ["৪৮ ঘন্টা পর রেফার বোনাস দিবে সাইট টি"],
                     sellPlaceholder: "আপনার নাম্বারটি লিখুন...",
                     sellVideo: "https://youtu.be/wLKjFMIFfn0?si=lneNC4iltVL4Hprj",
@@ -683,29 +766,65 @@
                     title: "অন্যান্য / সাপোর্ট",
                     category: "all",
                     icon: "📦",
-                    sellPrice: "--",
+                    sellPriceUnit: 0,
+                    sellPriceDisplay: "--",
                     sellRequirements: [],
                     sellPlaceholder: "বিস্তারিত লিখুন...",
                     hasBuyOption: false,
                     status: "active"
-                },
-                // ================= SINGLE VPN BUNDLE CARD =================
-                all_vpn_promo: { 
-                    id: "all_vpn_promo", 
-                    title: "All VPN Premium (7 Days)", 
-                    category: "vpn", 
-                    icon: "🛡️", 
-                    sellPrice: null, 
-                    buyPriceDisplay: "৩০ টাকা (৭ দিন)", 
-                    buyName: "VPN Service", 
-                    type: "vpn_bundle", // Special type to trigger dropdown
-                    status: "active" 
                 }
             }
         };
 
         // =================================================================
-        // 🍞 ULTRA PRO TOAST NOTIFICATION
+        // ⏰ TIME CONTROL SYSTEM (Bangladesh Time)
+        // =================================================================
+        function checkShopStatus() {
+            // Get current time in Bangladesh Timezone
+            const now = new Date().toLocaleString("en-US", {timeZone: "Asia/Dhaka"});
+            const bdDate = new Date(now);
+            const hours = bdDate.getHours();
+
+            // Shop is OPEN from 05:00 (5 AM) to 22:00 (10 PM)
+            // It closes exactly at 10 PM (22:00)
+            const isOpen = hours >= 5 && hours < 22; 
+            
+            updateShopStatusBanner(isOpen);
+            return isOpen;
+        }
+
+        function updateShopStatusBanner(isOpen) {
+            const banner = document.getElementById('shopStatusBanner');
+            if(isOpen) {
+                banner.className = "mt-4 inline-block px-4 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 animate-pulse";
+                banner.innerHTML = "🟢 দোকান খোলা আছে (সকাল ৫টা - রাত ১০টা)";
+            } else {
+                banner.className = "mt-4 inline-block px-4 py-1 rounded-full text-xs font-bold bg-red-100 text-red-600";
+                banner.innerHTML = "🔴 দোকান বন্ধ (রাত ১০টা - সকাল ৫টা)";
+            }
+        }
+
+        function attemptAction(actionName, ...args) {
+            if (checkShopStatus()) {
+                // Shop is Open
+                if (actionName === 'upload') openModal();
+                else if (actionName === 'choice') openChoiceModal(...args);
+                else if (actionName === 'buy') openBuyModal(...args);
+                else if (actionName === 'openModalWithJob') openModalWithJob(...args);
+            } else {
+                // Shop is Closed
+                document.getElementById('shopClosedPopup').classList.remove('hidden');
+                setTimeout(() => document.getElementById('shopClosedPopup').classList.add('active'), 10);
+            }
+        }
+
+        function closeClosedPopup() {
+            document.getElementById('shopClosedPopup').classList.remove('active');
+            setTimeout(() => document.getElementById('shopClosedPopup').classList.add('hidden'), 200);
+        }
+
+        // =================================================================
+        // 🍞 TOAST NOTIFICATION
         // =================================================================
         function showToast(message, type = 'info') {
             const container = document.getElementById('toast-container');
@@ -727,16 +846,12 @@
 
             container.appendChild(toast);
 
-            // Remove after 3 seconds
             setTimeout(() => {
                 toast.style.animation = 'fadeOut 0.3s ease-out forwards';
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
         }
 
-        // =================================================================
-        // ⚡ UTILITY: DEBOUNCE FUNCTION
-        // =================================================================
         function debounce(func, wait) {
             let timeout;
             return function(...args) {
@@ -764,6 +879,8 @@
             renderJobs();
             populateJobSelect();
             initBot();
+            checkShopStatus(); // Initial check
+            setInterval(checkShopStatus, 60000); // Check every minute
         });
 
         // --- JOB RENDERER ---
@@ -771,11 +888,12 @@
             const grid = document.getElementById('opportunitiesGrid');
             const jobs = Object.values(MASTER_CONTROL.jobs);
             
-            const filteredJobs = jobs.filter(job => {
+            let filteredJobs = jobs.filter(job => {
                 const categoryMatch = currentCategory === 'all' || 
                                       (currentCategory === 'hybrid' && job.category === 'hybrid') ||
                                       (currentCategory === 'rent' && job.category === 'rent') || 
-                                      (currentCategory === 'vpn' && job.category === 'vpn') || // VPN Filter Support
+                                      (currentCategory === 'vpn' && job.category === 'vpn') || 
+                                      (currentCategory === 'mail' && (job.category === 'mail' || job.id === 'gmail')) || 
                                       job.category === currentCategory;
                                       
                 const searchLower = searchTerm.toLowerCase();
@@ -783,6 +901,17 @@
                 const statusMatch = statusFilterValue === 'all' || job.status === statusFilterValue;
 
                 return categoryMatch && searchMatch && statusMatch;
+            });
+
+            // === SORTING LOGIC: ACTIVE First, CLOSED Last ===
+            // This ensures closed services always drop to the bottom
+            filteredJobs.sort((a, b) => {
+                // If a is active and b is closed, a comes first (-1)
+                if (a.status === 'active' && b.status === 'closed') return -1;
+                // If a is closed and b is active, b comes first (1)
+                if (a.status === 'closed' && b.status === 'active') return 1;
+                // Otherwise keep original order
+                return 0;
             });
 
             grid.innerHTML = '';
@@ -797,27 +926,29 @@
                 const isClosed = job.status === 'closed';
                 
                 let btnText = 'কাজটি করুন <i class="fas fa-arrow-right"></i>';
-                let btnAction = `openModalWithJob('${job.id}')`;
+                // Note: Wrapped in attemptAction for time check
+                let btnAction = `attemptAction('openModalWithJob', '${job.id}')`;
                 
                 // Logic for Buttons
-                if (job.type === 'buy_only' || job.type === 'vpn_bundle') {
+                if (job.type === 'buy_only' || job.type === 'vpn_bundle' || job.type === 'variable_product') {
                      btnText = 'কিনুন (Buy) <i class="fas fa-shopping-cart ml-1"></i>';
-                     btnAction = `openBuyModal('${job.id}')`;
+                     btnAction = `attemptAction('buy', '${job.id}')`;
                 } else if (job.hasBuyOption) {
                     btnText = 'কিনুন অথবা সেল করুন <i class="fas fa-exchange-alt ml-1"></i>';
-                    btnAction = `openChoiceModal('${job.id}')`;
+                    btnAction = `attemptAction('choice', '${job.id}')`;
                 }
 
                 // Price Display Logic
-                let priceDisplay = job.sellPrice;
-                if (job.type === 'buy_only' || job.type === 'vpn_bundle') {
+                let priceDisplay = job.sellPriceDisplay;
+                if (job.type === 'buy_only' || job.type === 'vpn_bundle' || job.type === 'variable_product') {
                     priceDisplay = `দাম: ${job.buyPriceDisplay}`;
                 } else if (job.hasBuyOption) {
-                    priceDisplay = `Sell: ${job.sellPrice} <br> Buy: ${job.buyPriceDisplay}`;
+                    priceDisplay = `Sell: ${job.sellPriceDisplay} <br> Buy: ${job.buyPriceDisplay}`;
                 }
 
                 const card = document.createElement('div');
-                card.className = `glass-card p-6 rounded-3xl relative group transition duration-300 hover:-translate-y-2 border-t-4 ${isClosed ? 'border-red-400 grayscale opacity-80' : 'border-blue-500 hover:shadow-2xl'}`;
+                // Added grayscale and opacity for closed cards to make them look inactive
+                card.className = `glass-card p-6 rounded-3xl relative group transition duration-300 hover:-translate-y-2 border-t-4 ${isClosed ? 'border-red-400 grayscale opacity-80 order-last' : 'border-blue-500 hover:shadow-2xl'}`;
                 
                 card.innerHTML = `
                     <div class="absolute top-4 right-4">
@@ -844,8 +975,10 @@
             return now.toLocaleString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
         }
 
-        // --- BUY LOGIC ---
+        // --- BUY LOGIC & CALCULATION ---
         let currentBuyJob = null;
+        let currentUnitPrice = 0;
+
         function openBuyModal(jobId) {
             const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
             if (!jobData) return;
@@ -855,25 +988,57 @@
             document.getElementById('buyQuantity').value = "";
             document.getElementById('buyerName').value = "";
             document.getElementById('buyerPhone').value = "";
+            document.getElementById('buyTotalDisplayBox').classList.add('hidden');
             
-            // Logic for VPN Bundle Dropdown
             const staticNameEl = document.getElementById('buyProductName');
-            const vpnSelectContainer = document.getElementById('buyVpnSelectContainer');
-            const vpnSelect = document.getElementById('buyVpnSelect');
+            const variableSelectContainer = document.getElementById('buyVariableSelectContainer');
+            const variableSelect = document.getElementById('buyVariableSelect');
+            
+            // Default Unit Price (if fixed)
+            currentUnitPrice = jobData.buyPriceUnit || 0;
 
-            if (jobData.type === 'vpn_bundle') {
+            if (jobData.type === 'variable_product' || jobData.type === 'vpn_bundle') {
                 staticNameEl.classList.add('hidden');
-                vpnSelectContainer.classList.remove('hidden');
+                variableSelectContainer.classList.remove('hidden');
                 
-                // Populate Dropdown
-                vpnSelect.innerHTML = MASTER_CONTROL.vpnList.map(vpn => `<option value="${vpn}">${vpn}</option>`).join('');
+                variableSelect.innerHTML = '';
+                
+                if (jobData.type === 'variable_product') {
+                     // For Microsoft Mails (Edu, Hotmail, Outlook)
+                     Object.entries(jobData.options).forEach(([key, opt]) => {
+                         if (opt.status === 'active') { // Check sub-status
+                             const option = document.createElement('option');
+                             option.value = key;
+                             option.text = `${opt.name}`;
+                             option.dataset.price = opt.price;
+                             variableSelect.appendChild(option);
+                         }
+                     });
+                } else if (jobData.type === 'vpn_bundle') {
+                    // For VPNs
+                    MASTER_CONTROL.vpnList.forEach(vpn => {
+                        const option = document.createElement('option');
+                        option.value = vpn;
+                        option.text = vpn;
+                        option.dataset.price = 30; // Fixed VPN price
+                        variableSelect.appendChild(option);
+                    });
+                }
+                
+                // Set initial price from first option
+                if(variableSelect.options.length > 0) {
+                     currentUnitPrice = parseFloat(variableSelect.options[0].dataset.price) || 0;
+                }
+                
             } else {
                 staticNameEl.classList.remove('hidden');
-                vpnSelectContainer.classList.add('hidden');
+                variableSelectContainer.classList.add('hidden');
                 staticNameEl.innerText = jobData.buyName;
             }
             
-            // Video Logic for Buy Modal
+            updateBuyTotal();
+
+            // Video Logic
             const buyVideoContainer = document.getElementById('buyVideoContainer');
             if(jobData.sellVideo) {
                 buyVideoContainer.classList.remove('hidden');
@@ -885,18 +1050,66 @@
             document.getElementById('buyModal').classList.remove('hidden');
             setTimeout(() => document.getElementById('buyModal').classList.add('active'), 10);
         }
+
+        function updateBuyTotal() {
+            // Update unit price if variable product
+            if (currentBuyJob.type === 'variable_product' || currentBuyJob.type === 'vpn_bundle') {
+                 const select = document.getElementById('buyVariableSelect');
+                 const selectedOpt = select.options[select.selectedIndex];
+                 if(selectedOpt) {
+                    currentUnitPrice = parseFloat(selectedOpt.dataset.price);
+                 }
+            }
+
+            const qty = parseInt(document.getElementById('buyQuantity').value) || 0;
+            const priceDisplay = document.getElementById('buyUnitPriceDisplay');
+            const totalBox = document.getElementById('buyTotalDisplayBox');
+            
+            // Update Unit Price Label
+            if(currentUnitPrice > 0) {
+                priceDisplay.innerText = `প্রতি পিস: ${currentUnitPrice} ৳`;
+                priceDisplay.classList.remove('hidden');
+            } else {
+                priceDisplay.classList.add('hidden');
+            }
+
+            // Calculate Total
+            if (qty > 0 && currentUnitPrice > 0) {
+                const total = (qty * currentUnitPrice).toFixed(2);
+                document.getElementById('buyTotalPrice').innerText = total;
+                totalBox.classList.remove('hidden');
+            } else {
+                totalBox.classList.add('hidden');
+            }
+        }
+
         function closeBuyModal() { document.getElementById('buyModal').classList.remove('active'); setTimeout(() => document.getElementById('buyModal').classList.add('hidden'), 200); }
         
         function handleBuySubmit(e) {
             e.preventDefault();
+            // Re-check shop status on submit
+            if(!checkShopStatus()) {
+                closeBuyModal();
+                attemptAction('buy'); // Will trigger closed popup
+                return;
+            }
+
             const name = document.getElementById('buyerName').value;
             const phone = document.getElementById('buyerPhone').value;
             const qty = document.getElementById('buyQuantity').value;
             let productName = currentBuyJob.buyName;
+            let finalPriceText = "আলোচনা সাপেক্ষে";
 
-            // Get VPN name if dropdown is active
-            if (currentBuyJob.type === 'vpn_bundle') {
-                productName = document.getElementById('buyVpnSelect').value;
+            // Get product name for variables
+            if (currentBuyJob.type === 'variable_product' || currentBuyJob.type === 'vpn_bundle') {
+                const select = document.getElementById('buyVariableSelect');
+                productName = select.options[select.selectedIndex].text;
+            }
+
+            // Calculate Total for Message
+            if (currentUnitPrice > 0) {
+                const total = (parseInt(qty) * currentUnitPrice).toFixed(2);
+                finalPriceText = `${total} টাকা (${qty} x ${currentUnitPrice})`;
             }
             
             if(!name || !qty || !phone) {
@@ -904,7 +1117,6 @@
                 return;
             }
 
-            // Phone Validation
             if (!/^01\d{9}$/.test(phone)) {
                 showToast("সঠিক মোবাইল নাম্বার দিন (১১ ডিজিট)", "error");
                 return;
@@ -916,6 +1128,7 @@
             msg += `------------------ %0A`;
             msg += `প্রোডাক্ট: ${productName} %0A`;
             msg += `পরিমাণ: ${qty} পিস %0A`;
+            msg += `মোট দাম: ${finalPriceText} %0A`;
             msg += `------------------ %0A`;
             msg += `ক্রেতা: ${name} %0A`;
             msg += `নাম্বার: ${phone} %0A`;
@@ -935,7 +1148,8 @@
         function populateJobSelect() {
             jobSelect.innerHTML = '<option value="">এখানে ক্লিক করে সিলেক্ট করুন...</option>';
             Object.values(MASTER_CONTROL.jobs).forEach(job => {
-                if(job.type === 'buy_only' || job.type === 'vpn_bundle') return; // Don't show Buy Only jobs in Sell form
+                // Hide Buy Only, VPN Bundles, and Variable Products (like the Mails group) from generic Sell list
+                if(job.type === 'buy_only' || job.type === 'vpn_bundle' || job.type === 'variable_product') return;
                 const option = document.createElement('option');
                 option.value = job.id;
                 option.text = `${job.icon} ${job.title}`;
@@ -1130,6 +1344,14 @@
 
         function handleSellSubmit(e) {
             e.preventDefault();
+            // Check Time
+            if(!checkShopStatus()) {
+                closeModal();
+                document.getElementById('shopClosedPopup').classList.remove('hidden');
+                setTimeout(() => document.getElementById('shopClosedPopup').classList.add('active'), 10);
+                return;
+            }
+
             const jobId = jobSelect.value;
             const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
             const name = document.getElementById('userName').value;
@@ -1137,6 +1359,13 @@
             const details = document.getElementById('dynamicText').value;
             const countToSend = (jobId === 'gmail' || jobId === 'facebook') ? globalUniqueCount : details.split('\n').filter(l => l.trim() !== '').length;
             
+            // Calc Total Sell Price if applicable
+            let totalSellPriceMsg = "";
+            if (jobData.sellPriceUnit && jobData.sellPriceUnit > 0) {
+                const total = countToSend * jobData.sellPriceUnit;
+                totalSellPriceMsg = `সম্ভাব্য বিল: ${total} টাকা (${countToSend} x ${jobData.sellPriceUnit})`;
+            }
+
             const dateTime = getBengaliDateTime();
 
             let msg = `*নতুন কাজ জমা (Sell)* %0A`;
@@ -1146,6 +1375,7 @@
             msg += `নাম: ${name} %0A`;
             msg += `পেমেন্ট নাম্বার: ${contact} %0A`;
             if (jobId === 'gmail' || jobId === 'facebook') msg += `মোট পরিমাণ (Unique): ${countToSend} পিস %0A`;
+            if (totalSellPriceMsg) msg += `${totalSellPriceMsg} %0A`;
             msg += `------------------ %0A`;
             if (details) msg += `লিস্ট:%0A${encodeURIComponent(details)}`;
 
@@ -1195,7 +1425,6 @@
             loader.innerHTML = '<span class="animate-pulse">...</span>';
             chatMessages.appendChild(loader);
             
-            // Artificial delay for realism (300ms)
             setTimeout(() => {
                 document.getElementById('bot-loader').remove();
                 const reply = getOfflineResponse(text);
@@ -1203,45 +1432,32 @@
             }, 500);
         }
 
-        // --- INTELLIGENT OFFLINE LOGIC ---
         function getOfflineResponse(text) {
             const lowerText = text.toLowerCase();
             const jobs = MASTER_CONTROL.jobs;
             
-            // Greetings
             if (lowerText.match(/hi|hello|slm|salam|হাই|হ্যালো|সালাম|আসসালামু/)) {
                 return "ওয়ালাইকুম আসসালাম! আমি MF Tifor অফলাইন অ্যাসিস্ট্যান্ট। আমি আপনাকে কিভাবে সাহায্য করতে পারি?";
             }
-            
-            // Price / Rate queries
             if (lowerText.match(/price|dam|rate|cost|দাম|রেট|কত/)) {
-                if (lowerText.includes('gmail')) return `${jobs.gmail.title}: ${jobs.gmail.sellPrice}। আমাদের রেট ফিক্সড।`;
-                if (lowerText.includes('facebook') || lowerText.includes('fb')) return `${jobs.facebook.title}: ${jobs.facebook.sellPrice}।`;
-                if (lowerText.includes('vpn')) return "সব VPN এর দাম ৩০ টাকা (৭ দিনের জন্য)।";
-                return "সব সার্ভিসের দাম জানতে 'সার্ভিস তালিকা' চেক করুন অথবা নির্দিষ্ট সার্ভিসের নাম লিখুন (যেমন: Gmail দাম)।";
+                if (lowerText.includes('gmail')) return `${jobs.gmail.title}: ${jobs.gmail.sellPriceDisplay}।`;
+                if (lowerText.includes('edu')) return "Edu Mail: ১.৫ টাকা";
+                if (lowerText.includes('outlook')) return "Outlook: ০.৬০ টাকা";
+                return "সব সার্ভিসের দাম জানতে 'সার্ভিস তালিকা' চেক করুন।";
             }
-            
-            // Sell queries
             if (lowerText.match(/sell|bikri|joma|কিভাবে|বিক্রি|কাজ/)) {
-                return "সেল করার জন্য উপরের 'কাজ জমা দিন' বাটনে ক্লিক করুন। সেখানে ফর্ম পূরণ করে হোয়াটসঅ্যাপে পাঠান।";
+                return "সেল করার জন্য উপরের 'কাজ জমা দিন' বাটনে ক্লিক করুন।";
             }
-            
-            // Buy queries
             if (lowerText.match(/buy|kinbo|kinte|কিনতে|ক্রয়/)) {
-                return "কিনতে চাইলে 'কিনুন' বাটনে ক্লিক করুন অথবা সরাসরি অ্যাডমিনকে হোয়াটসঅ্যাপে মেসেজ দিন।";
+                return "কিনতে চাইলে 'কিনুন' বাটনে ক্লিক করুন।";
             }
-            
-            // Payment / Bkash
-            if (lowerText.match(/bkash|payment|nogod|rocket|বিকাশ|পেমেন্ট/)) {
-                return `পেমেন্ট করার আগে অবশ্যই অ্যাডমিনের সাথে কথা বলবেন। অফিশিয়াল বিকাশ: ${MASTER_CONTROL.admin.paymentNumber}`;
+            if (lowerText.match(/open|time|somoy|সময়|খোলা/)) {
+                return "দোকান খোলা থাকে: সকাল ০৫:০০ টা থেকে রাত ১০:০০ টা পর্যন্ত (BD Time)।";
             }
-
-            // Contact / Admin
             if (lowerText.match(/admin|contact|number|whatsapp|number|মালিক|নম্বর|যোগাযোগ/)) {
                 return `অ্যাডমিন হোয়াটসঅ্যাপ: ${MASTER_CONTROL.admin.whatsappNumber} \nটেলিগ্রাম: ${MASTER_CONTROL.socialLinks.telegram}`;
             }
 
-            // Default fallback
             return "দুঃখিত, আমি এটি বুঝতে পারিনি। তবে আপনি মেনু থেকে অপশনগুলো দেখতে পারেন অথবা সরাসরি অ্যাডমিনকে মেসেজ দিতে পারেন।";
         }
 
