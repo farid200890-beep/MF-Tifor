@@ -719,21 +719,23 @@
                     buyPriceDisplay: "Edu: ১.৫ ৳ | Hot: ১ ৳ | Outlook: ০.৬০ ৳", 
                     status: "active"
                 },
+                // FACEBOOK SERVICE MOVED HERE & ACTIVATED
                 facebook: {
                     id: "facebook",
                     title: "Facebook সার্ভিস",
                     category: "hybrid",
                     icon: "👤",
                     sellPriceUnit: 0,
-                    sellPriceDisplay: "আপাতত বন্ধ রয়েছে চালু হলে এখানেই দেখতে পাবেন!",
+                    sellPriceDisplay: "--",
                     sellRequirements: ["UID, Password, 2FA/Key সঠিক"],
                     sellPlaceholder: "10001234567890 password123 2FAKEYCODE",
                     sellVideo: "https://youtu.be/2aan-2krI14?si=ASAxOEeZbYrT6Oti",
                     hasBuyOption: true,
-                    buyPriceUnit: 0,
-                    buyPriceDisplay: "আলোচনা সাপেক্ষে",
+                    buyPriceUnit: 6, // Updated Price
+                    buyPriceDisplay: "৬ টাকা", // Updated Display
                     buyName: "Facebook Account",
-                    status: "closed"
+                    status: "active", // Activated
+                    type: "buy_only" // Buy Only Enabled
                 },
                 // REORDERED: VPN Bundle moved BEFORE WhatsApp
                 all_vpn_promo: { 
