@@ -37,6 +37,7 @@
                         'pulse-slow': 'pulse 3s infinite',
                         'slide-in': 'slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                         'fade-out': 'fadeOut 0.3s ease-out forwards',
+                        'shimmer': 'shimmer 2s linear infinite', // New animation for unique card
                     },
                     keyframes: {
                         blob: {
@@ -52,6 +53,10 @@
                         fadeOut: {
                             '0%': { opacity: '1' },
                             '100%': { opacity: '0', visibility: 'hidden' }
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% 0' },
+                            '100%': { backgroundPosition: '200% 0' }
                         }
                     }
                 }
@@ -402,7 +407,7 @@
             <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 animate-pulse">
                 <i class="fas fa-store-slash"></i>
             </div>
-            <h3 class="text-2xl font-black text-slate-800 mb-2">দোকান এখন বন্ধ!</h3>
+            <h3 class="text-2xl font-black text-slate-800 mb-2">MF Tifor এখন বন্ধ!</h3>
             <p class="text-slate-500 font-bold mb-6">
                 কেনা-বেচার সময়:<br>
                 <span class="text-emerald-600">সকাল ০৫:০০ টা</span> থেকে <span class="text-red-500">রাত ১০:০০ টা</span> পর্যন্ত (BD Time)।
@@ -686,6 +691,22 @@
             // status: "active" for Open, "closed" for Closed
             // NOTE: Order of keys roughly determines render order, but sort logic overrides based on active/closed
             jobs: {
+                // NEW: Website Build Service
+                website_build: {
+                    id: "website_build",
+                    title: "ওয়েবসাইট বানিয়ে নিন!",
+                    category: "hybrid",
+                    icon: "💻",
+                    sellPrice: null,
+                    buyPriceUnit: 1500, // Base calculation unit
+                    // CHANGE: Updated price display with strikethrough
+                    buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৩৬০০ ৳</span> ১৫০০-২০০০ ৳",
+                    buyName: "Website Service",
+                    type: "buy_only",
+                    status: "active",
+                    isUnique: true, // HOT OFFER
+                    deliveryTime: "ডেলিভারি ১ থেকে ২ দিন"
+                },
                 gmail: {
                     id: "gmail",
                     title: "Gmail সার্ভিস",
@@ -693,15 +714,19 @@
                     icon: "📧",
                     // Numeric price for calculations
                     sellPriceUnit: 18, 
-                    sellPriceDisplay: "১ পিচ = ১৮ টাকা",
+                    // CHANGE: Updated Sell price display
+                    sellPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>১৬ ৳</span> ১৮ ৳",
                     sellRequirements: ["রিকভারি রিমুভ", "পাসওয়ার্ড সঠিক"],
                     sellPlaceholder: "example@gmail.com password123",
                     sellVideo: "https://youtu.be/QEjMeRXpfjk?si=ZQ2VpX7xfYUbBa5r",
                     hasBuyOption: true,
-                    buyPriceUnit: 0, // 0 means negotiable or unknown
-                    buyPriceDisplay: "আলোচনা সাপেক্ষে", 
+                    // === CHANGE HERE: UPDATED PRICE UNIT TO 20 ===
+                    buyPriceUnit: 20, 
+                    // CHANGE: Updated Buy price display
+                    buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>২৫ ৳</span> ২০ ৳", 
                     buyName: "Fresh Gmail Account",
-                    status: "active"
+                    status: "active",
+                    isUnique: true // HOT OFFER ADDED (Same Unit as Website)
                 },
                 // NEW SECTION: MICROSOFT & EDU MAILS
                 microsoft_mails: {
@@ -713,10 +738,10 @@
                     options: {
                         edumail: { name: "Edu Mail", price: 1.5, status: "active" }, 
                         hotmail: { name: "Hotmail", price: 1, status: "active" },   
-                        outlook: { name: "Outlook Mail", price: 0.60, status: "active" } 
+                        outlook: { name: "Outlook Mail", price: 1, status: "active" } 
                     },
                     sellPrice: null, 
-                    buyPriceDisplay: "Edu: ১.৫ ৳ | Hot: ১ ৳ | Outlook: ০.৬০ ৳", 
+                    buyPriceDisplay: "Edu: ১.৫ ৳ | Hot: ১ ৳ | Outlook:  ১ ৳", 
                     status: "active"
                 },
                 // FACEBOOK SERVICE MOVED HERE & ACTIVATED
@@ -732,7 +757,8 @@
                     sellVideo: "https://youtu.be/2aan-2krI14?si=ASAxOEeZbYrT6Oti",
                     hasBuyOption: true,
                     buyPriceUnit: 6, // Updated Price
-                    buyPriceDisplay: "৬ টাকা", // Updated Display
+                    // CHANGE: Updated Buy price display
+                    buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৮ ৳</span> ৬ ৳", 
                     buyName: "Facebook Account",
                     status: "active", // Activated
                     type: "buy_only" // Buy Only Enabled
@@ -745,7 +771,8 @@
                     icon: "🛡️", 
                     sellPrice: null, 
                     buyPriceUnit: 30, // Fixed price
-                    buyPriceDisplay: "৩০ টাকা (৭ দিন)", 
+                    // CHANGE: Updated Buy price display
+                    buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৪৫ ৳</span> ৩০ ৳", 
                     buyName: "VPN Service", 
                     type: "vpn_bundle", 
                     status: "active" 
@@ -761,7 +788,8 @@
                     sellPlaceholder: "আপনার নাম্বারটি লিখুন...",
                     sellVideo: "https://youtu.be/wLKjFMIFfn0?si=lneNC4iltVL4Hprj",
                     hasBuyOption: false,
-                    status: "active"
+                    // CHANGE: Status Closed (Moves to bottom automatically)
+                    status: "closed"
                 },
                 other: {
                     id: "other",
@@ -799,10 +827,10 @@
             const banner = document.getElementById('shopStatusBanner');
             if(isOpen) {
                 banner.className = "mt-4 inline-block px-4 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 animate-pulse";
-                banner.innerHTML = "🟢 দোকান খোলা আছে (সকাল ৫টা - রাত ১০টা)";
+                banner.innerHTML = "🟢 MF Tifor খোলা আছে (সকাল ৫টা - রাত ১০টা)";
             } else {
                 banner.className = "mt-4 inline-block px-4 py-1 rounded-full text-xs font-bold bg-red-100 text-red-600";
-                banner.innerHTML = "🔴 দোকান বন্ধ (রাত ১০টা - সকাল ৫টা)";
+                banner.innerHTML = "🔴 MF Tifor বন্ধ (রাত ১০টা - সকাল ৫টা)";
             }
         }
 
@@ -906,13 +934,13 @@
             });
 
             // === SORTING LOGIC: ACTIVE First, CLOSED Last ===
-            // This ensures closed services always drop to the bottom
             filteredJobs.sort((a, b) => {
-                // If a is active and b is closed, a comes first (-1)
+                // Keep Website Build first if active
+                if (a.id === 'website_build' && a.status === 'active') return -1;
+                if (b.id === 'website_build' && b.status === 'active') return 1;
+
                 if (a.status === 'active' && b.status === 'closed') return -1;
-                // If a is closed and b is active, b comes first (1)
                 if (a.status === 'closed' && b.status === 'active') return 1;
-                // Otherwise keep original order
                 return 0;
             });
 
@@ -948,11 +976,22 @@
                     priceDisplay = `Sell: ${job.sellPriceDisplay} <br> Buy: ${job.buyPriceDisplay}`;
                 }
 
+                // UNIQUE STYLE LOGIC
+                let cardClass = `glass-card p-6 rounded-3xl relative group transition duration-300 hover:-translate-y-2 border-t-4 ${isClosed ? 'border-red-400 grayscale opacity-80 order-last' : 'border-blue-500 hover:shadow-2xl'}`;
+                let extraBadge = '';
+                let extraInfo = '';
+
+                if (job.isUnique && !isClosed) {
+                    cardClass = `glass-card p-6 rounded-3xl relative group transition duration-300 hover:-translate-y-2 border-2 border-purple-500 shadow-xl shadow-purple-200/50 bg-gradient-to-br from-white to-purple-50`;
+                    extraBadge = `<span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm bg-gradient-to-r from-pink-500 to-purple-600 text-white animate-pulse">🔥 হট অফার</span>`;
+                    extraInfo = job.deliveryTime ? `<div class="mt-2 bg-purple-100/50 rounded-lg p-2 text-center border border-purple-100"><p class="text-xs text-purple-700 font-bold"><i class="fas fa-clock"></i> ${job.deliveryTime}</p></div>` : '';
+                }
+
                 const card = document.createElement('div');
-                // Added grayscale and opacity for closed cards to make them look inactive
-                card.className = `glass-card p-6 rounded-3xl relative group transition duration-300 hover:-translate-y-2 border-t-4 ${isClosed ? 'border-red-400 grayscale opacity-80 order-last' : 'border-blue-500 hover:shadow-2xl'}`;
+                card.className = cardClass;
                 
                 card.innerHTML = `
+                    ${extraBadge}
                     <div class="absolute top-4 right-4">
                         <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm ${isClosed ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}">${isClosed ? 'বন্ধ' : '● চলমান'}</span>
                     </div>
@@ -960,8 +999,9 @@
                         <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-md mb-4 text-slate-700">${job.icon}</div>
                         <h3 class="font-bold text-xl text-slate-800 mb-1 leading-tight">${job.title}</h3>
                         <p class="text-xs text-blue-600 font-bold mt-1 leading-relaxed">${priceDisplay}</p>
+                        ${extraInfo}
                     </div>
-                    <button onclick="${btnAction}" ${isClosed ? 'disabled' : ''} class="w-full py-3.5 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 cursor-pointer ${isClosed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : 'bg-slate-900 text-white hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-blue-500/30'}">${isClosed ? 'বর্তমানে বন্ধ' : btnText}</button>
+                    <button onclick="${btnAction}" ${isClosed ? 'disabled' : ''} class="w-full py-3.5 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 cursor-pointer ${isClosed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : (job.isUnique ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-purple-500/40' : 'bg-slate-900 text-white hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-blue-500/30')}">${isClosed ? 'বর্তমানে বন্ধ' : btnText}</button>
                 `;
                 grid.appendChild(card);
             });
@@ -1069,7 +1109,12 @@
             
             // Update Unit Price Label
             if(currentUnitPrice > 0) {
-                priceDisplay.innerText = `প্রতি পিস: ${currentUnitPrice} ৳`;
+                // If it is website build, show fixed start range or unit
+                if(currentBuyJob.id === 'website_build') {
+                    priceDisplay.innerText = "দাম: ১৫০০-২০০০ ৳";
+                } else {
+                    priceDisplay.innerText = `প্রতি পিস: ${currentUnitPrice} ৳`;
+                }
                 priceDisplay.classList.remove('hidden');
             } else {
                 priceDisplay.classList.add('hidden');
@@ -1079,6 +1124,10 @@
             if (qty > 0 && currentUnitPrice > 0) {
                 const total = (qty * currentUnitPrice).toFixed(2);
                 document.getElementById('buyTotalPrice').innerText = total;
+                // For website build, show estimated base price
+                if(currentBuyJob.id === 'website_build') {
+                    document.getElementById('buyTotalPrice').innerText = total + "+";
+                }
                 totalBox.classList.remove('hidden');
             } else {
                 totalBox.classList.add('hidden');
@@ -1134,7 +1183,7 @@
             msg += `------------------ %0A`;
             msg += `ক্রেতা: ${name} %0A`;
             msg += `নাম্বার: ${phone} %0A`;
-            msg += `*আমি নিতে চাই। জমা দিন।*`;
+            msg += `*আমি নিতে চাই। জমা দিন।%2A`;
 
             showToast("হোয়াটসঅ্যাপ ওপেন হচ্ছে...", "success");
             setTimeout(() => {
@@ -1445,6 +1494,7 @@
                 if (lowerText.includes('gmail')) return `${jobs.gmail.title}: ${jobs.gmail.sellPriceDisplay}।`;
                 if (lowerText.includes('edu')) return "Edu Mail: ১.৫ টাকা";
                 if (lowerText.includes('outlook')) return "Outlook: ০.৬০ টাকা";
+                if (lowerText.includes('website') || lowerText.includes('web')) return "ওয়েবসাইট বানাতে খরচ ১৫০০-২০০০ টাকা।";
                 return "সব সার্ভিসের দাম জানতে 'সার্ভিস তালিকা' চেক করুন।";
             }
             if (lowerText.match(/sell|bikri|joma|কিভাবে|বিক্রি|কাজ/)) {
@@ -1454,7 +1504,7 @@
                 return "কিনতে চাইলে 'কিনুন' বাটনে ক্লিক করুন।";
             }
             if (lowerText.match(/open|time|somoy|সময়|খোলা/)) {
-                return "দোকান খোলা থাকে: সকাল ০৫:০০ টা থেকে রাত ১০:০০ টা পর্যন্ত (BD Time)।";
+                return "MF Tifor খোলা থাকে: সকাল ০৫:০০ টা থেকে রাত ১০:০০ টা পর্যন্ত (BD Time)।";
             }
             if (lowerText.match(/admin|contact|number|whatsapp|number|মালিক|নম্বর|যোগাযোগ/)) {
                 return `অ্যাডমিন হোয়াটসঅ্যাপ: ${MASTER_CONTROL.admin.whatsappNumber} \nটেলিগ্রাম: ${MASTER_CONTROL.socialLinks.telegram}`;
