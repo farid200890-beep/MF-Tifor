@@ -37,7 +37,8 @@
                         'pulse-slow': 'pulse 3s infinite',
                         'slide-in': 'slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                         'fade-out': 'fadeOut 0.3s ease-out forwards',
-                        'shimmer': 'shimmer 2s linear infinite', // New animation for unique card
+                        'shimmer': 'shimmer 2s linear infinite', 
+                        'highlight-card': 'highlightPulse 2s ease-in-out infinite', // New Animation for Chatbot
                     },
                     keyframes: {
                         blob: {
@@ -57,6 +58,12 @@
                         shimmer: {
                             '0%': { backgroundPosition: '-200% 0' },
                             '100%': { backgroundPosition: '200% 0' }
+                        },
+                        // Highlighting Keyframes
+                        highlightPulse: {
+                            '0%': { transform: 'scale(1)', borderColor: '#4F46E5', boxShadow: '0 0 0 0 rgba(79, 70, 229, 0.7)' },
+                            '50%': { transform: 'scale(1.05)', borderColor: '#9333EA', boxShadow: '0 0 20px 10px rgba(147, 51, 234, 0.2)' },
+                            '100%': { transform: 'scale(1)', borderColor: '#4F46E5', boxShadow: '0 0 0 0 rgba(79, 70, 229, 0)' }
                         }
                     }
                 }
@@ -142,6 +149,14 @@
             position: relative;
             z-index: 10; 
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Highlight Logic */
+        .highlight-active {
+            animation: highlightPulse 1.5s ease-in-out infinite;
+            z-index: 30 !important;
+            border-width: 2px !important;
+            border-color: #9333EA !important;
         }
 
         /* Mobile Specifics */
@@ -312,7 +327,7 @@
                 বিশ্বস্ত সোর্স - ১০০% পেমেন্ট গ্যারান্টি 🚀
             </div>
             
-            <!-- NEW NOTICE ADDED HERE -->
+            <!-- NOTICE -->
             <div class="mb-6 flex justify-center">
                 <p class="text-base md:text-xl font-bold text-slate-800 bg-white/60 backdrop-blur-md py-3 px-8 rounded-2xl shadow-sm border border-slate-200/50 flex items-center gap-2">
                     <i class="fas fa-clock text-blue-600"></i> সকাল ০৫:০০ টা থেকে রাত ১০:০০ টা পর্যন্ত ওয়েবসাইট এ সকল কেনাবেচা করতে পারবেন
@@ -347,8 +362,8 @@
                 <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-2">সার্ভিস তালিকা</h2>
                 <p class="text-slate-600 font-medium">নিচের অপশনগুলো থেকে কিনুন অথবা সেল করুন</p>
                 <!-- Shop Status Indicator -->
-                <div id="shopStatusBanner" class="mt-4 inline-block px-4 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-500">
-                    লোডিং...
+                <div id="shopStatusBanner" class="mt-4 inline-block px-4 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-600 border border-blue-100">
+                    <i class="fas fa-clock"></i> সময়সূচী: সকাল ০৫:০০ - রাত ১০:০০
                 </div>
             </div>
 
@@ -410,7 +425,8 @@
             <h3 class="text-2xl font-black text-slate-800 mb-2">MF Tifor এখন বন্ধ!</h3>
             <p class="text-slate-500 font-bold mb-6">
                 কেনা-বেচার সময়:<br>
-                <span class="text-emerald-600">সকাল ০৫:০০ টা</span> থেকে <span class="text-red-500">রাত ১০:০০ টা</span> পর্যন্ত (BD Time)।
+                <span class="text-emerald-600">সকাল ০৫:০০ টা</span> থেকে <span class="text-red-500">রাত ১০:০০ টা</span> পর্যন্ত (BD Time)।<br>
+                <span class="text-xs text-slate-400 mt-2 block">(জিমেইল সেল: সকাল ৫টা - বিকাল ৫টা)</span>
             </p>
             <button onclick="closeClosedPopup()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition">
                 ঠিক আছে
@@ -616,8 +632,8 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 mb-1">হোয়াটসঅ্যাপ নাম্বার</label>
-                        <input type="tel" id="buyerPhone" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold appearance-none" placeholder="01XXXXXXXXX">
+                        <label id="buyerPhoneLabel" class="block text-xs font-bold text-slate-500 mb-1">হোয়াটসঅ্যাপ নাম্বার</label>
+                        <input type="tel" id="buyerPhone" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold appearance-none" placeholder="01XXXXXXXXX">
                     </div>
 
                     <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl flex items-start gap-2">
@@ -644,8 +660,8 @@
                         <i class="fas fa-robot text-lg"></i>
                     </div>
                     <div>
-                        <h4 class="font-bold text-sm">MF Tifor AI (Offline)</h4>
-                        <p class="text-[10px] text-blue-100 flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> Active</p>
+                        <h4 class="font-bold text-sm">MF Tifor Assistant</h4>
+                        <p class="text-[10px] text-blue-100 flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse"></span> Online</p>
                     </div>
                 </div>
                 <button onclick="toggleChat()" class="text-white/80 hover:text-white"><i class="fas fa-times"></i></button>
@@ -688,47 +704,51 @@
                 "Sky VPN", "X VPN", "Panda VPN", "Cyberghost", "Vypr VPN"
             ],
             // JOBS CONFIGURATION
-            // status: "active" for Open, "closed" for Closed
-            // NOTE: Order of keys roughly determines render order, but sort logic overrides based on active/closed
             jobs: {
-                // NEW: Website Build Service
                 website_build: {
                     id: "website_build",
                     title: "ওয়েবসাইট বানিয়ে নিন!",
                     category: "hybrid",
                     icon: "💻",
                     sellPrice: null,
-                    buyPriceUnit: 1500, // Base calculation unit
-                    // CHANGE: Updated price display with strikethrough
+                    buyPriceUnit: 1500,
                     buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৩৬০০ ৳</span> ১৫০০-২০০০ ৳",
                     buyName: "Website Service",
                     type: "buy_only",
                     status: "active",
-                    isUnique: true, // HOT OFFER
+                    isUnique: true,
                     deliveryTime: "ডেলিভারি ১ থেকে ২ দিন"
+                },
+                youtube_premium: {
+                    id: "youtube_premium",
+                    title: "YouTube Premium",
+                    category: "hybrid",
+                    icon: '<i class="fab fa-youtube text-red-600"></i>', 
+                    sellPrice: null,
+                    buyPriceUnit: 35,
+                    buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৬০ ৳</span> ৩৫ ৳ (১ মাস)",
+                    buyName: "YouTube Premium (1 Month)",
+                    type: "buy_only",
+                    status: "active",
+                    isUnique: true, // HOT OFFER
                 },
                 gmail: {
                     id: "gmail",
                     title: "Gmail সার্ভিস",
                     category: "hybrid",
                     icon: "📧",
-                    // Numeric price for calculations
                     sellPriceUnit: 18, 
-                    // CHANGE: Updated Sell price display
                     sellPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>১৬ ৳</span> ১৮ ৳",
                     sellRequirements: ["রিকভারি রিমুভ", "পাসওয়ার্ড সঠিক"],
                     sellPlaceholder: "example@gmail.com password123",
                     sellVideo: "https://youtu.be/QEjMeRXpfjk?si=ZQ2VpX7xfYUbBa5r",
                     hasBuyOption: true,
-                    // === CHANGE HERE: UPDATED PRICE UNIT TO 20 ===
                     buyPriceUnit: 20, 
-                    // CHANGE: Updated Buy price display
                     buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>২৫ ৳</span> ২০ ৳", 
                     buyName: "Fresh Gmail Account",
                     status: "active",
-                    isUnique: true // HOT OFFER ADDED (Same Unit as Website)
+                    isUnique: true
                 },
-                // NEW SECTION: MICROSOFT & EDU MAILS
                 microsoft_mails: {
                     id: "microsoft_mails",
                     title: "Microsoft & Edu Mails",
@@ -744,7 +764,20 @@
                     buyPriceDisplay: "Edu: ১.৫ ৳ | Hot: ১ ৳ | Outlook:  ১ ৳", 
                     status: "active"
                 },
-                // FACEBOOK SERVICE MOVED HERE & ACTIVATED
+                // VPN moved here before Facebook
+                all_vpn_promo: { 
+                    id: "all_vpn_promo", 
+                    title: "All VPN Premium (7 Days)", 
+                    category: "vpn", 
+                    icon: "🛡️", 
+                    sellPrice: null, 
+                    buyPriceUnit: 30, 
+                    buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৪৫ ৳</span> ৩০ ৳", 
+                    buyName: "VPN Service", 
+                    type: "vpn_bundle", 
+                    status: "active" 
+                },
+                // Facebook moved before WhatsApp (both are closed)
                 facebook: {
                     id: "facebook",
                     title: "Facebook সার্ভিস",
@@ -756,26 +789,11 @@
                     sellPlaceholder: "10001234567890 password123 2FAKEYCODE",
                     sellVideo: "https://youtu.be/2aan-2krI14?si=ASAxOEeZbYrT6Oti",
                     hasBuyOption: true,
-                    buyPriceUnit: 6, // Updated Price
-                    // CHANGE: Updated Buy price display
+                    buyPriceUnit: 6, 
                     buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৮ ৳</span> ৬ ৳", 
                     buyName: "Facebook Account",
-                    status: "active", // Activated
-                    type: "buy_only" // Buy Only Enabled
-                },
-                // REORDERED: VPN Bundle moved BEFORE WhatsApp
-                all_vpn_promo: { 
-                    id: "all_vpn_promo", 
-                    title: "All VPN Premium (7 Days)", 
-                    category: "vpn", 
-                    icon: "🛡️", 
-                    sellPrice: null, 
-                    buyPriceUnit: 30, // Fixed price
-                    // CHANGE: Updated Buy price display
-                    buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৪৫ ৳</span> ৩০ ৳", 
-                    buyName: "VPN Service", 
-                    type: "vpn_bundle", 
-                    status: "active" 
+                    status: "closed", // CLOSED NOW
+                    type: "buy_only" 
                 },
                 whatsapp: {
                     id: "whatsapp_rent",
@@ -788,7 +806,6 @@
                     sellPlaceholder: "আপনার নাম্বারটি লিখুন...",
                     sellVideo: "https://youtu.be/wLKjFMIFfn0?si=lneNC4iltVL4Hprj",
                     hasBuyOption: false,
-                    // CHANGE: Status Closed (Moves to bottom automatically)
                     status: "closed"
                 },
                 other: {
@@ -807,20 +824,29 @@
         };
 
         // =================================================================
-        // ⏰ TIME CONTROL SYSTEM (Bangladesh Time)
+        // ⏰ TIME CONTROL SYSTEM
         // =================================================================
-        function checkShopStatus() {
-            // Get current time in Bangladesh Timezone
-            const now = new Date().toLocaleString("en-US", {timeZone: "Asia/Dhaka"});
-            const bdDate = new Date(now);
-            const hours = bdDate.getHours();
+        function checkShopStatus(jobId = null) {
+            // FIX: Robust Time Handling for all browsers including Safari/iOS
+            const now = new Date();
+            // Get Dhaka Hour directly using Intl which is safer than string parsing
+            const options = { timeZone: "Asia/Dhaka", hour: 'numeric', hour12: false };
+            const formatter = new Intl.DateTimeFormat('en-US', options);
+            const hours = parseInt(formatter.format(now));
 
-            // Shop is OPEN from 05:00 (5 AM) to 22:00 (10 PM)
-            // It closes exactly at 10 PM (22:00)
-            const isOpen = hours >= 5 && hours < 22; 
-            
-            updateShopStatusBanner(isOpen);
-            return isOpen;
+            // Default Shop: 5 AM to 10 PM (22)
+            const isShopOpen = hours >= 5 && hours < 22; 
+
+            // Specific Job Check (if needed later)
+            if (jobId) {
+                const job = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
+                if (job && job.customHours) {
+                    const isCustomOpen = hours >= job.customHours.start && hours < job.customHours.end;
+                    return isCustomOpen;
+                }
+            }
+
+            return isShopOpen;
         }
 
         function updateShopStatusBanner(isOpen) {
@@ -835,14 +861,17 @@
         }
 
         function attemptAction(actionName, ...args) {
-            if (checkShopStatus()) {
-                // Shop is Open
+            // Check specific job status if jobId is passed (args[0])
+            let jobId = (actionName === 'openModalWithJob' || actionName === 'buy' || actionName === 'choice') ? args[0] : null;
+            
+            const isOpen = checkShopStatus(jobId);
+
+            if (isOpen) {
                 if (actionName === 'upload') openModal();
                 else if (actionName === 'choice') openChoiceModal(...args);
                 else if (actionName === 'buy') openBuyModal(...args);
                 else if (actionName === 'openModalWithJob') openModalWithJob(...args);
             } else {
-                // Shop is Closed
                 document.getElementById('shopClosedPopup').classList.remove('hidden');
                 setTimeout(() => document.getElementById('shopClosedPopup').classList.add('active'), 10);
             }
@@ -909,8 +938,16 @@
             renderJobs();
             populateJobSelect();
             initBot();
-            checkShopStatus(); // Initial check
-            setInterval(checkShopStatus, 60000); // Check every minute
+            
+            // Initial Status Check
+            const isOpen = checkShopStatus();
+            updateShopStatusBanner(isOpen);
+            
+            setInterval(() => {
+                const open = checkShopStatus();
+                updateShopStatusBanner(open);
+                renderJobs(); 
+            }, 60000); 
         });
 
         // --- JOB RENDERER ---
@@ -928,19 +965,26 @@
                                       
                 const searchLower = searchTerm.toLowerCase();
                 const searchMatch = job.title.toLowerCase().includes(searchLower);
-                const statusMatch = statusFilterValue === 'all' || job.status === statusFilterValue;
+                
+                // Determine effective status (manual status + time check)
+                const isClosed = job.status === 'closed';
+                
+                const statusMatch = statusFilterValue === 'all' || (isClosed ? 'closed' : 'active') === statusFilterValue;
 
                 return categoryMatch && searchMatch && statusMatch;
             });
 
-            // === SORTING LOGIC: ACTIVE First, CLOSED Last ===
+            // === SORTING: Active First, Closed Last ===
             filteredJobs.sort((a, b) => {
-                // Keep Website Build first if active
-                if (a.id === 'website_build' && a.status === 'active') return -1;
-                if (b.id === 'website_build' && b.status === 'active') return 1;
+                const statusA = a.status;
+                const statusB = b.status;
 
-                if (a.status === 'active' && b.status === 'closed') return -1;
-                if (a.status === 'closed' && b.status === 'active') return 1;
+                // Website Build Priority
+                if (a.id === 'website_build' && statusA === 'active') return -1;
+                if (b.id === 'website_build' && statusB === 'active') return 1;
+
+                if (statusA === 'active' && statusB === 'closed') return -1;
+                if (statusA === 'closed' && statusB === 'active') return 1;
                 return 0;
             });
 
@@ -953,13 +997,13 @@
 
             filteredJobs.forEach(job => {
                 if (job.id === 'other') return;
+                
+                // Determine if closed by Time OR by Manual Status
                 const isClosed = job.status === 'closed';
                 
                 let btnText = 'কাজটি করুন <i class="fas fa-arrow-right"></i>';
-                // Note: Wrapped in attemptAction for time check
                 let btnAction = `attemptAction('openModalWithJob', '${job.id}')`;
                 
-                // Logic for Buttons
                 if (job.type === 'buy_only' || job.type === 'vpn_bundle' || job.type === 'variable_product') {
                      btnText = 'কিনুন (Buy) <i class="fas fa-shopping-cart ml-1"></i>';
                      btnAction = `attemptAction('buy', '${job.id}')`;
@@ -968,7 +1012,6 @@
                     btnAction = `attemptAction('choice', '${job.id}')`;
                 }
 
-                // Price Display Logic
                 let priceDisplay = job.sellPriceDisplay;
                 if (job.type === 'buy_only' || job.type === 'vpn_bundle' || job.type === 'variable_product') {
                     priceDisplay = `দাম: ${job.buyPriceDisplay}`;
@@ -976,7 +1019,6 @@
                     priceDisplay = `Sell: ${job.sellPriceDisplay} <br> Buy: ${job.buyPriceDisplay}`;
                 }
 
-                // UNIQUE STYLE LOGIC
                 let cardClass = `glass-card p-6 rounded-3xl relative group transition duration-300 hover:-translate-y-2 border-t-4 ${isClosed ? 'border-red-400 grayscale opacity-80 order-last' : 'border-blue-500 hover:shadow-2xl'}`;
                 let extraBadge = '';
                 let extraInfo = '';
@@ -987,7 +1029,9 @@
                     extraInfo = job.deliveryTime ? `<div class="mt-2 bg-purple-100/50 rounded-lg p-2 text-center border border-purple-100"><p class="text-xs text-purple-700 font-bold"><i class="fas fa-clock"></i> ${job.deliveryTime}</p></div>` : '';
                 }
 
+                // Add ID to card for chatbot scroll function
                 const card = document.createElement('div');
+                card.id = `job-card-${job.id}`;
                 card.className = cardClass;
                 
                 card.innerHTML = `
@@ -1010,14 +1054,20 @@
         // --- MODAL HELPERS ---
         function openChoiceModal(jobId) { selectedJobIdForChoice = jobId; document.getElementById('choiceModal').classList.remove('hidden'); setTimeout(() => document.getElementById('choiceModal').classList.add('active'), 10); }
         function closeChoiceModal() { document.getElementById('choiceModal').classList.remove('active'); setTimeout(() => document.getElementById('choiceModal').classList.add('hidden'), 200); }
-        function handleChoice(action) { closeChoiceModal(); setTimeout(() => action === 'buy' ? openBuyModal(selectedJobIdForChoice) : openModalWithJob(selectedJobIdForChoice), 300); }
+        function handleChoice(action) { 
+            closeChoiceModal(); 
+            setTimeout(() => {
+                if (action === 'buy') openBuyModal(selectedJobIdForChoice);
+                else openModalWithJob(selectedJobIdForChoice);
+            }, 300); 
+        }
 
         function getBengaliDateTime() {
             const now = new Date();
             return now.toLocaleString('bn-BD', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
         }
 
-        // --- BUY LOGIC & CALCULATION ---
+        // --- BUY LOGIC ---
         let currentBuyJob = null;
         let currentUnitPrice = 0;
 
@@ -1026,29 +1076,50 @@
             if (!jobData) return;
             currentBuyJob = jobData;
             
-            // Reset fields
             document.getElementById('buyQuantity').value = "";
             document.getElementById('buyerName').value = "";
             document.getElementById('buyerPhone').value = "";
             document.getElementById('buyTotalDisplayBox').classList.add('hidden');
             
+            // YOUTUBE PREMIUM EMAIL LOGIC
+            const phoneLabel = document.getElementById('buyerPhoneLabel');
+            const phoneInput = document.getElementById('buyerPhone');
+            
+            if (jobData.id === 'youtube_premium') {
+                phoneLabel.innerText = "ইমেইল এড্রেস (যেটাতে প্রিমিয়াম নিবেন)";
+                phoneInput.placeholder = "example@gmail.com";
+                phoneInput.type = "email";
+                // Remove numeric restriction
+                phoneInput.onkeypress = null;
+            } else {
+                phoneLabel.innerText = "হোয়াটসঅ্যাপ নাম্বার";
+                phoneInput.placeholder = "01XXXXXXXXX";
+                phoneInput.type = "tel";
+                phoneInput.onkeypress = (event) => event.charCode >= 48 && event.charCode <= 57;
+            }
+
             const staticNameEl = document.getElementById('buyProductName');
             const variableSelectContainer = document.getElementById('buyVariableSelectContainer');
             const variableSelect = document.getElementById('buyVariableSelect');
             
-            // Default Unit Price (if fixed)
             currentUnitPrice = jobData.buyPriceUnit || 0;
+
+            // YouTube Premium Logic (Single Item Only)
+            if (jobData.id === 'youtube_premium') {
+                document.getElementById('buyQuantity').value = 1;
+                document.getElementById('buyQuantity').disabled = true; 
+            } else {
+                document.getElementById('buyQuantity').disabled = false;
+            }
 
             if (jobData.type === 'variable_product' || jobData.type === 'vpn_bundle') {
                 staticNameEl.classList.add('hidden');
                 variableSelectContainer.classList.remove('hidden');
-                
                 variableSelect.innerHTML = '';
                 
                 if (jobData.type === 'variable_product') {
-                     // For Microsoft Mails (Edu, Hotmail, Outlook)
                      Object.entries(jobData.options).forEach(([key, opt]) => {
-                         if (opt.status === 'active') { // Check sub-status
+                         if (opt.status === 'active') {
                              const option = document.createElement('option');
                              option.value = key;
                              option.text = `${opt.name}`;
@@ -1057,21 +1128,16 @@
                          }
                      });
                 } else if (jobData.type === 'vpn_bundle') {
-                    // For VPNs
                     MASTER_CONTROL.vpnList.forEach(vpn => {
                         const option = document.createElement('option');
                         option.value = vpn;
                         option.text = vpn;
-                        option.dataset.price = 30; // Fixed VPN price
+                        option.dataset.price = 30; 
                         variableSelect.appendChild(option);
                     });
                 }
                 
-                // Set initial price from first option
-                if(variableSelect.options.length > 0) {
-                     currentUnitPrice = parseFloat(variableSelect.options[0].dataset.price) || 0;
-                }
-                
+                if(variableSelect.options.length > 0) currentUnitPrice = parseFloat(variableSelect.options[0].dataset.price) || 0;
             } else {
                 staticNameEl.classList.remove('hidden');
                 variableSelectContainer.classList.add('hidden');
@@ -1080,97 +1146,80 @@
             
             updateBuyTotal();
 
-            // Video Logic
             const buyVideoContainer = document.getElementById('buyVideoContainer');
             if(jobData.sellVideo) {
                 buyVideoContainer.classList.remove('hidden');
                 document.getElementById('buyVideoLinkBtn').href = jobData.sellVideo;
-            } else {
-                buyVideoContainer.classList.add('hidden');
-            }
+            } else buyVideoContainer.classList.add('hidden');
 
             document.getElementById('buyModal').classList.remove('hidden');
             setTimeout(() => document.getElementById('buyModal').classList.add('active'), 10);
         }
 
         function updateBuyTotal() {
-            // Update unit price if variable product
             if (currentBuyJob.type === 'variable_product' || currentBuyJob.type === 'vpn_bundle') {
                  const select = document.getElementById('buyVariableSelect');
                  const selectedOpt = select.options[select.selectedIndex];
-                 if(selectedOpt) {
-                    currentUnitPrice = parseFloat(selectedOpt.dataset.price);
-                 }
+                 if(selectedOpt) currentUnitPrice = parseFloat(selectedOpt.dataset.price);
             }
 
             const qty = parseInt(document.getElementById('buyQuantity').value) || 0;
             const priceDisplay = document.getElementById('buyUnitPriceDisplay');
             const totalBox = document.getElementById('buyTotalDisplayBox');
             
-            // Update Unit Price Label
             if(currentUnitPrice > 0) {
-                // If it is website build, show fixed start range or unit
-                if(currentBuyJob.id === 'website_build') {
-                    priceDisplay.innerText = "দাম: ১৫০০-২০০০ ৳";
-                } else {
-                    priceDisplay.innerText = `প্রতি পিস: ${currentUnitPrice} ৳`;
-                }
+                if(currentBuyJob.id === 'website_build') priceDisplay.innerText = "দাম: ১৫০০-২০০০ ৳";
+                else priceDisplay.innerText = `প্রতি পিস: ${currentUnitPrice} ৳`;
                 priceDisplay.classList.remove('hidden');
-            } else {
-                priceDisplay.classList.add('hidden');
-            }
+            } else priceDisplay.classList.add('hidden');
 
-            // Calculate Total
             if (qty > 0 && currentUnitPrice > 0) {
                 const total = (qty * currentUnitPrice).toFixed(2);
                 document.getElementById('buyTotalPrice').innerText = total;
-                // For website build, show estimated base price
-                if(currentBuyJob.id === 'website_build') {
-                    document.getElementById('buyTotalPrice').innerText = total + "+";
-                }
+                if(currentBuyJob.id === 'website_build') document.getElementById('buyTotalPrice').innerText = total + "+";
                 totalBox.classList.remove('hidden');
-            } else {
-                totalBox.classList.add('hidden');
-            }
+            } else totalBox.classList.add('hidden');
         }
 
         function closeBuyModal() { document.getElementById('buyModal').classList.remove('active'); setTimeout(() => document.getElementById('buyModal').classList.add('hidden'), 200); }
         
         function handleBuySubmit(e) {
             e.preventDefault();
-            // Re-check shop status on submit
-            if(!checkShopStatus()) {
+            if(!checkShopStatus(currentBuyJob ? currentBuyJob.id : null)) {
                 closeBuyModal();
-                attemptAction('buy'); // Will trigger closed popup
+                attemptAction('buy'); 
                 return;
             }
 
             const name = document.getElementById('buyerName').value;
-            const phone = document.getElementById('buyerPhone').value;
-            const qty = document.getElementById('buyQuantity').value;
+            // Phone can be email if YouTube
+            const phoneOrEmail = document.getElementById('buyerPhone').value;
+            let qty = document.getElementById('buyQuantity').value;
+            
+            // Force quantity 1 for YouTube Premium safety check
+            if (currentBuyJob.id === 'youtube_premium') qty = 1;
+            
             let productName = currentBuyJob.buyName;
             let finalPriceText = "আলোচনা সাপেক্ষে";
 
-            // Get product name for variables
             if (currentBuyJob.type === 'variable_product' || currentBuyJob.type === 'vpn_bundle') {
                 const select = document.getElementById('buyVariableSelect');
                 productName = select.options[select.selectedIndex].text;
             }
 
-            // Calculate Total for Message
             if (currentUnitPrice > 0) {
                 const total = (parseInt(qty) * currentUnitPrice).toFixed(2);
                 finalPriceText = `${total} টাকা (${qty} x ${currentUnitPrice})`;
             }
             
-            if(!name || !qty || !phone) {
-                showToast("অনুগ্রহ করে সব তথ্য দিন", "error");
-                return;
-            }
-
-            if (!/^01\d{9}$/.test(phone)) {
-                showToast("সঠিক মোবাইল নাম্বার দিন (১১ ডিজিট)", "error");
-                return;
+            if(!name || !qty || !phoneOrEmail) return showToast("অনুগ্রহ করে সব তথ্য দিন", "error");
+            
+            // Validate Phone only if NOT YouTube
+            if (currentBuyJob.id !== 'youtube_premium') {
+                 if (!/^01\d{9}$/.test(phoneOrEmail)) return showToast("সঠিক মোবাইল নাম্বার দিন (১১ ডিজিট)", "error");
+            } else {
+                 // Basic Email check
+                 if (!phoneOrEmail.includes('@')) return showToast("সঠিক ইমেইল এড্রেস দিন", "error");
             }
 
             const dateTime = getBengaliDateTime();
@@ -1182,7 +1231,13 @@
             msg += `মোট দাম: ${finalPriceText} %0A`;
             msg += `------------------ %0A`;
             msg += `ক্রেতা: ${name} %0A`;
-            msg += `নাম্বার: ${phone} %0A`;
+            
+            if (currentBuyJob.id === 'youtube_premium') {
+                msg += `ইমেইল (Premium): ${phoneOrEmail} %0A`;
+            } else {
+                msg += `নাম্বার: ${phoneOrEmail} %0A`;
+            }
+            
             msg += `*আমি নিতে চাই। জমা দিন।%2A`;
 
             showToast("হোয়াটসঅ্যাপ ওপেন হচ্ছে...", "success");
@@ -1199,17 +1254,39 @@
         function populateJobSelect() {
             jobSelect.innerHTML = '<option value="">এখানে ক্লিক করে সিলেক্ট করুন...</option>';
             Object.values(MASTER_CONTROL.jobs).forEach(job => {
-                // Hide Buy Only, VPN Bundles, and Variable Products (like the Mails group) from generic Sell list
                 if(job.type === 'buy_only' || job.type === 'vpn_bundle' || job.type === 'variable_product') return;
                 const option = document.createElement('option');
                 option.value = job.id;
-                option.text = `${job.icon} ${job.title}`;
+                option.text = `${job.icon} ${job.title}`; 
+                let cleanTitle = job.title; 
+                option.text = cleanTitle; 
                 jobSelect.appendChild(option);
             });
         }
 
         function openModal() { uploadModal.classList.remove('hidden'); setTimeout(() => uploadModal.classList.add('active'), 10); resetSellForm(); }
-        function openModalWithJob(jobId) { openModal(); jobSelect.value = jobId; handleJobChange(); }
+        
+        function openModalWithJob(jobId) {
+            // Check Special SELL hours for Gmail
+            if (jobId === 'gmail') {
+                 // FIX: Robust hour check
+                 const now = new Date();
+                 const options = { timeZone: "Asia/Dhaka", hour: 'numeric', hour12: false };
+                 const formatter = new Intl.DateTimeFormat('en-US', options);
+                 const hour = parseInt(formatter.format(now));
+
+                 // Sell is closed after 5 PM (17:00)
+                 if (hour >= 17) {
+                     showToast("দুঃখিত! জিমেইল সেল সার্ভিস বিকেল ৫টার পর বন্ধ থাকে।", "error");
+                     return;
+                 }
+            }
+            
+            openModal(); 
+            jobSelect.value = jobId; 
+            handleJobChange(); 
+        }
+
         function closeModal() { uploadModal.classList.remove('active'); setTimeout(() => { uploadModal.classList.add('hidden'); resetSellForm(); }, 200); }
 
         function resetSellForm() {
@@ -1256,37 +1333,91 @@
             }
         }
 
+        // ==========================================
+        // 🧠 MAGIC AUTO FORMATTER (SMART LOGIC)
+        // ==========================================
         function performAutoFormat() {
-            const jobId = jobSelect.value;
             const input = document.getElementById('dynamicText');
+            // 1. Pre-cleaning
             let text = input.value;
+            // Remove serial numbers and labels
+            text = text.replace(/^\s*\d+[\.)]\s*/gm, ' '); 
+            text = text.replace(/\s\d+[\.)]\s/g, ' '); 
+            text = text.replace(/gmail:|email:|user:|id:|pass:|password:|p:|u:/gi, ' ');
+            text = text.replace(/[:;|]/g, ' ');
+            const tokens = text.trim().split(/\s+/);
+
+            if (tokens.length === 0) return showToast("দয়া করে আগে কিছু লিখুন", "error");
+
+            // Identify indices of emails
+            const emailIndices = [];
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             
-            if (!text.trim()) return showToast("দয়া করে আগে কিছু লিখুন", "error");
+            tokens.forEach((t, i) => { if (emailRegex.test(t)) emailIndices.push(i); });
 
+            if (emailIndices.length === 0) return showToast("কোনো ইমেইল পাওয়া যায়নি", "error");
+
+            // Determine Pattern (Left vs Right association)
+            let leftScore = 0;
+            let rightScore = 0;
+
+            emailIndices.forEach(index => {
+                // If token to the left exists and is NOT email => Likely "Password Email"
+                if (index > 0 && !emailRegex.test(tokens[index - 1])) leftScore++;
+                // If token to the right exists and is NOT email => Likely "Email Password"
+                if (index < tokens.length - 1 && !emailRegex.test(tokens[index + 1])) rightScore++;
+            });
+
+            // Decide Pattern: If Left Score > Right Score, assume "Pass Email" format
+            const isPassBeforeEmail = leftScore > rightScore;
+            
             let formattedLines = [];
+            let usedIndices = new Set();
+            let errors = [];
 
-            if (jobId === 'gmail') {
-                 let cleanText = text.replace(/[,;|]/g, ' ').replace(/\s+/g, ' ').trim();
-                 const tokens = cleanText.split(' ');
-                 for (let i = 0; i < tokens.length; i++) {
-                    const token = tokens[i];
-                    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(token)) {
-                        if (i + 1 < tokens.length) {
-                            formattedLines.push(`${token} ${tokens[i+1]}`);
-                            i++; 
-                        } else {
-                            formattedLines.push(`${token} ???`);
-                        }
+            emailIndices.forEach((emailIdx, i) => {
+                const email = tokens[emailIdx];
+                let password = "???";
+                let passIdx = -1;
+
+                if (isPassBeforeEmail) {
+                    // Strategy: Password is on the LEFT
+                    // Check if Left Neighbor exists, is not email, and hasn't been used
+                    if (emailIdx > 0 && !emailRegex.test(tokens[emailIdx - 1]) && !usedIndices.has(emailIdx - 1)) {
+                        passIdx = emailIdx - 1;
+                        password = tokens[passIdx];
+                    }
+                } else {
+                    // Strategy: Password is on the RIGHT (Standard)
+                    // Check if Right Neighbor exists, is not email, and hasn't been used
+                    if (emailIdx < tokens.length - 1 && !emailRegex.test(tokens[emailIdx + 1]) && !usedIndices.has(emailIdx + 1)) {
+                        passIdx = emailIdx + 1;
+                        password = tokens[passIdx];
                     }
                 }
-            } 
 
-            if (formattedLines.length > 0) {
-                input.value = formattedLines.join('\n');
-                validateForm();
-                showToast("অটো ফরম্যাট সম্পন্ন হয়েছে!", "success");
+                if (passIdx !== -1) {
+                    usedIndices.add(passIdx);
+                    usedIndices.add(emailIdx); // Mark email as used too
+                    formattedLines.push(`${email} ${password}`);
+                } else {
+                    // Missing Password
+                    errors.push(`Line ${i + 1}: ${email} (পাসওয়ার্ড পাওয়া যায়নি)`);
+                    formattedLines.push(`${email} ???`);
+                }
+            });
+
+            input.value = formattedLines.join('\n');
+            
+            // Error Handling UI
+            const feedback = document.getElementById('validationFeedback');
+            if (errors.length > 0) {
+                feedback.innerHTML = `<div class="text-red-600 font-bold text-xs">⚠️ কিছু পাসওয়ার্ড পাওয়া যায়নি:<br>${errors.slice(0, 3).join('<br>')}${errors.length > 3 ? '<br>...' : ''}</div>`;
+                feedback.classList.remove('hidden');
+                showToast(`${errors.length} টি ইমেইলের পাসওয়ার্ড মিসিং!`, "error");
             } else {
-                showToast("ফরম্যাট করার মতো ডাটা পাওয়া যায়নি", "error");
+                 showToast("সাজানো সম্পন্ন হয়েছে!", "success");
+                 validateForm(); 
             }
         }
 
@@ -1395,8 +1526,7 @@
 
         function handleSellSubmit(e) {
             e.preventDefault();
-            // Check Time
-            if(!checkShopStatus()) {
+            if(!checkShopStatus(jobSelect.value)) {
                 closeModal();
                 document.getElementById('shopClosedPopup').classList.remove('hidden');
                 setTimeout(() => document.getElementById('shopClosedPopup').classList.add('active'), 10);
@@ -1410,7 +1540,6 @@
             const details = document.getElementById('dynamicText').value;
             const countToSend = (jobId === 'gmail' || jobId === 'facebook') ? globalUniqueCount : details.split('\n').filter(l => l.trim() !== '').length;
             
-            // Calc Total Sell Price if applicable
             let totalSellPriceMsg = "";
             if (jobData.sellPriceUnit && jobData.sellPriceUnit > 0) {
                 const total = countToSend * jobData.sellPriceUnit;
@@ -1438,7 +1567,7 @@
         }
 
         // =================================================================
-        // 🤖 OFFLINE CHAT BOT (Zero Latency)
+        // 🤖 OFFLINE CHAT BOT (IMPROVED & HUMAN-LIKE)
         // =================================================================
         const chatBox = document.getElementById('chatBox');
         const chatMessages = document.getElementById('chatMessages');
@@ -1455,11 +1584,14 @@
             div.className = `chat-bubble ${sender}`;
             if (isHtml) div.innerHTML = text; else div.innerText = text;
             chatMessages.appendChild(div);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            // Bug Fix: Auto scroll to bottom
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 50);
         }
 
         function initBot() {
-            setTimeout(() => addMessage("আসসালামু আলাইকুম! MF Tifor এ আপনাকে স্বাগতম। আমি কিভাবে সাহায্য করতে পারি?", 'bot'), 1000);
+            setTimeout(() => addMessage("আসসালামু আলাইকুম! আমি MF Tifor এর অ্যাসিস্ট্যান্ট। আমি আপনাকে কীভাবে সাহায্য করতে পারি? 😊", 'bot'), 1000);
         }
 
         function handleChatEnter(e) { if (e.key === 'Enter') sendUserMessage(); }
@@ -1475,11 +1607,39 @@
             loader.id = 'bot-loader';
             loader.innerHTML = '<span class="animate-pulse">...</span>';
             chatMessages.appendChild(loader);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
             
             setTimeout(() => {
                 document.getElementById('bot-loader').remove();
                 const reply = getOfflineResponse(text);
-                addMessage(reply, 'bot');
+                addMessage(reply, 'bot', true); // Enable HTML for links/formatting
+            }, 600);
+        }
+
+        // Helper for random selection
+        function pickRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // --- NEW: SCROLL & HIGHLIGHT SERVICE ---
+        function highlightService(jobId) {
+            // Wait a bit for message to render
+            setTimeout(() => {
+                // Ensure 'All' category is selected if hidden
+                if (currentCategory !== 'all') {
+                    setCategory('all');
+                }
+                
+                // Wait for re-render
+                setTimeout(() => {
+                    const card = document.getElementById(`job-card-${jobId}`);
+                    if (card) {
+                        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        card.classList.add('highlight-active');
+                        // Remove highlight after animation
+                        setTimeout(() => card.classList.remove('highlight-active'), 3000);
+                    }
+                }, 100);
             }, 500);
         }
 
@@ -1487,30 +1647,91 @@
             const lowerText = text.toLowerCase();
             const jobs = MASTER_CONTROL.jobs;
             
+            // Greetings & Politeness
             if (lowerText.match(/hi|hello|slm|salam|হাই|হ্যালো|সালাম|আসসালামু/)) {
-                return "ওয়ালাইকুম আসসালাম! আমি MF Tifor অফলাইন অ্যাসিস্ট্যান্ট। আমি আপনাকে কিভাবে সাহায্য করতে পারি?";
+                const greetings = [
+                    "ওয়ালাইকুম আসসালাম! কেমন আছেন আপনি? আমি আপনাকে কীভাবে সাহায্য করতে পারি?",
+                    "হ্যালো! MF Tifor এ আপনাকে স্বাগতম। কিছু জানতে চাইলে বলতে পারেন। 😊",
+                    "আসসালামু আলাইকুম! আমি রেডি আছি আপনার প্রশ্নের উত্তর দেয়ার জন্য।"
+                ];
+                return pickRandom(greetings);
             }
-            if (lowerText.match(/price|dam|rate|cost|দাম|রেট|কত/)) {
-                if (lowerText.includes('gmail')) return `${jobs.gmail.title}: ${jobs.gmail.sellPriceDisplay}।`;
-                if (lowerText.includes('edu')) return "Edu Mail: ১.৫ টাকা";
-                if (lowerText.includes('outlook')) return "Outlook: ০.৬০ টাকা";
-                if (lowerText.includes('website') || lowerText.includes('web')) return "ওয়েবসাইট বানাতে খরচ ১৫০০-২০০০ টাকা।";
-                return "সব সার্ভিসের দাম জানতে 'সার্ভিস তালিকা' চেক করুন।";
-            }
-            if (lowerText.match(/sell|bikri|joma|কিভাবে|বিক্রি|কাজ/)) {
-                return "সেল করার জন্য উপরের 'কাজ জমা দিন' বাটনে ক্লিক করুন।";
-            }
-            if (lowerText.match(/buy|kinbo|kinte|কিনতে|ক্রয়/)) {
-                return "কিনতে চাইলে 'কিনুন' বাটনে ক্লিক করুন।";
-            }
-            if (lowerText.match(/open|time|somoy|সময়|খোলা/)) {
-                return "MF Tifor খোলা থাকে: সকাল ০৫:০০ টা থেকে রাত ১০:০০ টা পর্যন্ত (BD Time)।";
-            }
-            if (lowerText.match(/admin|contact|number|whatsapp|number|মালিক|নম্বর|যোগাযোগ/)) {
-                return `অ্যাডমিন হোয়াটসঅ্যাপ: ${MASTER_CONTROL.admin.whatsappNumber} \nটেলিগ্রাম: ${MASTER_CONTROL.socialLinks.telegram}`;
+            
+            if (lowerText.match(/kemon|bhalo| কেমন | ভালো /)) {
+                return "আলহামদুলিল্লাহ, আমি ভালো আছি! আপনি কেমন আছেন? MF Tifor নিয়ে কোনো প্রশ্ন থাকলে করতে পারেন।";
             }
 
-            return "দুঃখিত, আমি এটি বুঝতে পারিনি। তবে আপনি মেনু থেকে অপশনগুলো দেখতে পারেন অথবা সরাসরি অ্যাডমিনকে মেসেজ দিতে পারেন।";
+            // --- SMART NAVIGATION LOGIC ---
+
+            // Gmail
+            if (lowerText.includes('gmail') || lowerText.includes('mail') || lowerText.includes('জিমেইল')) {
+                highlightService('gmail');
+                return `জিমেইল সম্পর্কে জানতে চেয়েছেন? আমি আপনাকে দেখিয়ে দিচ্ছি! 👇 <br>বর্তমানে রেট: ${jobs.gmail.sellPriceDisplay}।`;
+            }
+
+            // YouTube
+            if (lowerText.includes('youtube') || lowerText.includes('premium') || lowerText.includes('ইউটিউব')) {
+                highlightService('youtube_premium');
+                return `YouTube Premium এখন হট অফার! 🔥 মাত্র ৩৫ টাকা। এখনই নিয়ে নিন! আমি নিচে দেখিয়ে দিচ্ছি। 👇`;
+            }
+
+            // Website
+            if (lowerText.includes('website') || lowerText.includes('web') || lowerText.includes('site') || lowerText.includes('ওয়েবসাইট')) {
+                highlightService('website_build');
+                return `ওয়েবসাইট বানাতে চান? আমাদের দারুণ প্যাকেজ আছে। আমি আপনাকে অপশনটি দেখিয়ে দিচ্ছি! 👇`;
+            }
+
+            // VPN
+            if (lowerText.includes('vpn') || lowerText.includes('ip') || lowerText.includes('ভিপিএন')) {
+                highlightService('all_vpn_promo');
+                return `আমাদের কাছে সব ধরণের প্রিমিয়াম VPN আছে। মাত্র ৩০ টাকায় ৭ দিন! আমি নিচে অপশনটি হাইলাইট করে দিচ্ছি। 👇`;
+            }
+
+            // Facebook
+            if (lowerText.includes('facebook') || lowerText.includes('fb') || lowerText.includes('ফেসবুক')) {
+                highlightService('facebook');
+                return `ফেসবুক সার্ভিসটি এখন ${jobs.facebook.status === 'closed' ? 'বন্ধ আছে' : 'চালু আছে'}। বিস্তারিত নিচে দেখুন। 👇`;
+            }
+            
+            // Edu Mail / Microsoft
+            if (lowerText.includes('edu') || lowerText.includes('outlook') || lowerText.includes('hotmail')) {
+                highlightService('microsoft_mails');
+                return `Edu Mail বা Outlook খুঁজছেন? আমাদের কাছে আছে! নিচে দেখুন। 👇`;
+            }
+
+            // Price & Rates (General)
+            if (lowerText.match(/price|dam|rate|cost|দাম|রেট|কত/)) {
+                return "কোন সার্ভিসটির দাম জানতে চান? (যেমন: 'Gmail দাম কত' বা 'VPN রেট') লিখে জানালে আমি আপনাকে সরাসরি সেই সার্ভিসে নিয়ে যাব। 😊";
+            }
+
+            // Sell & Buy Intentions
+            if (lowerText.match(/sell|bikri|joma|কিভাবে|বিক্রি|কাজ|income|টাকা/)) {
+                return "খুবই সহজ! আপনি যদি কাজ জমা দিতে চান, তবে উপরের মেনু থেকে <b>'কাজ জমা দিন'</b> বাটনে ক্লিক করুন। সেখানে ফর্ম পূরণ করে জমা দিলেই হবে।";
+            }
+            if (lowerText.match(/buy|kinbo|kinte|কিনতে|ক্রয়|order|অর্ডার/)) {
+                return "কিনতে চাইলে 'সার্ভিস তালিকা' থেকে আপনার পছন্দের অপশনে ক্লিক করে <b>'কিনুন (Buy)'</b> বাটন চাপুন। এরপর ফর্ম পূরণ করলে আমরা যোগাযোগ করব।";
+            }
+
+            // Operational Queries
+            if (lowerText.match(/open|time|somoy|সময়|খোলা|কখন/)) {
+                return "আমাদের ওয়েবসাইট সকাল ৫টা থেকে রাত ১০টা পর্যন্ত খোলা থাকে। তবে জিমেইল জমা দেওয়ার সময় বিকাল ৫টা পর্যন্ত। ⏰";
+            }
+            if (lowerText.match(/admin|contact|number|whatsapp|number|মালিক|নম্বর|যোগাযোগ|help/)) {
+                return `যেকোনো প্রয়োজনে সরাসরি অ্যাডমিন এর সাথে কথা বলতে পারেন:<br>📞 WhatsApp: <a href="https://wa.me/${MASTER_CONTROL.admin.whatsappNumber}" target="_blank" class="text-blue-600 underline">${MASTER_CONTROL.admin.whatsappNumber}</a><br>✈️ Telegram: <a href="${MASTER_CONTROL.socialLinks.telegram}" target="_blank" class="text-blue-600 underline">চ্যানেল লিংক</a>`;
+            }
+            
+            // Payment
+            if (lowerText.match(/payment|bkash|nagad|পেমেন্ট|বিকাশ|টাকা পাবো/)) {
+                return "আমরা সাধারণত কাজ চেক করার পর সাথে সাথে পেমেন্ট করে থাকি। ১০০% পেমেন্ট গ্যারান্টি! 🚀";
+            }
+
+            // Default fallback
+            const fallbacks = [
+                "দুঃখিত, আমি ঠিক বুঝতে পারিনি। আপনি কি 'জিমেইল', 'ইউটিউব' বা 'দাম' নিয়ে জানতে চাচ্ছেন? একটু বুঝিয়ে বললে আমি আপনাকে সরাসরি অপশনটি দেখিয়ে দিতে পারব।",
+                "বিষয়টি আমার কাছে পরিষ্কার নয়। আপনি চাইলে আমাদের সার্ভিস তালিকাটি ঘুরে দেখতে পারেন অথবা অ্যাডমিনকে সরাসরি মেসেজ দিতে পারেন।",
+                "আমি শিখছি এখনও! 😅 আপনি কি দয়া করে আপনার প্রশ্নটি একটু সহজ করে করবেন?"
+            ];
+            return pickRandom(fallbacks);
         }
 
         // Mobile Menu
