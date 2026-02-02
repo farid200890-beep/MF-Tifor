@@ -299,7 +299,7 @@
             }
         };
 
-        let INSTA_CONFIG = { start: 8, end: 23 };
+        let INSTA_CONFIG = { start: 15, end: 23 };
 
         function checkShopStatus(jobId = null) {
             const now = new Date();
@@ -309,14 +309,14 @@
             return hours >= 5 && hours < 22;
         }
 
-        // Hardcoded function for Instagram Time: 8 AM to 12 AM (Midnight)
+        // Hardcoded function for Instagram Time: 3 PM (15) to 11:59 PM (23)
         function checkInstaTime() {
             const now = new Date();
             const options = { timeZone: "Asia/Dhaka", hour: 'numeric', hour12: false };
             const formatter = new Intl.DateTimeFormat('en-US', options);
             const hours = parseInt(formatter.format(now));
-            // 8:00 AM (8) to 11:59 PM (23) covers "Sokal 8ta theke Rat 12ta"
-            return hours >= 8 && hours <= 23;
+            // 15:00 (3 PM) to 23:59 (11:59 PM) covers "Dupur 3ta theke Rat 12ta"
+            return hours >= 15 && hours <= 23;
         }
 
         function updateShopStatusBanner(isOpen) {
@@ -417,7 +417,7 @@
                 const open = checkShopStatus();
                 updateShopStatusBanner(open);
                 renderJobs(); 
-            }, 5000); // Changed to 5 seconds for faster updates
+            }, 5000); 
         });
 
         function renderJobs() {
@@ -517,13 +517,10 @@
 
             const submitBtn = document.getElementById('instaSubmitBtn');
             const form = document.getElementById('instaForm');
-            
-            // FIX: Using URLSearchParams instead of FormData for reliable submission
+            // Using FormData for reliable submission
             const formData = new FormData(form);
-            const data = new URLSearchParams(formData);
-            
             // Append timestamp manually
-            data.append("timestamp", new Date().toLocaleString());
+            formData.append("timestamp", new Date().toLocaleString());
 
             // UI Feedback
             const originalBtnContent = submitBtn.innerHTML;
@@ -531,10 +528,9 @@
             submitBtn.disabled = true;
 
             // Using fetch with no-cors mode for Google Forms/Scripts
-            // IMPORTANT: Sending as URLSearchParams matches e.parameter in GAS
             fetch(MASTER_CONTROL.admin.sheetScriptUrl, {
                 method: "POST",
-                body: data,
+                body: formData,
                 mode: 'no-cors'
             })
             .then(() => {
