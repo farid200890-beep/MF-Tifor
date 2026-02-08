@@ -319,6 +319,22 @@
             return hours >= 15 && hours <= 23;
         }
 
+        // NEWLY ADDED: Missing function fix
+        function getBengaliDateTime() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+                timeZone: 'Asia/Dhaka'
+            };
+            return now.toLocaleString('bn-BD', options);
+        }
+
         function updateShopStatusBanner(isOpen) {
             const banner = document.getElementById('shopStatusBanner');
             if(isOpen) {
@@ -612,7 +628,10 @@
             if (currentUnitPrice > 0) { const total = (parseInt(qty) * currentUnitPrice).toFixed(2); finalPriceText = `${total} টাকা (${qty} x ${currentUnitPrice})`; }
             if(!name || !qty || !phoneOrEmail) return showToast("অনুগ্রহ করে সব তথ্য দিন", "error");
             if (currentBuyJob.id !== 'youtube_premium') { if (!/^01\d{9}$/.test(phoneOrEmail)) return showToast("সঠিক মোবাইল নাম্বার দিন (১১ ডিজিট)", "error"); } else { if (!phoneOrEmail.includes('@')) return showToast("সঠিক ইমেইল এড্রেস দিন", "error"); }
+            
+            // Fixed: This function is now defined
             const dateTime = getBengaliDateTime();
+            
             let msg = `*অর্ডার রিকোয়েস্ট (Buy)* %0Aসময়: ${dateTime} %0A------------------ %0Aপ্রোডাক্ট: ${productName} %0Aপরিমাণ: ${qty} পিস %0Aমোট দাম: ${finalPriceText} %0A------------------ %0Aক্রেতা: ${name} %0A`;
             if (currentBuyJob.id === 'youtube_premium') msg += `ইমেইল (Premium): ${phoneOrEmail} %0A`; else msg += `নাম্বার: ${phoneOrEmail} %0A`;
             msg += `*আমি নিতে চাই। জমা দিন।%2A`;
@@ -729,21 +748,56 @@
         function handleSellSubmit(e) {
             e.preventDefault();
             if(!checkShopStatus(jobSelect.value)) { closeModal(); document.getElementById('shopClosedPopup').classList.remove('hidden'); setTimeout(() => document.getElementById('shopClosedPopup').classList.add('active'), 10); return; }
+            
             const jobId = jobSelect.value;
             const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
             const name = document.getElementById('userName').value;
             const contact = document.getElementById('userContact').value;
             const details = document.getElementById('dynamicText').value;
             const countToSend = (jobId === 'gmail' || jobId === 'facebook') ? globalUniqueCount : details.split('\n').filter(l => l.trim() !== '').length;
+            
             let totalSellPriceMsg = "";
-            if (jobData.sellPriceUnit && jobData.sellPriceUnit > 0) { const total = countToSend * jobData.sellPriceUnit; totalSellPriceMsg = `সম্ভাব্য বিল: ${total} টাকা (${countToSend} x ${jobData.sellPriceUnit})`; }
+            if (jobData.sellPriceUnit && jobData.sellPriceUnit > 0) { 
+                const total = countToSend * jobData.sellPriceUnit; 
+                totalSellPriceMsg = `সম্ভাব্য বিল: ${total} টাকা (${countToSend} x ${jobData.sellPriceUnit})`; 
+            }
+            
+            // Getting Bengali Date Time using the existing function
             const dateTime = getBengaliDateTime();
-            let msg = `*নতুন কাজ জমা (Sell)* %0Aসময়: ${dateTime} %0A------------------ %0Aকাজ: ${jobData.title} %0Aনাম: ${name} %0Aপেমেন্ট নাম্বার: ${contact} %0A`;
-            if (jobId === 'gmail' || jobId === 'facebook') msg += `মোট পরিমাণ (Unique): ${countToSend} পিস %0A`;
-            if (totalSellPriceMsg) msg += `${totalSellPriceMsg} %0A`;
-            msg += `------------------ %0A`;
-            if (details) msg += `লিস্ট:%0A${encodeURIComponent(details)}`;
-            showToast("কাজ জমা দেওয়া হচ্ছে...", "success"); setTimeout(() => { window.open(`https://wa.me/${MASTER_CONTROL.admin.whatsappNumber}?text=${msg}`, '_blank'); closeModal(); }, 1000);
+            
+            // Constructing message with simple newlines first to avoid URL breaking issues
+            let msgParts = [];
+            msgParts.push(`*নতুন কাজ জমা (Sell)*`);
+            msgParts.push(`সময়: ${dateTime}`);
+            msgParts.push(`------------------`);
+            msgParts.push(`কাজ: ${jobData.title}`);
+            msgParts.push(`নাম: ${name}`);
+            msgParts.push(`পেমেন্ট নাম্বার: ${contact}`);
+            
+            if (jobId === 'gmail' || jobId === 'facebook') {
+                msgParts.push(`মোট পরিমাণ (Unique): ${countToSend} পিস`);
+            }
+            
+            if (totalSellPriceMsg) {
+                msgParts.push(totalSellPriceMsg);
+            }
+            
+            msgParts.push(`------------------`);
+            
+            if (details) {
+                msgParts.push(`লিস্ট:`);
+                msgParts.push(details);
+            }
+
+            // Join with newline characters
+            const finalMsg = msgParts.join('\n');
+            
+            showToast("কাজ জমা দেওয়া হচ্ছে...", "success"); 
+            setTimeout(() => { 
+                // Encoding the ENTIRE message at once ensures no broken links
+                window.open(`https://wa.me/${MASTER_CONTROL.admin.whatsappNumber}?text=${encodeURIComponent(finalMsg)}`, '_blank'); 
+                closeModal(); 
+            }, 1000);
         }
 
         const menuBtn = document.getElementById('mobileMenuBtn');
