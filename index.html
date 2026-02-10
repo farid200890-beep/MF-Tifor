@@ -140,8 +140,9 @@
         <div class="container mx-auto max-w-4xl text-center">
             <h2 class="text-3xl font-black mb-8">যোগাযোগ করুন</h2>
             <div class="flex flex-col sm:flex-row justify-center gap-6">
-                <a id="footerWhatsappLink" href="#" target="_blank" class="flex items-center justify-center gap-3 bg-[#25D366] hover:bg-[#128C7E] text-white py-4 px-10 rounded-2xl text-xl font-bold shadow-xl hover:shadow-green-500/30 transition transform hover:-translate-y-1"><i class="fab fa-whatsapp text-3xl"></i> WhatsApp</a>
-                <a id="footerTelegramLink" href="#" target="_blank" class="flex items-center justify-center gap-3 bg-[#0088cc] hover:bg-[#0077b5] text-white py-4 px-10 rounded-2xl text-xl font-bold shadow-xl hover:shadow-blue-500/30 transition transform hover:-translate-y-1"><i class="fab fa-telegram-plane text-3xl"></i> Telegram</a>
+                <!-- Footer WhatsApp Button changed to Telegram -->
+                <a id="footerWhatsappLink" href="#" target="_blank" class="flex items-center justify-center gap-3 bg-[#0088cc] hover:bg-[#0077b5] text-white py-4 px-10 rounded-2xl text-xl font-bold shadow-xl hover:shadow-blue-500/30 transition transform hover:-translate-y-1"><i class="fab fa-telegram-plane text-3xl"></i> Telegram (Admin)</a>
+                <a id="footerTelegramLink" href="#" target="_blank" class="flex items-center justify-center gap-3 bg-[#229ED9] hover:bg-[#1f8dbf] text-white py-4 px-10 rounded-2xl text-xl font-bold shadow-xl hover:shadow-blue-500/30 transition transform hover:-translate-y-1"><i class="fab fa-telegram-plane text-3xl"></i> Telegram Channel</a>
             </div>
             <p class="text-slate-500 text-sm mt-12">&copy; 2026 MF Tifor. All rights reserved.</p>
         </div>
@@ -161,7 +162,7 @@
         <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden modal-content p-8 text-center relative z-50">
             <div class="w-20 h-20 bg-pink-50 text-pink-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"><i class="fab fa-instagram"></i></div>
             <h3 class="text-2xl font-black text-slate-800 mb-2">সার্ভিসটি এখন বন্ধ!</h3>
-            <p class="text-slate-500 font-bold mb-6">বর্তমানে এই অফারটি অফ আছে।<br>অনুগ্রহ করে পরে চেষ্টা করুন।</p>
+            <p class="text-slate-500 font-bold mb-6">Instagram Cookies জমা দেওয়া যাবে শুধুমাত্র:<br><span class="text-purple-600">দুপুর ০৩:০০ টা</span> থেকে <span class="text-red-500">রাত ১১:৫৯ মি.</span> পর্যন্ত।</p>
             <button onclick="closeInstaClosedPopup()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition">ঠিক আছে</button>
         </div>
     </div>
@@ -217,7 +218,7 @@
                         <div id="validationFeedback" class="mt-3 hidden p-3 bg-slate-50 rounded-lg border border-slate-200"></div>
                         <div id="duplicateErrorBox" class="mt-2 hidden bg-red-50 border border-red-200 rounded-xl p-3"><p class="text-xs font-bold text-red-600 mb-2 border-b border-red-100 pb-1 flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> নিচের ডুপ্লিকেটগুলো ডিলিট করুন:</p><ul id="duplicateList" class="list-disc list-inside text-[10px] text-red-700 font-mono space-y-1 max-h-24 overflow-y-auto"></ul></div>
                     </div>
-                    <button type="submit" id="sellSubmitBtn" disabled class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-base hover:bg-slate-800 shadow-xl hover:shadow-2xl transition transform active:scale-95 flex justify-center items-center gap-2 mt-2 opacity-50 cursor-not-allowed"><span>জমা দিন</span> <i class="fab fa-whatsapp"></i></button>
+                    <button type="submit" id="sellSubmitBtn" disabled class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-base hover:bg-slate-800 shadow-xl hover:shadow-2xl transition transform active:scale-95 flex justify-center items-center gap-2 mt-2 opacity-50 cursor-not-allowed"><span>জমা দিন</span> <i class="fab fa-telegram-plane"></i></button>
                 </form>
             </div>
         </div>
@@ -234,7 +235,7 @@
                 <div class="bg-purple-50 border border-purple-100 p-3 rounded-xl mb-4 flex items-start gap-2"><i class="fas fa-info-circle text-purple-600 mt-1"></i><p class="text-xs text-purple-800 font-bold">সতর্কতা: দিনে একবারই সাবমিট করতে পারবেন। তাই সব লিংক একসাথে একটি শিটে সাজিয়ে তারপর লিংক দিন।</p></div>
                 <form id="instaForm" onsubmit="handleInstaSubmit(event)" class="space-y-4">
                     <div><label class="block text-xs font-bold text-slate-500 mb-1">আপনার নাম</label><input type="text" name="name" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none text-sm font-bold appearance-none" placeholder="নাম লিখুন"></div>
-                    <div><label class="block text-xs font-bold text-slate-500 mb-1">WhatsApp নাম্বার</label><input type="tel" name="whatsapp" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none text-sm font-bold appearance-none" placeholder="01XXXXXXXXX"></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">বিকাশ নাম্বার <span class="text-[10px] text-blue-500">(যেটাতে পেমেন্ট নিবেন)</span></label><input type="tel" name="whatsapp" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none text-sm font-bold appearance-none" placeholder="01XXXXXXXXX"></div>
                     <div><label class="block text-xs font-bold text-slate-500 mb-1">Google Sheet Link (Cookies)</label><input type="url" name="sheet_link" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none text-sm font-bold appearance-none" placeholder="https://docs.google.com/spreadsheets/..."></div>
                     <button type="submit" id="instaSubmitBtn" class="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold text-base hover:bg-slate-800 shadow-xl transition transform active:scale-95 flex justify-center items-center gap-2 mt-4"><span>জমা দিন</span> <i class="fas fa-paper-plane"></i></button>
                 </form>
@@ -269,9 +270,9 @@
                 </div>
                 <form onsubmit="handleBuySubmit(event)" class="space-y-4" autocomplete="off">
                     <div><label class="block text-xs font-bold text-slate-500 mb-1">আপনার নাম</label><input type="text" id="buyerName" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold appearance-none" placeholder="আপনার নাম লিখুন"></div>
-                    <div><label id="buyerPhoneLabel" class="block text-xs font-bold text-slate-500 mb-1">হোয়াটসঅ্যাপ নাম্বার</label><input type="tel" id="buyerPhone" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold appearance-none" placeholder="01XXXXXXXXX"></div>
-                    <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl flex items-start gap-2"><i class="fas fa-info-circle text-blue-500 mt-0.5 text-xs"></i><p class="text-[11px] text-blue-800 font-bold">অর্ডার কনফার্ম করার পর হোয়াটসঅ্যাপে আমাদের সাথে কথা বলে পেমেন্ট এবং ডেলিভারি বুঝে নিবেন।</p></div>
-                    <button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold text-base hover:bg-emerald-700 shadow-xl hover:shadow-emerald-500/30 transition transform active:scale-95 flex justify-center items-center gap-2 mt-2 cursor-pointer"><span>জমা দিন</span> <i class="fab fa-whatsapp text-lg"></i></button>
+                    <div><label id="buyerPhoneLabel" class="block text-xs font-bold text-slate-500 mb-1">মোবাইল নাম্বার (যোগাযোগের জন্য)</label><input type="tel" id="buyerPhone" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold appearance-none" placeholder="01XXXXXXXXX"></div>
+                    <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl flex items-start gap-2"><i class="fas fa-info-circle text-blue-500 mt-0.5 text-xs"></i><p class="text-[11px] text-blue-800 font-bold">অর্ডার কনফার্ম করার পর টেলিগ্রামে আমাদের সাথে কথা বলে পেমেন্ট এবং ডেলিভারি বুঝে নিবেন।</p></div>
+                    <button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold text-base hover:bg-emerald-700 shadow-xl hover:shadow-emerald-500/30 transition transform active:scale-95 flex justify-center items-center gap-2 mt-2 cursor-pointer"><span>জমা দিন</span> <i class="fab fa-telegram-plane text-lg"></i></button>
                 </form>
             </div>
         </div>
@@ -280,17 +281,17 @@
     <script>
         const MASTER_CONTROL = {
             admin: {
-                whatsappNumber: "8801754838532",
+                telegramUser: "mftiforofficial",
                 // IMPORTANT: Replace with YOUR NEW DEPLOYMENT URL
                 sheetScriptUrl: "https://script.google.com/macros/s/AKfycbwY6e_OZfIGdiSA6MWThJsxo7vd4m_DRuf8BRppI9DBeE_YQ4i9HqkhxRf1xqg8lk84Iw/exec"
             },
-            socialLinks: { youtube: "https://youtube.com/@mftifor?si=7LBOs8C9pN587s7j", whatsappGroup: "https://wa.me/8801754838532", telegram: "https://t.me/mftiforchannel" },
+            socialLinks: { youtube: "https://youtube.com/@mftifor?si=7LBOs8C9pN587s7j", whatsappGroup: "https://t.me/mftiforofficial", telegram: "https://t.me/mftiforchannel" },
             vpnList: ["Express VPN", "Nord VPN", "PIA VPN", "Surfshark", "Hotspot Shield", "HMA VPN", "IP Vanish", "Pure VPN", "Turbo VPN", "Avast Seculine", "Sky VPN", "X VPN", "Panda VPN", "Cyberghost", "Vypr VPN"],
             jobs: {
                 website_build: { id: "website_build", title: "ওয়েবসাইট বানিয়ে নিন!", category: "hybrid", icon: "💻", sellPrice: null, buyPriceUnit: 1500, buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৩৬০০ ৳</span> ১৫০০-২০০০ ৳", buyName: "Website Service", type: "buy_only", status: "active", isUnique: true, deliveryTime: "ডেলিভারি ১ থেকে ২ দিন" },
-                instagram_cookies: { id: "instagram_cookies", title: "Instagram Cookies Sell", category: "hybrid", icon: '<i class="fab fa-instagram text-pink-600"></i>', sellPriceUnit: 3.20, sellPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>২.৫০ ৳</span> ৩.২০ ৳", buyPriceDisplay: "--", hasBuyOption: false, status: "active", isUnique: true, type: "insta_special" },
+                instagram_cookies: { id: "instagram_cookies", title: "Instagram Cookies Sell", category: "hybrid", icon: '<i class="fab fa-instagram text-pink-600"></i>', sellPriceUnit: 3.85, sellPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>২.৫০ ৳</span> ৩.৮৫ ৳", buyPriceDisplay: "--", hasBuyOption: false, status: "active", isUnique: true, type: "insta_special" },
                 youtube_premium: { id: "youtube_premium", title: "YouTube Premium", category: "hybrid", icon: '<i class="fab fa-youtube text-red-600"></i>', sellPrice: null, buyPriceUnit: 35, buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৬০ ৳</span> ৩৫ ৳ (১ মাস)", buyName: "YouTube Premium (1 Month)", type: "buy_only", status: "active", isUnique: true },
-                microsoft_mails: { id: "microsoft_mails", title: "Microsoft & Edu Mails", category: "mail", icon: "📫", type: "variable_product", options: { edumail: { name: "Edu Mail", price: 1.5, status: "active" }, hotmail: { name: "Hotmail", price: 1, status: "active" }, outlook: { name: "Outlook Mail", price: 1, status: "active" } }, sellPrice: null, buyPriceDisplay: "Edu: ১.৫ ৳ | Hot: ১ ৳ | Outlook: ১ ৳", status: "active" },
+                microsoft_mails: { id: "microsoft_mails", title: "Microsoft & Edu Mails", category: "mail", icon: "📫", type: "variable_product", options: { edumail: { name: "Edu Mail", price: 2, status: "active" }, hotmail: { name: "Hotmail", price: 1.5, status: "active" }, outlook: { name: "Outlook Mail", price: 1.5, status: "active" } }, sellPrice: null, buyPriceDisplay: "Edu: ২ ৳ | Hot: ১.৫০ ৳ | Outlook: ১.৫০ ৳", status: "active" },
                 all_vpn_promo: { id: "all_vpn_promo", title: "All VPN Premium (7 Days)", category: "vpn", icon: "🛡️", sellPrice: null, buyPriceUnit: 30, buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৪৫ ৳</span> ৩০ ৳", buyName: "VPN Service", type: "vpn_bundle", status: "active" },
                 facebook: { id: "facebook", title: "Facebook সার্ভিস", category: "hybrid", icon: "👤", sellPriceUnit: 0, sellPriceDisplay: "--", sellRequirements: ["UID, Password, 2FA/Key সঠিক"], sellPlaceholder: "10001234567890 password123 2FAKEYCODE", sellVideo: "https://youtu.be/2aan-2krI14?si=ASAxOEeZbYrT6Oti", hasBuyOption: true, buyPriceUnit: 6, buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৮ ৳</span> ৬ ৳", buyName: "Facebook Account", status: "closed", type: "buy_only" },
                 gmail: { id: "gmail", title: "Gmail সার্ভিস", category: "hybrid", icon: "📧", sellPriceUnit: 18, sellPriceDisplay: "--", hasBuyOption: false, buyPriceUnit: 20, buyPriceDisplay: "--", buyName: "Fresh Gmail Account", status: "closed", isUnique: true },
@@ -350,11 +351,8 @@
             let jobId = (actionName === 'openModalWithJob' || actionName === 'buy' || actionName === 'choice' || actionName === 'insta') ? args[0] : null;
             
             if (actionName === 'insta') {
-                if (checkInstaTime()) {
-                    if (checkInstaLimit()) openInstaModal();
-                } else {
-                    openInstaClosedPopup();
-                }
+                // UPDATE: Always open modal for Instagram, time check will happen on Submit
+                openInstaModal();
                 return;
             }
 
@@ -474,11 +472,10 @@
                 }
 
                 if (job.id === 'instagram_cookies') {
+                    // UPDATE: Insta always shows active/running badge even if time is off, because logic is moved to submit
                     isClosed = false; 
-                    if (!checkInstaTime()) {
-                        badgeText = '🔴 সময় শেষ (বন্ধ)';
-                        badgeClass = 'bg-red-100 text-red-600';
-                    }
+                    badgeText = '● চলমান';
+                    badgeClass = 'bg-green-100 text-green-600';
                 } else {
                     if (isClosed) {
                         badgeText = 'বন্ধ';
@@ -529,6 +526,14 @@
 
         function handleInstaSubmit(e) {
             e.preventDefault();
+            
+            // UPDATE: Check time HERE instead of before opening modal
+            if (!checkInstaTime()) {
+                closeInstaModal();
+                openInstaClosedPopup(); // Show the popup saying it's closed and the timing
+                return;
+            }
+
             if(!checkInstaLimit()) return;
 
             const submitBtn = document.getElementById('instaSubmitBtn');
@@ -582,7 +587,7 @@
             const phoneInput = document.getElementById('buyerPhone');
             
             if (jobData.id === 'youtube_premium') { phoneLabel.innerText = "ইমেইল এড্রেস (যেটাতে প্রিমিয়াম নিবেন)"; phoneInput.placeholder = "example@gmail.com"; phoneInput.type = "email"; phoneInput.onkeypress = null; } 
-            else { phoneLabel.innerText = "হোয়াটসঅ্যাপ নাম্বার"; phoneInput.placeholder = "01XXXXXXXXX"; phoneInput.type = "tel"; phoneInput.onkeypress = (event) => event.charCode >= 48 && event.charCode <= 57; }
+            else { phoneLabel.innerText = "মোবাইল নাম্বার (যোগাযোগের জন্য)"; phoneInput.placeholder = "01XXXXXXXXX"; phoneInput.type = "tel"; phoneInput.onkeypress = (event) => event.charCode >= 48 && event.charCode <= 57; }
 
             const staticNameEl = document.getElementById('buyProductName');
             const variableSelectContainer = document.getElementById('buyVariableSelectContainer');
@@ -614,6 +619,45 @@
         }
 
         function closeBuyModal() { document.getElementById('buyModal').classList.remove('active'); setTimeout(() => document.getElementById('buyModal').classList.add('hidden'), 200); }
+
+        function copyToClipboard(text) {
+            // Create a text area
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            
+            // Ensure it's not visible but part of the DOM
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            textArea.style.top = "0";
+            document.body.appendChild(textArea);
+            
+            textArea.focus();
+            textArea.select();
+            
+            // For mobile devices
+            textArea.setSelectionRange(0, 99999); 
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                     showToast("মেসেজ কপি হয়েছে! টেলিগ্রামে পেস্ট করুন।", "success");
+                } else {
+                     // Try modern API if execCommand fails (rare fallback)
+                     if(navigator.clipboard && navigator.clipboard.writeText) {
+                         navigator.clipboard.writeText(text)
+                             .then(() => showToast("মেসেজ কপি হয়েছে! টেলিগ্রামে পেস্ট করুন।", "success"))
+                             .catch(() => showToast("কপি করা যায়নি, ম্যানুয়ালি লিখুন।", "error"));
+                     } else {
+                        showToast("কপি করা যায়নি, ম্যানুয়ালি লিখুন।", "error");
+                     }
+                }
+            } catch (err) {
+                console.error('Copy failed', err);
+                showToast("কপি এরর! ম্যানুয়ালি লিখুন।", "error");
+            }
+            
+            document.body.removeChild(textArea);
+        }
         
         function handleBuySubmit(e) {
             e.preventDefault();
@@ -635,7 +679,17 @@
             let msg = `*অর্ডার রিকোয়েস্ট (Buy)* %0Aসময়: ${dateTime} %0A------------------ %0Aপ্রোডাক্ট: ${productName} %0Aপরিমাণ: ${qty} পিস %0Aমোট দাম: ${finalPriceText} %0A------------------ %0Aক্রেতা: ${name} %0A`;
             if (currentBuyJob.id === 'youtube_premium') msg += `ইমেইল (Premium): ${phoneOrEmail} %0A`; else msg += `নাম্বার: ${phoneOrEmail} %0A`;
             msg += `*আমি নিতে চাই। জমা দিন।%2A`;
-            showToast("হোয়াটসঅ্যাপ ওপেন হচ্ছে...", "success"); setTimeout(() => { window.open(`https://wa.me/${MASTER_CONTROL.admin.whatsappNumber}?text=${msg}`, '_blank'); closeBuyModal(); }, 1000);
+            
+            // Clean up %0A for clipboard copy
+            const decodedMsg = decodeURIComponent(msg).replace(/%0A/g, '\n');
+            
+            // Use the robust copy function
+            copyToClipboard(decodedMsg);
+
+            setTimeout(() => { 
+                window.open(`https://t.me/${MASTER_CONTROL.admin.telegramUser}`, '_blank'); 
+                closeBuyModal(); 
+            }, 1000);
         }
 
         const uploadModal = document.getElementById('uploadModal');
@@ -791,11 +845,14 @@
 
             // Join with newline characters
             const finalMsg = msgParts.join('\n');
+            const decodedMsg = finalMsg; // Already a string
+
+            // Use the robust copy function
+            copyToClipboard(decodedMsg);
             
-            showToast("কাজ জমা দেওয়া হচ্ছে...", "success"); 
             setTimeout(() => { 
                 // Encoding the ENTIRE message at once ensures no broken links
-                window.open(`https://wa.me/${MASTER_CONTROL.admin.whatsappNumber}?text=${encodeURIComponent(finalMsg)}`, '_blank'); 
+                window.open(`https://t.me/${MASTER_CONTROL.admin.telegramUser}`, '_blank'); 
                 closeModal(); 
             }, 1000);
         }
