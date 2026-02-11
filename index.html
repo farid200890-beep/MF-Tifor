@@ -312,12 +312,8 @@
 
         // Hardcoded function for Instagram Time: 3 PM (15) to 11:59 PM (23)
         function checkInstaTime() {
-            const now = new Date();
-            const options = { timeZone: "Asia/Dhaka", hour: 'numeric', hour12: false };
-            const formatter = new Intl.DateTimeFormat('en-US', options);
-            const hours = parseInt(formatter.format(now));
-            // 15:00 (3 PM) to 23:59 (11:59 PM) covers "Dupur 3ta theke Rat 12ta"
-            return hours >= 15 && hours <= 23;
+            // Instagram Service is now always open (24/7)
+            return true;
         }
 
         // NEWLY ADDED: Missing function fix
