@@ -382,9 +382,13 @@
 
         function checkInstaLimit() {
             const today = new Date().toLocaleDateString('en-CA');
-            const lastSubmit = localStorage.getItem('lastInstaSubmitDate');
+            // Modified: Use unique key based on service type
+            const storageKey = 'lastInstaSubmitDate_' + currentInstaType;
+            const lastSubmit = localStorage.getItem(storageKey);
+            
             if (lastSubmit === today) {
-                showToast("দুঃখিত! আপনি আজ একবার সাবমিট করেছেন।", "error");
+                const serviceName = currentInstaType === '2fa' ? '2FA' : 'Cookies';
+                showToast(`দুঃখিত! আপনি আজ ${serviceName} একবার সাবমিট করেছেন।`, "error");
                 return false;
             }
             return true;
@@ -392,7 +396,9 @@
 
         function markInstaSubmitted() {
             const today = new Date().toLocaleDateString('en-CA');
-            localStorage.setItem('lastInstaSubmitDate', today);
+            // Modified: Save with unique key based on service type
+            const storageKey = 'lastInstaSubmitDate_' + currentInstaType;
+            localStorage.setItem(storageKey, today);
         }
 
         function closeClosedPopup() { document.getElementById('shopClosedPopup').classList.remove('active'); setTimeout(() => document.getElementById('shopClosedPopup').classList.add('hidden'), 200); }
