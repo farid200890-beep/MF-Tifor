@@ -180,6 +180,20 @@
         </div>
     </div>
 
+    <!-- NEW INSTAGRAM CHOICE MODAL -->
+    <div id="instaChoiceModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden modal-content p-6 text-center relative z-50">
+            <button onclick="closeInstaChoiceModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition"><i class="fas fa-times"></i></button>
+            <div class="w-16 h-16 bg-pink-50 text-pink-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"><i class="fab fa-instagram"></i></div>
+            <h3 class="text-xl font-black text-slate-800 mb-2">কোন সার্ভিসটি চান?</h3>
+            <p class="text-slate-500 text-sm mb-6 font-medium">নিচের যে কোনো একটি অপশন বেছে নিন</p>
+            <div class="space-y-3">
+                <button onclick="handleInstaChoice('cookies')" class="w-full py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl font-bold shadow-lg hover:shadow-pink-500/30 transition transform active:scale-95 flex items-center justify-center gap-3 cursor-pointer"><i class="fas fa-cookie-bite"></i> Instagram Cookies</button>
+                <button onclick="handleInstaChoice('2fa')" class="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold shadow-lg hover:shadow-slate-500/30 transition transform active:scale-95 flex items-center justify-center gap-3 cursor-pointer"><i class="fas fa-shield-alt"></i> Instagram 2FA</button>
+            </div>
+        </div>
+    </div>
+
     <div id="uploadModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/70 backdrop-blur-md">
         <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden modal-content flex flex-col max-h-[90vh] relative z-50">
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
@@ -228,7 +242,7 @@
     <div id="instaCookieModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/70 backdrop-blur-md">
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden modal-content flex flex-col max-h-[90vh] relative z-50">
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-pink-500 to-purple-600 text-white">
-                <h3 class="text-lg font-bold flex items-center gap-2"><i class="fab fa-instagram"></i> Cookies Sell Form</h3>
+                <h3 class="text-lg font-bold flex items-center gap-2"><i class="fab fa-instagram"></i> <span id="instaModalTitle">Cookies Sell Form</span></h3>
                 <button onclick="closeInstaModal()" class="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition"><i class="fas fa-times"></i></button>
             </div>
             <div class="p-6 overflow-y-auto custom-scrollbar">
@@ -236,7 +250,7 @@
                 <form id="instaForm" onsubmit="handleInstaSubmit(event)" class="space-y-4">
                     <div><label class="block text-xs font-bold text-slate-500 mb-1">আপনার নাম</label><input type="text" name="name" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none text-sm font-bold appearance-none" placeholder="নাম লিখুন"></div>
                     <div><label class="block text-xs font-bold text-slate-500 mb-1">বিকাশ নাম্বার <span class="text-[10px] text-blue-500">(যেটাতে পেমেন্ট নিবেন)</span></label><input type="tel" name="whatsapp" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none text-sm font-bold appearance-none" placeholder="01XXXXXXXXX"></div>
-                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Google Sheet Link (Cookies)</label><input type="url" name="sheet_link" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none text-sm font-bold appearance-none" placeholder="https://docs.google.com/spreadsheets/..."></div>
+                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Google Sheet Link (Data)</label><input type="url" name="sheet_link" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none text-sm font-bold appearance-none" placeholder="https://docs.google.com/spreadsheets/..."></div>
                     <button type="submit" id="instaSubmitBtn" class="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold text-base hover:bg-slate-800 shadow-xl transition transform active:scale-95 flex justify-center items-center gap-2 mt-4"><span>জমা দিন</span> <i class="fas fa-paper-plane"></i></button>
                 </form>
             </div>
@@ -282,14 +296,16 @@
         const MASTER_CONTROL = {
             admin: {
                 telegramUser: "mftiforofficial",
-                // IMPORTANT: Replace with YOUR NEW DEPLOYMENT URL
-                sheetScriptUrl: "https://script.google.com/macros/s/AKfycbwY6e_OZfIGdiSA6MWThJsxo7vd4m_DRuf8BRppI9DBeE_YQ4i9HqkhxRf1xqg8lk84Iw/exec"
+                // IMPORTANT: Default URL (Cookies)
+                sheetScriptUrl: "https://script.google.com/macros/s/AKfycbwY6e_OZfIGdiSA6MWThJsxo7vd4m_DRuf8BRppI9DBeE_YQ4i9HqkhxRf1xqg8lk84Iw/exec",
+                // NEW: 2FA URL
+                instaTwoFaUrl: "https://script.google.com/macros/s/AKfycbxVXi54ygWQLm7BTrU-QNLLz18ILyln0RvkmCSaqGf52mVHxOhg7KehnbKNLi60dhJXyA/exec"
             },
             socialLinks: { youtube: "https://youtube.com/@mftifor?si=7LBOs8C9pN587s7j", whatsappGroup: "https://t.me/mftiforofficial", telegram: "https://t.me/mftiforchannel" },
             vpnList: ["Express VPN", "Nord VPN", "PIA VPN", "Surfshark", "Hotspot Shield", "HMA VPN", "IP Vanish", "Pure VPN", "Turbo VPN", "Avast Seculine", "Sky VPN", "X VPN", "Panda VPN", "Cyberghost", "Vypr VPN"],
             jobs: {
                 website_build: { id: "website_build", title: "ওয়েবসাইট বানিয়ে নিন!", category: "hybrid", icon: "💻", sellPrice: null, buyPriceUnit: 1500, buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৩৬০০ ৳</span> ১৫০০-২০০০ ৳", buyName: "Website Service", type: "buy_only", status: "active", isUnique: true, deliveryTime: "ডেলিভারি ১ থেকে ২ দিন" },
-                instagram_cookies: { id: "instagram_cookies", title: "Instagram Cookies Sell", category: "hybrid", icon: '<i class="fab fa-instagram text-pink-600"></i>', sellPriceUnit: 3.85, sellPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>২.৫০ ৳</span> ৩.৮৫ ৳", buyPriceDisplay: "--", hasBuyOption: false, status: "active", isUnique: true, type: "insta_special" },
+                instagram_cookies: { id: "instagram_cookies", title: "Instagram Service", category: "hybrid", icon: '<i class="fab fa-instagram text-pink-600"></i>', sellPriceUnit: 3.85, sellPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>২.৫০ ৳</span> ৩.৮৫ ৳", buyPriceDisplay: "--", hasBuyOption: false, status: "active", isUnique: true, type: "insta_special" },
                 youtube_premium: { id: "youtube_premium", title: "YouTube Premium", category: "hybrid", icon: '<i class="fab fa-youtube text-red-600"></i>', sellPrice: null, buyPriceUnit: 35, buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৬০ ৳</span> ৩৫ ৳ (১ মাস)", buyName: "YouTube Premium (1 Month)", type: "buy_only", status: "active", isUnique: true },
                 microsoft_mails: { id: "microsoft_mails", title: "Microsoft & Edu Mails", category: "mail", icon: "📫", type: "variable_product", options: { edumail: { name: "Edu Mail", price: 2, status: "active" }, hotmail: { name: "Hotmail", price: 1.5, status: "active" }, outlook: { name: "Outlook Mail", price: 1.5, status: "active" } }, sellPrice: null, buyPriceDisplay: "Edu: ২ ৳ | Hot: ১.৫০ ৳ | Outlook: ১.৫০ ৳", status: "active" },
                 all_vpn_promo: { id: "all_vpn_promo", title: "All VPN Premium (7 Days)", category: "vpn", icon: "🛡️", sellPrice: null, buyPriceUnit: 30, buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৪৫ ৳</span> ৩০ ৳", buyName: "VPN Service", type: "vpn_bundle", status: "active" },
@@ -347,8 +363,8 @@
             let jobId = (actionName === 'openModalWithJob' || actionName === 'buy' || actionName === 'choice' || actionName === 'insta') ? args[0] : null;
             
             if (actionName === 'insta') {
-                // UPDATE: Always open modal for Instagram, time check will happen on Submit
-                openInstaModal();
+                // UPDATE: Instead of opening form immediately, open the choice modal
+                openInstaChoiceModal();
                 return;
             }
 
@@ -409,6 +425,10 @@
         let searchTerm = '';
         let statusFilterValue = 'all';
         let selectedJobIdForChoice = null;
+        // NEW: Track current Insta submission type and URL
+        let currentInstaType = 'cookies'; 
+        let currentInstaScriptUrl = MASTER_CONTROL.admin.sheetScriptUrl;
+
         const debouncedValidate = debounce(() => validateForm(), 300);
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -517,7 +537,34 @@
         function closeChoiceModal() { document.getElementById('choiceModal').classList.remove('active'); setTimeout(() => document.getElementById('choiceModal').classList.add('hidden'), 200); }
         function handleChoice(action) { closeChoiceModal(); setTimeout(() => { if (action === 'buy') openBuyModal(selectedJobIdForChoice); else openModalWithJob(selectedJobIdForChoice); }, 300); }
 
-        function openInstaModal() { document.getElementById('instaCookieModal').classList.remove('hidden'); setTimeout(() => document.getElementById('instaCookieModal').classList.add('active'), 10); }
+        // NEW: Instagram Choice Modal Logic
+        function openInstaChoiceModal() { document.getElementById('instaChoiceModal').classList.remove('hidden'); setTimeout(() => document.getElementById('instaChoiceModal').classList.add('active'), 10); }
+        function closeInstaChoiceModal() { document.getElementById('instaChoiceModal').classList.remove('active'); setTimeout(() => document.getElementById('instaChoiceModal').classList.add('hidden'), 200); }
+        
+        function handleInstaChoice(type) {
+            closeInstaChoiceModal();
+            setTimeout(() => {
+                openInstaModal(type);
+            }, 300);
+        }
+
+        function openInstaModal(type = 'cookies') { 
+            // Update global type tracker
+            currentInstaType = type;
+            
+            // Set URL based on type
+            if (type === '2fa') {
+                currentInstaScriptUrl = MASTER_CONTROL.admin.instaTwoFaUrl;
+                document.getElementById('instaModalTitle').innerText = "Instagram 2FA";
+            } else {
+                currentInstaScriptUrl = MASTER_CONTROL.admin.sheetScriptUrl;
+                document.getElementById('instaModalTitle').innerText = "Instagram Cookies";
+            }
+
+            document.getElementById('instaCookieModal').classList.remove('hidden'); 
+            setTimeout(() => document.getElementById('instaCookieModal').classList.add('active'), 10); 
+        }
+
         function closeInstaModal() { document.getElementById('instaCookieModal').classList.remove('active'); setTimeout(() => document.getElementById('instaCookieModal').classList.add('hidden'), 200); }
 
         function handleInstaSubmit(e) {
@@ -538,6 +585,8 @@
             const formData = new FormData(form);
             // Append timestamp manually
             formData.append("timestamp", new Date().toLocaleString());
+            // NEW: Append service type so backend knows (optional, but good practice)
+            formData.append("service_type", currentInstaType);
 
             // UI Feedback
             const originalBtnContent = submitBtn.innerHTML;
@@ -545,7 +594,8 @@
             submitBtn.disabled = true;
 
             // Using fetch with no-cors mode for Google Forms/Scripts
-            fetch(MASTER_CONTROL.admin.sheetScriptUrl, {
+            // IMPORTANT: Using dynamic URL based on selection
+            fetch(currentInstaScriptUrl, {
                 method: "POST",
                 body: formData,
                 mode: 'no-cors'
