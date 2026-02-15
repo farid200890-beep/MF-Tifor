@@ -140,8 +140,9 @@
         <div class="container mx-auto max-w-4xl text-center">
             <h2 class="text-3xl font-black mb-8">যোগাযোগ করুন</h2>
             <div class="flex flex-col sm:flex-row justify-center gap-6">
-                <!-- Footer WhatsApp Button changed to Telegram -->
+                <!-- Telegram Admin -->
                 <a id="footerWhatsappLink" href="#" target="_blank" class="flex items-center justify-center gap-3 bg-[#0088cc] hover:bg-[#0077b5] text-white py-4 px-10 rounded-2xl text-xl font-bold shadow-xl hover:shadow-blue-500/30 transition transform hover:-translate-y-1"><i class="fab fa-telegram-plane text-3xl"></i> Telegram (Admin)</a>
+                <!-- Telegram Channel -->
                 <a id="footerTelegramLink" href="#" target="_blank" class="flex items-center justify-center gap-3 bg-[#229ED9] hover:bg-[#1f8dbf] text-white py-4 px-10 rounded-2xl text-xl font-bold shadow-xl hover:shadow-blue-500/30 transition transform hover:-translate-y-1"><i class="fab fa-telegram-plane text-3xl"></i> Telegram Channel</a>
             </div>
             <p class="text-slate-500 text-sm mt-12">&copy; 2026 MF Tifor. All rights reserved.</p>
@@ -155,6 +156,18 @@
             <h3 class="text-2xl font-black text-slate-800 mb-2">MF Tifor এখন বন্ধ!</h3>
             <p class="text-slate-500 font-bold mb-6">কেনা-বেচার সময়:<br><span class="text-emerald-600">সকাল ০৫:০০ টা</span> থেকে <span class="text-red-500">রাত ১০:০০ টা</span> পর্যন্ত (BD Time)।</p>
             <button onclick="closeClosedPopup()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition">ঠিক আছে</button>
+        </div>
+    </div>
+
+    <!-- NEW SUCCESS REDIRECT POPUP -->
+    <div id="successRedirectModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/80 backdrop-blur-md">
+        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden modal-content p-8 text-center relative z-50">
+            <div class="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 animate-bounce"><i class="fas fa-check"></i></div>
+            <h3 class="text-2xl font-black text-slate-800 mb-2">কপি করা হয়েছে! ✅</h3>
+            <p class="text-slate-500 font-bold mb-6 text-sm">অর্ডারের সকল তথ্য আপনার কিবোর্ডে কপি করা হয়েছে।<br>নিচের বাটনে ক্লিক করে টেলিগ্রামে পেস্ট করুন।</p>
+            <button id="redirectBtn" onclick="handleRedirect()" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg flex items-center justify-center gap-2">
+                <i class="fab fa-telegram-plane"></i> টেলিগ্রামে যান
+            </button>
         </div>
     </div>
 
@@ -180,7 +193,6 @@
         </div>
     </div>
 
-    <!-- NEW INSTAGRAM CHOICE MODAL -->
     <div id="instaChoiceModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm">
         <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden modal-content p-6 text-center relative z-50">
             <button onclick="closeInstaChoiceModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition"><i class="fas fa-times"></i></button>
@@ -221,7 +233,14 @@
                     <div id="requirementsBox" class="hidden p-4 bg-amber-50 border border-amber-100 rounded-xl"><div class="flex items-start gap-2"><i class="fas fa-exclamation-circle text-amber-500 mt-0.5"></i><p class="text-xs text-amber-800 font-bold" id="reqText"></p></div></div>
                     <div class="grid grid-cols-1 gap-4">
                         <div><label class="block text-xs font-bold text-slate-500 mb-1">আপনার নাম</label><input type="text" id="userName" required autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold appearance-none" placeholder="নাম লিখুন"></div>
-                        <div><label id="paymentLabel" class="block text-xs font-bold text-slate-500 mb-1">বিকাশ নাম্বার</label><input type="tel" id="userContact" oninput="debouncedValidate()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold transition duration-200 appearance-none" placeholder="01XXXXXXXXX"></div>
+                        <!-- UPDATED LABEL -->
+                        <div>
+                            <label id="paymentLabel" class="block text-xs font-bold text-slate-500 mb-1">
+                                বিকাশ ও হোয়াটসঅ্যাপ নাম্বার 
+                                <span class="text-[10px] text-blue-500 block font-normal">(এই নাম্বারে পেমেন্ট কনফার্মেশন মেসেজ যাবে)</span>
+                            </label>
+                            <input type="tel" id="userContact" oninput="debouncedValidate()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold transition duration-200 appearance-none" placeholder="01XXXXXXXXX">
+                        </div>
                     </div>
                     <div id="dynamicInputArea" class="hidden">
                         <div class="flex flex-wrap justify-between items-end mb-2 gap-2">
@@ -238,7 +257,7 @@
         </div>
     </div>
 
-    <!-- INSTAGRAM MODAL -->
+    <!-- INSTAGRAM MODAL (KEPT AS IS) -->
     <div id="instaCookieModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/70 backdrop-blur-md">
         <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden modal-content flex flex-col max-h-[90vh] relative z-50">
             <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-pink-500 to-purple-600 text-white">
@@ -296,9 +315,7 @@
         const MASTER_CONTROL = {
             admin: {
                 telegramUser: "mftiforofficial",
-                // IMPORTANT: Default URL (Cookies)
                 sheetScriptUrl: "https://script.google.com/macros/s/AKfycbwY6e_OZfIGdiSA6MWThJsxo7vd4m_DRuf8BRppI9DBeE_YQ4i9HqkhxRf1xqg8lk84Iw/exec",
-                // NEW: 2FA URL
                 instaTwoFaUrl: "https://script.google.com/macros/s/AKfycbxVXi54ygWQLm7BTrU-QNLLz18ILyln0RvkmCSaqGf52mVHxOhg7KehnbKNLi60dhJXyA/exec"
             },
             socialLinks: { youtube: "https://youtube.com/@mftifor?si=7LBOs8C9pN587s7j", whatsappGroup: "https://t.me/mftiforofficial", telegram: "https://t.me/mftiforchannel" },
@@ -326,25 +343,11 @@
             return hours >= 5 && hours < 22;
         }
 
-        // Hardcoded function for Instagram Time: 3 PM (15) to 11:59 PM (23)
-        function checkInstaTime() {
-            // Instagram Service is now always open (24/7)
-            return true;
-        }
+        function checkInstaTime() { return true; }
 
-        // NEWLY ADDED: Missing function fix
         function getBengaliDateTime() {
             const now = new Date();
-            const options = { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                hour12: true,
-                timeZone: 'Asia/Dhaka'
-            };
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'Asia/Dhaka' };
             return now.toLocaleString('bn-BD', options);
         }
 
@@ -361,13 +364,7 @@
 
         function attemptAction(actionName, ...args) {
             let jobId = (actionName === 'openModalWithJob' || actionName === 'buy' || actionName === 'choice' || actionName === 'insta') ? args[0] : null;
-            
-            if (actionName === 'insta') {
-                // UPDATE: Instead of opening form immediately, open the choice modal
-                openInstaChoiceModal();
-                return;
-            }
-
+            if (actionName === 'insta') { openInstaChoiceModal(); return; }
             const isOpen = checkShopStatus(jobId);
             if (isOpen) {
                 if (actionName === 'upload') openModal();
@@ -382,10 +379,8 @@
 
         function checkInstaLimit() {
             const today = new Date().toLocaleDateString('en-CA');
-            // Modified: Use unique key based on service type
             const storageKey = 'lastInstaSubmitDate_' + currentInstaType;
             const lastSubmit = localStorage.getItem(storageKey);
-            
             if (lastSubmit === today) {
                 const serviceName = currentInstaType === '2fa' ? '2FA' : 'Cookies';
                 showToast(`দুঃখিত! আপনি আজ ${serviceName} একবার সাবমিট করেছেন।`, "error");
@@ -396,7 +391,6 @@
 
         function markInstaSubmitted() {
             const today = new Date().toLocaleDateString('en-CA');
-            // Modified: Save with unique key based on service type
             const storageKey = 'lastInstaSubmitDate_' + currentInstaType;
             localStorage.setItem(storageKey, today);
         }
@@ -431,17 +425,52 @@
         let searchTerm = '';
         let statusFilterValue = 'all';
         let selectedJobIdForChoice = null;
-        // NEW: Track current Insta submission type and URL
         let currentInstaType = 'cookies'; 
         let currentInstaScriptUrl = MASTER_CONTROL.admin.sheetScriptUrl;
 
         const debouncedValidate = debounce(() => validateForm(), 300);
 
+        function copyToClipboard(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast("মেসেজ কপি হয়েছে! টেলিগ্রামে পেস্ট করুন।", "success");
+                }).catch(err => {
+                    fallbackCopyTextToClipboard(text);
+                });
+            } else {
+                fallbackCopyTextToClipboard(text);
+            }
+        }
+
+        function fallbackCopyTextToClipboard(text) {
+            var textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                var successful = document.execCommand('copy');
+                if(successful) {
+                    showToast("মেসেজ কপি হয়েছে! টেলিগ্রামে পেস্ট করুন।", "success");
+                } else {
+                    showToast("কপি করা যায়নি, ম্যানুয়ালি লিখুন।", "error");
+                }
+            } catch (err) {
+                showToast("কপি এরর! ম্যানুয়ালি লিখুন।", "error");
+            }
+            document.body.removeChild(textArea);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const heroLink = document.getElementById('heroYoutubeLink');
             if (heroLink) heroLink.href = MASTER_CONTROL.socialLinks.youtube;
+            
             const waLink = document.getElementById('footerWhatsappLink');
-            if (waLink) waLink.href = MASTER_CONTROL.socialLinks.whatsappGroup;
+            if (waLink) waLink.href = "https://t.me/" + MASTER_CONTROL.admin.telegramUser;
+            
             const tgLink = document.getElementById('footerTelegramLink');
             if (tgLink) tgLink.href = MASTER_CONTROL.socialLinks.telegram;
             
@@ -484,26 +513,12 @@
 
             filteredJobs.forEach(job => {
                 if (job.id === 'other') return;
-                
                 let isClosed = job.status === 'closed';
                 let badgeText = '● চলমান';
                 let badgeClass = 'bg-green-100 text-green-600';
-                
-                if (job.id !== 'instagram_cookies' && !checkShopStatus(job.id)) {
-                    isClosed = true;
-                }
-
-                if (job.id === 'instagram_cookies') {
-                    // UPDATE: Insta always shows active/running badge even if time is off, because logic is moved to submit
-                    isClosed = false; 
-                    badgeText = '● চলমান';
-                    badgeClass = 'bg-green-100 text-green-600';
-                } else {
-                    if (isClosed) {
-                        badgeText = 'বন্ধ';
-                        badgeClass = 'bg-red-100 text-red-600';
-                    }
-                }
+                if (job.id !== 'instagram_cookies' && !checkShopStatus(job.id)) { isClosed = true; }
+                if (job.id === 'instagram_cookies') { isClosed = false; badgeText = '● চলমান'; badgeClass = 'bg-green-100 text-green-600'; } 
+                else { if (isClosed) { badgeText = 'বন্ধ'; badgeClass = 'bg-red-100 text-red-600'; } }
 
                 let btnText = 'কাজটি করুন <i class="fas fa-arrow-right"></i>';
                 let btnAction = `attemptAction('openModalWithJob', '${job.id}')`;
@@ -543,7 +558,6 @@
         function closeChoiceModal() { document.getElementById('choiceModal').classList.remove('active'); setTimeout(() => document.getElementById('choiceModal').classList.add('hidden'), 200); }
         function handleChoice(action) { closeChoiceModal(); setTimeout(() => { if (action === 'buy') openBuyModal(selectedJobIdForChoice); else openModalWithJob(selectedJobIdForChoice); }, 300); }
 
-        // NEW: Instagram Choice Modal Logic
         function openInstaChoiceModal() { document.getElementById('instaChoiceModal').classList.remove('hidden'); setTimeout(() => document.getElementById('instaChoiceModal').classList.add('active'), 10); }
         function closeInstaChoiceModal() { document.getElementById('instaChoiceModal').classList.remove('active'); setTimeout(() => document.getElementById('instaChoiceModal').classList.add('hidden'), 200); }
         
@@ -555,10 +569,7 @@
         }
 
         function openInstaModal(type = 'cookies') { 
-            // Update global type tracker
             currentInstaType = type;
-            
-            // Set URL based on type
             if (type === '2fa') {
                 currentInstaScriptUrl = MASTER_CONTROL.admin.instaTwoFaUrl;
                 document.getElementById('instaModalTitle').innerText = "Instagram 2FA";
@@ -566,7 +577,6 @@
                 currentInstaScriptUrl = MASTER_CONTROL.admin.sheetScriptUrl;
                 document.getElementById('instaModalTitle').innerText = "Instagram Cookies";
             }
-
             document.getElementById('instaCookieModal').classList.remove('hidden'); 
             setTimeout(() => document.getElementById('instaCookieModal').classList.add('active'), 10); 
         }
@@ -575,32 +585,16 @@
 
         function handleInstaSubmit(e) {
             e.preventDefault();
-            
-            // UPDATE: Check time HERE instead of before opening modal
-            if (!checkInstaTime()) {
-                closeInstaModal();
-                openInstaClosedPopup(); // Show the popup saying it's closed and the timing
-                return;
-            }
-
+            if (!checkInstaTime()) { closeInstaModal(); openInstaClosedPopup(); return; }
             if(!checkInstaLimit()) return;
-
             const submitBtn = document.getElementById('instaSubmitBtn');
             const form = document.getElementById('instaForm');
-            // Using FormData for reliable submission
             const formData = new FormData(form);
-            // Append timestamp manually
             formData.append("timestamp", new Date().toLocaleString());
-            // NEW: Append service type so backend knows (optional, but good practice)
             formData.append("service_type", currentInstaType);
-
-            // UI Feedback
             const originalBtnContent = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> পাঠানো হচ্ছে...';
             submitBtn.disabled = true;
-
-            // Using fetch with no-cors mode for Google Forms/Scripts
-            // IMPORTANT: Using dynamic URL based on selection
             fetch(currentInstaScriptUrl, {
                 method: "POST",
                 body: formData,
@@ -629,32 +623,25 @@
             const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
             if (!jobData) return;
             currentBuyJob = jobData;
-            
             document.getElementById('buyQuantity').value = "";
             document.getElementById('buyerName').value = "";
             document.getElementById('buyerPhone').value = "";
             document.getElementById('buyTotalDisplayBox').classList.add('hidden');
-            
             const phoneLabel = document.getElementById('buyerPhoneLabel');
             const phoneInput = document.getElementById('buyerPhone');
-            
             if (jobData.id === 'youtube_premium') { phoneLabel.innerText = "ইমেইল এড্রেস (যেটাতে প্রিমিয়াম নিবেন)"; phoneInput.placeholder = "example@gmail.com"; phoneInput.type = "email"; phoneInput.onkeypress = null; } 
             else { phoneLabel.innerText = "মোবাইল নাম্বার (যোগাযোগের জন্য)"; phoneInput.placeholder = "01XXXXXXXXX"; phoneInput.type = "tel"; phoneInput.onkeypress = (event) => event.charCode >= 48 && event.charCode <= 57; }
-
             const staticNameEl = document.getElementById('buyProductName');
             const variableSelectContainer = document.getElementById('buyVariableSelectContainer');
             const variableSelect = document.getElementById('buyVariableSelect');
-            
             currentUnitPrice = jobData.buyPriceUnit || 0;
             if (jobData.id === 'youtube_premium') { document.getElementById('buyQuantity').value = 1; document.getElementById('buyQuantity').disabled = true; } else { document.getElementById('buyQuantity').disabled = false; }
-
             if (jobData.type === 'variable_product' || jobData.type === 'vpn_bundle') {
                 staticNameEl.classList.add('hidden'); variableSelectContainer.classList.remove('hidden'); variableSelect.innerHTML = '';
                 if (jobData.type === 'variable_product') { Object.entries(jobData.options).forEach(([key, opt]) => { if (opt.status === 'active') { const option = document.createElement('option'); option.value = key; option.text = `${opt.name}`; option.dataset.price = opt.price; variableSelect.appendChild(option); } }); } 
                 else if (jobData.type === 'vpn_bundle') { MASTER_CONTROL.vpnList.forEach(vpn => { const option = document.createElement('option'); option.value = vpn; option.text = vpn; option.dataset.price = 30; variableSelect.appendChild(option); }); }
                 if(variableSelect.options.length > 0) currentUnitPrice = parseFloat(variableSelect.options[0].dataset.price) || 0;
             } else { staticNameEl.classList.remove('hidden'); variableSelectContainer.classList.add('hidden'); staticNameEl.innerText = jobData.buyName; }
-            
             updateBuyTotal();
             const buyVideoContainer = document.getElementById('buyVideoContainer');
             if(jobData.sellVideo) { buyVideoContainer.classList.remove('hidden'); document.getElementById('buyVideoLinkBtn').href = jobData.sellVideo; } else buyVideoContainer.classList.add('hidden');
@@ -672,45 +659,25 @@
 
         function closeBuyModal() { document.getElementById('buyModal').classList.remove('active'); setTimeout(() => document.getElementById('buyModal').classList.add('hidden'), 200); }
 
-        function copyToClipboard(text) {
-            // Create a text area
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            
-            // Ensure it's not visible but part of the DOM
-            textArea.style.position = "fixed";
-            textArea.style.left = "-9999px";
-            textArea.style.top = "0";
-            document.body.appendChild(textArea);
-            
-            textArea.focus();
-            textArea.select();
-            
-            // For mobile devices
-            textArea.setSelectionRange(0, 99999); 
+        // NEW LOGIC: Modal for redirecting to Telegram
+        let currentRedirectUrl = "";
 
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                     showToast("মেসেজ কপি হয়েছে! টেলিগ্রামে পেস্ট করুন।", "success");
-                } else {
-                     // Try modern API if execCommand fails (rare fallback)
-                     if(navigator.clipboard && navigator.clipboard.writeText) {
-                         navigator.clipboard.writeText(text)
-                             .then(() => showToast("মেসেজ কপি হয়েছে! টেলিগ্রামে পেস্ট করুন।", "success"))
-                             .catch(() => showToast("কপি করা যায়নি, ম্যানুয়ালি লিখুন।", "error"));
-                     } else {
-                        showToast("কপি করা যায়নি, ম্যানুয়ালি লিখুন।", "error");
-                     }
-                }
-            } catch (err) {
-                console.error('Copy failed', err);
-                showToast("কপি এরর! ম্যানুয়ালি লিখুন।", "error");
-            }
-            
-            document.body.removeChild(textArea);
+        function showSuccessModal(url) {
+            currentRedirectUrl = url;
+            closeModal();
+            closeBuyModal();
+            document.getElementById('successRedirectModal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('successRedirectModal').classList.add('active'), 10);
         }
-        
+
+        function handleRedirect() {
+            if(currentRedirectUrl) {
+                window.open(currentRedirectUrl, '_blank');
+                document.getElementById('successRedirectModal').classList.remove('active');
+                setTimeout(() => document.getElementById('successRedirectModal').classList.add('hidden'), 200);
+            }
+        }
+
         function handleBuySubmit(e) {
             e.preventDefault();
             if(!checkShopStatus(currentBuyJob ? currentBuyJob.id : null)) { closeBuyModal(); attemptAction('buy'); return; }
@@ -725,23 +692,16 @@
             if(!name || !qty || !phoneOrEmail) return showToast("অনুগ্রহ করে সব তথ্য দিন", "error");
             if (currentBuyJob.id !== 'youtube_premium') { if (!/^01\d{9}$/.test(phoneOrEmail)) return showToast("সঠিক মোবাইল নাম্বার দিন (১১ ডিজিট)", "error"); } else { if (!phoneOrEmail.includes('@')) return showToast("সঠিক ইমেইল এড্রেস দিন", "error"); }
             
-            // Fixed: This function is now defined
             const dateTime = getBengaliDateTime();
-            
             let msg = `*অর্ডার রিকোয়েস্ট (Buy)* %0Aসময়: ${dateTime} %0A------------------ %0Aপ্রোডাক্ট: ${productName} %0Aপরিমাণ: ${qty} পিস %0Aমোট দাম: ${finalPriceText} %0A------------------ %0Aক্রেতা: ${name} %0A`;
             if (currentBuyJob.id === 'youtube_premium') msg += `ইমেইল (Premium): ${phoneOrEmail} %0A`; else msg += `নাম্বার: ${phoneOrEmail} %0A`;
             msg += `*আমি নিতে চাই। জমা দিন।%2A`;
-            
-            // Clean up %0A for clipboard copy
+
             const decodedMsg = decodeURIComponent(msg).replace(/%0A/g, '\n');
-            
-            // Use the robust copy function
             copyToClipboard(decodedMsg);
 
-            setTimeout(() => { 
-                window.open(`https://t.me/${MASTER_CONTROL.admin.telegramUser}`, '_blank'); 
-                closeBuyModal(); 
-            }, 1000);
+            // Show Success Modal instead of direct open
+            showSuccessModal(`https://t.me/${MASTER_CONTROL.admin.telegramUser}`);
         }
 
         const uploadModal = document.getElementById('uploadModal');
@@ -788,7 +748,18 @@
                 if (jobData.sellVideo) { document.getElementById('videoContainer').classList.remove('hidden'); document.getElementById('videoLinkBtn').href = jobData.sellVideo; } else document.getElementById('videoContainer').classList.add('hidden');
                 const dynArea = document.getElementById('dynamicInputArea'); dynArea.classList.remove('hidden'); document.getElementById('dynamicText').placeholder = jobData.sellPlaceholder || "";
                 const isAuto = (jobId === 'gmail'); document.getElementById('autoFormatBtn').classList.toggle('hidden', !isAuto);
-                document.getElementById('paymentLabel').innerText = (jobId === 'whatsapp_rent') ? "WhatsApp নাম্বার" : "বিকাশ নাম্বার";
+                
+                // Keep the label static as per new requirement, or conditionally update if really needed, 
+                // but user asked for a specific static text change in the HTML. 
+                // We will ensure the HTML static text is used, but if JS overrides it, we need to fix it here.
+                // The HTML has the new text. We should only override if it's "whatsapp_rent".
+                const paymentLabel = document.getElementById('paymentLabel');
+                if (jobId === 'whatsapp_rent') {
+                    paymentLabel.innerHTML = 'WhatsApp নাম্বার <span class="text-[10px] text-blue-500 block font-normal">(এই নাম্বারে পেমেন্ট কনফার্মেশন মেসেজ যাবে)</span>';
+                } else {
+                    paymentLabel.innerHTML = 'বিকাশ ও হোয়াটসঅ্যাপ নাম্বার <span class="text-[10px] text-blue-500 block font-normal">(এই নাম্বারে পেমেন্ট কনফার্মেশন মেসেজ যাবে)</span>';
+                }
+
                 if (jobData.sellRequirements.length > 0) { document.getElementById('requirementsBox').classList.remove('hidden'); document.getElementById('reqText').innerText = "অবশ্যই দেখুন: " + jobData.sellRequirements.join(", "); } else document.getElementById('requirementsBox').classList.add('hidden');
                 validateForm();
             }
@@ -868,45 +839,29 @@
                 totalSellPriceMsg = `সম্ভাব্য বিল: ${total} টাকা (${countToSend} x ${jobData.sellPriceUnit})`; 
             }
             
-            // Getting Bengali Date Time using the existing function
             const dateTime = getBengaliDateTime();
             
-            // Constructing message with simple newlines first to avoid URL breaking issues
-            let msgParts = [];
-            msgParts.push(`*নতুন কাজ জমা (Sell)*`);
-            msgParts.push(`সময়: ${dateTime}`);
-            msgParts.push(`------------------`);
-            msgParts.push(`কাজ: ${jobData.title}`);
-            msgParts.push(`নাম: ${name}`);
-            msgParts.push(`পেমেন্ট নাম্বার: ${contact}`);
-            
+            // MOVED LOGIC: Using Telegram logic
+            let msg = `*নতুন কাজ জমা (Sell)* %0Aসময়: ${dateTime} %0A------------------ %0Aকাজ: ${jobData.title} %0Aনাম: ${name} %0Aপেমেন্ট নাম্বার: ${contact} %0A`;
             if (jobId === 'gmail' || jobId === 'facebook') {
-                msgParts.push(`মোট পরিমাণ (Unique): ${countToSend} পিস`);
+                msg += `মোট পরিমাণ (Unique): ${countToSend} পিস %0A`;
             }
             
             if (totalSellPriceMsg) {
-                msgParts.push(totalSellPriceMsg);
+                msg += `${totalSellPriceMsg} %0A`;
             }
             
-            msgParts.push(`------------------`);
+            msg += `------------------ %0A`;
             
             if (details) {
-                msgParts.push(`লিস্ট:`);
-                msgParts.push(details);
+                msg += `লিস্ট:%0A${encodeURIComponent(details)}`;
             }
 
-            // Join with newline characters
-            const finalMsg = msgParts.join('\n');
-            const decodedMsg = finalMsg; // Already a string
-
-            // Use the robust copy function
+            const decodedMsg = decodeURIComponent(msg).replace(/%0A/g, '\n');
             copyToClipboard(decodedMsg);
-            
-            setTimeout(() => { 
-                // Encoding the ENTIRE message at once ensures no broken links
-                window.open(`https://t.me/${MASTER_CONTROL.admin.telegramUser}`, '_blank'); 
-                closeModal(); 
-            }, 1000);
+
+            // Show Success Modal instead of direct open
+            showSuccessModal(`https://t.me/${MASTER_CONTROL.admin.telegramUser}`);
         }
 
         const menuBtn = document.getElementById('mobileMenuBtn');
