@@ -1,886 +1,1040 @@
 <!DOCTYPE html>
-<html lang="bn" class="scroll-smooth">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="description" content="MF Tifor - Trusted Buy & Sell Platform for Social Media Accounts">
-    <title>MF Tifor</title>
-    
-    <link rel="preconnect" href="https://cdn.tailwindcss.com">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
-
+    <title>স্মার্ট টিউশন - Command Center</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: { primary: '#4F46E5', secondary: '#9333EA' },
-                    fontFamily: { sans: ['Hind Siliguri', 'sans-serif'] },
-                    animation: {
-                        'blob': 'blob 10s infinite',
-                        'bounce-slow': 'bounce 3s infinite',
-                        'highlight-card': 'highlightPulse 2s ease-in-out infinite',
-                    },
-                    keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        },
-                        highlightPulse: {
-                            '0%': { transform: 'scale(1)', borderColor: '#4F46E5', boxShadow: '0 0 0 0 rgba(79, 70, 229, 0.7)' },
-                            '50%': { transform: 'scale(1.05)', borderColor: '#9333EA', boxShadow: '0 0 20px 10px rgba(147, 51, 234, 0.2)' },
-                            '100%': { transform: 'scale(1)', borderColor: '#4F46E5', boxShadow: '0 0 0 0 rgba(79, 70, 229, 0)' }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
-        body { font-family: 'Hind Siliguri', sans-serif; -webkit-tap-highlight-color: transparent; overflow-x: hidden; touch-action: manipulation; }
-        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.5); }
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 10000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90%; max-width: 400px; }
-        .toast { pointer-events: auto; display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-radius: 16px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.15); font-weight: 600; font-size: 14px; animation: slideIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); border: 1px solid rgba(0,0,0,0.05); transition: all 0.3s; }
-        .toast-success { border-left: 5px solid #10B981; color: #065F46; }
-        .toast-error { border-left: 5px solid #EF4444; color: #7F1D1D; }
-        .toast-info { border-left: 5px solid #3B82F6; color: #1E40AF; }
-        .dynamic-bg { background: linear-gradient(-45deg, #fdfbfb, #e0c3fc, #e0eafc, #f5f7fa); background-size: 400% 400%; animation: gradientBG 15s ease infinite; }
-        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .glass-card { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(255, 255, 255, 1); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05); transform: translateZ(0); position: relative; z-index: 10; transition: transform 0.3s ease, box-shadow 0.3s ease; }
-        @media (max-width: 768px) { .dynamic-bg { background: #f8fafc; animation: none; } .glass, .glass-card { backdrop-filter: none; -webkit-backdrop-filter: none; background: #ffffff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); } input, select, textarea { font-size: 16px !important; } button, a { min-height: 44px; } }
-        .modal { transition: opacity 0.2s ease-out, visibility 0.2s; opacity: 0; visibility: hidden; z-index: 9999; }
-        .modal.active { opacity: 1; visibility: visible; pointer-events: auto; }
-        .modal-content { transform: scale(0.95) translateY(10px); transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform; }
-        .modal.active .modal-content { transform: scale(1) translateY(0); }
-        #shopClosedPopup { z-index: 10001; }
-        ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; } .scrollbar-hide::-webkit-scrollbar { display: none; } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        body { font-family: 'Noto Sans Bengali', sans-serif; background-color: #f8fafc; -webkit-tap-highlight-color: transparent; }
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Unique Violet & Fuchsia Brand UI */
+        .glass-card { background: rgba(255, 255, 255, 0.98); border-radius: 16px; box-shadow: 0 4px 25px rgba(124, 58, 237, 0.05); border: 1px solid rgba(124, 58, 237, 0.1); }
+        .ai-text-gradient { background: linear-gradient(135deg, #7c3aed, #db2777); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* NEW: Bouncing Progress Bar & Dots Loader */
+        #loader { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); background: rgba(124, 58, 237, 0.95); color: white; padding: 8px 18px; border-radius: 30px; z-index: 9999; display: flex; flex-direction: column; align-items: center; gap: 4px; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3); }
+        
+        .bounce-progress { width: 80px; height: 3px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; position: relative; }
+        .bounce-progress::after { content: ''; position: absolute; left: 0; top: 0; height: 100%; width: 40%; background: white; border-radius: 4px; animation: bounce-bar 0.8s infinite alternate ease-in-out; }
+        @keyframes bounce-bar { 0% { left: 0%; transform: translateX(0); } 100% { left: 100%; transform: translateX(-100%); } }
+        
+        .bounce-dots { display: inline-flex; gap: 3px; align-items: center; }
+        .bounce-dots div { width: 5px; height: 5px; background: currentColor; border-radius: 50%; animation: dot-bounce 0.4s infinite alternate; }
+        .bounce-dots div:nth-child(2) { animation-delay: 0.15s; }
+        .bounce-dots div:nth-child(3) { animation-delay: 0.3s; }
+        @keyframes dot-bounce { to { transform: translateY(-4px); } }
+
+        .red-dot { position: absolute; top: -2px; right: -2px; width: 12px; height: 12px; background-color: #ef4444; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(239, 68, 68, 0.6); animation: pulseRed 2s infinite; }
+        @keyframes pulseRed { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 50% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        
+        .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15); }
+        
+        #sync-indicator { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.8); color: white; padding: 6px 14px; border-radius: 20px; font-size: 10px; font-weight: bold; z-index: 100; opacity: 0; transition: 0.3s; pointer-events: none; display: flex; align-items: center; gap: 6px; backdrop-filter: blur(5px); }
+        #sync-indicator.active { opacity: 1; }
+        .nasa-panel { background: linear-gradient(145deg, #0f172a, #1e293b); color: #f8fafc; }
+        
+        .ai-pulse-icon { animation: aiPulse 2s infinite; }
+        @keyframes aiPulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.5); } 50% { transform: scale(1.05); } 70% { box-shadow: 0 0 0 8px rgba(79, 70, 229, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); } }
     </style>
 </head>
-<body class="dynamic-bg min-h-screen text-slate-800 antialiased selection:bg-purple-100 selection:text-purple-700">
+<body class="text-gray-800 antialiased min-h-screen flex flex-col selection:bg-violet-200 selection:text-violet-900">
 
-    <div id="toast-container"></div>
-
-    <nav class="fixed w-full z-50 glass shadow-sm transition-all duration-300">
-        <div class="container mx-auto px-4 md:px-6 h-16 flex justify-between items-center relative z-50">
-            <a href="#" class="text-3xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:scale-105 transition transform z-50">MF Tifor</a>
-            <div class="hidden md:flex items-center space-x-8 font-bold text-[15px]">
-                <a href="#home" class="text-slate-700 hover:text-primary transition relative group">হোম <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span></a>
-                <a href="#opportunities" class="text-slate-700 hover:text-primary transition relative group">সার্ভিস তালিকা <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span></a>
-                <button onclick="attemptAction('upload')" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full hover:shadow-lg hover:shadow-blue-500/30 transition transform hover:-translate-y-0.5 active:scale-95 flex items-center gap-2 text-sm font-bold cursor-pointer"><i class="fas fa-paper-plane"></i> কাজ জমা দিন</button>
-            </div>
-            <button id="mobileMenuBtn" aria-label="Menu" class="md:hidden w-10 h-10 flex items-center justify-center text-slate-700 bg-white/50 rounded-full shadow-sm border border-slate-200 active:scale-90 transition relative z-50"><i class="fas fa-bars text-lg"></i></button>
-        </div>
-        <div id="mobileMenu" class="md:hidden absolute top-16 left-0 w-full bg-white/95 backdrop-blur-xl border-b border-slate-100 shadow-xl transition-all duration-300 origin-top transform scale-y-0 opacity-0 overflow-hidden z-40">
-            <div class="p-5 space-y-3 font-bold text-center">
-                <a href="#home" onclick="toggleMobileMenu()" class="block p-4 rounded-xl bg-slate-50 text-slate-700 active:bg-blue-50">হোম</a>
-                <a href="#opportunities" onclick="toggleMobileMenu()" class="block p-4 rounded-xl bg-slate-50 text-slate-700 active:bg-blue-50">সার্ভিস তালিকা</a>
-                <button onclick="attemptAction('upload'); toggleMobileMenu()" class="w-full mt-2 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl shadow-lg font-bold">কাজ জমা দিন</button>
-            </div>
-        </div>
-    </nav>
-
-    <section id="home" class="pt-32 pb-20 px-4 relative overflow-hidden z-0">
-        <div class="absolute top-20 right-0 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob"></div>
-        <div class="absolute top-40 left-0 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
-        <div class="container mx-auto max-w-4xl text-center relative z-10">
-            <div class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/80 border border-blue-200 shadow-lg text-xs md:text-sm font-extrabold text-blue-700 mb-6 animate-bounce"><span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span> বিশ্বস্ত সোর্স - ১০০% পেমেন্ট গ্যারান্টি 🚀</div>
-            <div class="mb-6 flex justify-center">
-                <p class="text-base md:text-xl font-bold text-slate-800 bg-white/60 backdrop-blur-md py-3 px-8 rounded-2xl shadow-sm border border-slate-200/50 flex items-center gap-2"><i class="fas fa-clock text-blue-600"></i> সকাল ০৫:০০ টা থেকে রাত ১০:০০ টা পর্যন্ত ওয়েবসাইট এ সকল কেনাবেচা করতে পারবেন</p>
-            </div>
-            <h1 class="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-[1.15] text-slate-900 drop-shadow-sm">অনলাইনে ইনকাম এবং <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600">অ্যাকাউন্ট কেনা-বেচা</span></h1>
-            <p class="text-base md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed font-medium bg-white/30 backdrop-blur-sm p-4 rounded-2xl border border-white/50">MF Tifor এর সাথে যুক্ত হয়ে সোশ্যাল মিডিয়া অ্যাকাউন্ট কিনুন অথবা আপনার অ্যাকাউন্ট বিক্রি করে আয় করুন।</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center w-full px-2">
-                <a id="heroStartLink" href="#opportunities" class="w-full sm:w-auto px-8 py-4 bg-slate-900 text-white rounded-xl text-lg font-bold shadow-xl hover:shadow-2xl hover:bg-slate-800 transition transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2 cursor-pointer z-20"><i class="fas fa-bolt text-yellow-400"></i> শুরু করুন</a>
-                <a id="heroYoutubeLink" href="#" target="_blank" class="w-full sm:w-auto px-8 py-4 bg-red-600 text-white rounded-xl text-lg font-bold shadow-xl hover:bg-red-700 hover:shadow-red-500/30 transition transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2 cursor-pointer z-20"><i class="fab fa-youtube"></i> টিউটোরিয়াল দেখুন</a>
-            </div>
-        </div>
-    </section>
-
-    <section id="opportunities" class="py-12 px-4 mb-20 relative z-10">
-        <div class="container mx-auto max-w-6xl">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-2">সার্ভিস তালিকা</h2>
-                <p class="text-slate-600 font-medium">নিচের অপশনগুলো থেকে কিনুন অথবা সেল করুন</p>
-                <div id="shopStatusBanner" class="mt-4 inline-block px-4 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-600 border border-blue-100"><i class="fas fa-clock"></i> সময়সূচী: সকাল ০৫:০০ - রাত ১০:০০</div>
-            </div>
-            <div class="glass-card p-5 rounded-2xl shadow-lg mb-8 border border-white/60">
-                <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
-                    <div class="relative w-full md:w-1/2 group">
-                        <input type="text" id="searchInput" placeholder="খুঁজুন (যেমন: Gmail, Facebook)..." class="w-full pl-12 pr-4 py-3 bg-white/80 border border-slate-200 focus:border-blue-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-200 text-slate-800 font-bold shadow-sm transition appearance-none">
-                        <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 group-hover:text-blue-500 transition"></i>
-                    </div>
-                    <div class="flex items-center gap-3 w-full md:w-auto bg-white/80 p-1.5 rounded-xl shadow-sm border border-slate-200">
-                        <select id="statusFilter" class="bg-transparent border-none font-bold text-slate-700 focus:ring-0 cursor-pointer text-sm py-2 px-2 outline-none w-full md:w-auto appearance-none">
-                            <option value="all">সব দেখুন</option>
-                            <option value="active">🟢 এক্টিভ</option>
-                            <option value="closed">🔴 বন্ধ</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="flex gap-2 mt-4 overflow-x-auto pb-2 scrollbar-hide justify-start">
-                    <button onclick="setCategory('all')" id="btn-all" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold bg-slate-900 text-white transition shadow-md whitespace-nowrap">সব</button>
-                    <button onclick="setCategory('hybrid')" id="btn-hybrid" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap">বাই & সেল</button>
-                    <button onclick="setCategory('mail')" id="btn-mail" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap"><i class="fas fa-envelope"></i> Mails</button>
-                    <button onclick="setCategory('vpn')" id="btn-vpn" class="filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap"><i class="fas fa-shield-alt"></i> VPN</button>
-                </div>
-            </div>
-            <div id="opportunitiesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-        </div>
-    </section>
-
-    <section class="bg-slate-900 border-t border-slate-800 py-16 px-4 text-white relative z-10">
-        <div class="container mx-auto max-w-4xl text-center">
-            <h2 class="text-3xl font-black mb-8">যোগাযোগ করুন</h2>
-            <div class="flex flex-col sm:flex-row justify-center gap-6">
-                <!-- Telegram Admin -->
-                <a id="footerWhatsappLink" href="#" target="_blank" class="flex items-center justify-center gap-3 bg-[#0088cc] hover:bg-[#0077b5] text-white py-4 px-10 rounded-2xl text-xl font-bold shadow-xl hover:shadow-blue-500/30 transition transform hover:-translate-y-1"><i class="fab fa-telegram-plane text-3xl"></i> Telegram (Admin)</a>
-                <!-- Telegram Channel -->
-                <a id="footerTelegramLink" href="#" target="_blank" class="flex items-center justify-center gap-3 bg-[#229ED9] hover:bg-[#1f8dbf] text-white py-4 px-10 rounded-2xl text-xl font-bold shadow-xl hover:shadow-blue-500/30 transition transform hover:-translate-y-1"><i class="fab fa-telegram-plane text-3xl"></i> Telegram Channel</a>
-            </div>
-            <p class="text-slate-500 text-sm mt-12">&copy; 2026 MF Tifor. All rights reserved.</p>
-        </div>
-    </section>
-
-    <!-- POPUPS -->
-    <div id="shopClosedPopup" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/80 backdrop-blur-md">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden modal-content p-8 text-center relative z-50">
-            <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 animate-pulse"><i class="fas fa-store-slash"></i></div>
-            <h3 class="text-2xl font-black text-slate-800 mb-2">MF Tifor এখন বন্ধ!</h3>
-            <p class="text-slate-500 font-bold mb-6">কেনা-বেচার সময়:<br><span class="text-emerald-600">সকাল ০৫:০০ টা</span> থেকে <span class="text-red-500">রাত ১০:০০ টা</span> পর্যন্ত (BD Time)।</p>
-            <button onclick="closeClosedPopup()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition">ঠিক আছে</button>
-        </div>
+    <!-- Bouncing Progress Bar Loader -->
+    <div id="loader" class="hidden">
+        <span class="text-[10px] tracking-widest uppercase mb-1">প্রসেসিং...</span>
+        <div class="bounce-progress"></div>
+    </div>
+    
+    <div id="sync-indicator">
+        <div class="bounce-dots text-white mr-1"><div></div><div></div><div></div></div> রিয়েল-টাইম সিঙ্ক
     </div>
 
-    <!-- NEW SUCCESS REDIRECT POPUP -->
-    <div id="successRedirectModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/80 backdrop-blur-md">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden modal-content p-8 text-center relative z-50">
-            <div class="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6 animate-bounce"><i class="fas fa-check"></i></div>
-            <h3 class="text-2xl font-black text-slate-800 mb-2">কপি করা হয়েছে! ✅</h3>
-            <p class="text-slate-500 font-bold mb-6 text-sm">অর্ডারের সকল তথ্য আপনার কিবোর্ডে কপি করা হয়েছে।<br>নিচের বাটনে ক্লিক করে টেলিগ্রামে পেস্ট করুন।</p>
-            <button id="redirectBtn" onclick="handleRedirect()" class="w-full py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition shadow-lg flex items-center justify-center gap-2">
-                <i class="fab fa-telegram-plane"></i> টেলিগ্রামে যান
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-violet-700 to-fuchsia-600 text-white shadow-lg sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <h1 class="text-lg md:text-2xl font-black flex items-center gap-2 tracking-tight">
+                <i class="fa-solid fa-bolt text-yellow-300"></i> স্মার্ট টিউশন
+            </h1>
+            <button id="logout-btn" class="hidden bg-white/20 hover:bg-white/30 backdrop-blur-md px-4 py-2 rounded-xl text-xs font-bold transition shadow">
+                লগআউট <i class="fa-solid fa-right-from-bracket ml-1"></i>
             </button>
         </div>
-    </div>
+    </header>
 
-    <div id="instaClosedPopup" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/80 backdrop-blur-md">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden modal-content p-8 text-center relative z-50">
-            <div class="w-20 h-20 bg-pink-50 text-pink-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-6"><i class="fab fa-instagram"></i></div>
-            <h3 class="text-2xl font-black text-slate-800 mb-2">সার্ভিসটি এখন বন্ধ!</h3>
-            <p class="text-slate-500 font-bold mb-6">Instagram Cookies জমা দেওয়া যাবে শুধুমাত্র:<br><span class="text-purple-600">দুপুর ০৩:০০ টা</span> থেকে <span class="text-red-500">রাত ১১:৫৯ মি.</span> পর্যন্ত।</p>
-            <button onclick="closeInstaClosedPopup()" class="w-full py-3 bg-slate-900 text-white rounded-xl font-bold hover:bg-slate-800 transition">ঠিক আছে</button>
-        </div>
-    </div>
+    <main class="container mx-auto px-3 md:px-4 py-6 md:py-8 flex-grow relative w-full max-w-5xl overflow-hidden">
 
-    <div id="choiceModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden modal-content p-6 text-center relative z-50">
-            <button onclick="closeChoiceModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition"><i class="fas fa-times"></i></button>
-            <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"><i class="fas fa-exchange-alt"></i></div>
-            <h3 class="text-xl font-black text-slate-800 mb-2">কি করতে চান?</h3>
-            <p class="text-slate-500 text-sm mb-6 font-medium">নিচের যে কোনো একটি অপশন বেছে নিন</p>
-            <div class="space-y-3">
-                <button onclick="handleChoice('buy')" class="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold shadow-lg hover:shadow-emerald-500/30 transition transform active:scale-95 flex items-center justify-center gap-3 cursor-pointer"><i class="fas fa-shopping-cart"></i> কিনতে চাই (Buy)</button>
-                <button onclick="handleChoice('sell')" class="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold shadow-lg hover:shadow-slate-500/30 transition transform active:scale-95 flex items-center justify-center gap-3 cursor-pointer"><i class="fas fa-wallet"></i> বিক্রি করতে চাই (Sell)</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="instaChoiceModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden modal-content p-6 text-center relative z-50">
-            <button onclick="closeInstaChoiceModal()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-slate-100 text-slate-500 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition"><i class="fas fa-times"></i></button>
-            <div class="w-16 h-16 bg-pink-50 text-pink-600 rounded-full flex items-center justify-center text-3xl mx-auto mb-4"><i class="fab fa-instagram"></i></div>
-            <h3 class="text-xl font-black text-slate-800 mb-2">কোন সার্ভিসটি চান?</h3>
-            <p class="text-slate-500 text-sm mb-6 font-medium">নিচের যে কোনো একটি অপশন বেছে নিন</p>
-            <div class="space-y-3">
-                <button onclick="handleInstaChoice('cookies')" class="w-full py-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white rounded-xl font-bold shadow-lg hover:shadow-pink-500/30 transition transform active:scale-95 flex items-center justify-center gap-3 cursor-pointer"><i class="fas fa-cookie-bite"></i> Instagram Cookies</button>
-                <button onclick="handleInstaChoice('2fa')" class="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold shadow-lg hover:shadow-slate-500/30 transition transform active:scale-95 flex items-center justify-center gap-3 cursor-pointer"><i class="fas fa-shield-alt"></i> Instagram 2FA</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="uploadModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/70 backdrop-blur-md">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden modal-content flex flex-col max-h-[90vh] relative z-50">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
-                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2"><span class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-blue-600"><i class="fas fa-paper-plane"></i></span> কাজ জমা দিন (Sell)</h3>
-                <button onclick="closeModal()" class="w-10 h-10 rounded-full bg-slate-50 text-slate-500 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar">
-                <div id="videoContainer" class="mb-6 hidden">
-                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 flex items-center justify-between gap-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center text-red-600 shadow-sm shrink-0"><i class="fab fa-youtube text-lg"></i></div>
-                            <div class="text-left"><p class="text-sm font-bold text-slate-800">কিভাবে জমা দিবেন?</p><p class="text-[10px] text-slate-500 font-bold">নিয়মটি জানতে ভিডিও দেখুন</p></div>
-                        </div>
-                        <a id="videoLinkBtn" href="#" target="_blank" class="px-4 py-2 bg-red-600 text-white text-xs font-bold rounded-lg hover:bg-red-700 transition shadow-md whitespace-nowrap flex items-center gap-2"><i class="fas fa-play"></i> ভিডিও দেখুন</a>
-                    </div>
+        <!-- 1. AUTHENTICATION SECTION -->
+        <section id="auth-section" class="w-full max-w-md mx-auto fade-in hidden">
+            <div class="glass-card p-6 md:p-8 border-t-4 border-t-violet-500">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-violet-100 text-violet-600 rounded-full flex items-center justify-center mx-auto mb-3"><i class="fa-solid fa-user-astronaut text-3xl"></i></div>
+                    <h2 class="text-2xl font-black text-gray-800">অ্যাক্সেস পোর্টাল</h2>
+                    <p class="text-xs text-gray-500 mt-1 font-bold uppercase tracking-widest">স্টুডেন্ট লগইন প্যানেল</p>
                 </div>
-                <form onsubmit="handleSellSubmit(event)" class="space-y-5" autocomplete="off">
+
+                <div class="flex mb-6 bg-gray-100 rounded-xl p-1.5 shadow-inner">
+                    <button id="tab-login" class="flex-1 py-2.5 bg-white rounded-lg shadow-sm text-violet-700 font-black transition text-sm" onclick="switchAuthTab('login')">লগইন</button>
+                    <button id="tab-register" class="flex-1 py-2.5 text-gray-400 font-bold transition text-sm hover:text-gray-600" onclick="switchAuthTab('register')">রেজিস্ট্রেশন</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="space-y-4">
+                    <div><label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-1">মোবাইল নাম্বার</label><input type="tel" id="login-phone" autocomplete="username" required class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white text-sm font-bold font-mono transition"></div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">কাজের ধরন</label>
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-1">পাসওয়ার্ড</label>
+                        <div class="relative"><input type="password" id="login-pass" autocomplete="current-password" required class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white text-sm pr-10 font-mono transition"><button type="button" onclick="togglePass('login-pass', this)" class="absolute right-3 top-3.5 text-gray-400 hover:text-violet-600"><i class="fa-solid fa-eye"></i></button></div>
+                    </div>
+                    <button type="submit" class="w-full bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white py-3.5 rounded-xl font-black shadow-lg shadow-violet-200 hover:shadow-violet-300 transition active:scale-95 tracking-wider uppercase mt-4">প্রবেশ করুন</button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" class="space-y-4 hidden">
+                    <div class="flex justify-center mb-3">
                         <div class="relative">
-                            <select id="jobSelector" onchange="handleJobChange()" class="w-full pl-4 pr-10 py-3.5 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-100 focus:border-blue-500 outline-none font-bold text-slate-700 appearance-none text-sm transition shadow-sm cursor-pointer"><option value="">এখানে ক্লিক করে সিলেক্ট করুন...</option></select>
-                            <div class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-500"><i class="fas fa-chevron-down text-xs"></i></div>
+                            <img id="profile-preview" src="https://via.placeholder.com/150?text=Upload+Photo" class="w-24 h-24 rounded-full border-4 border-white shadow-xl object-cover bg-gray-50">
+                            <label class="absolute bottom-0 right-0 bg-violet-600 text-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:scale-110 transition border-2 border-white"><i class="fa-solid fa-camera text-xs"></i><input type="file" id="reg-photo" accept="image/*" class="hidden" onchange="triggerCropper(event, 'profile-preview')"></label>
                         </div>
                     </div>
-                    <div id="requirementsBox" class="hidden p-4 bg-amber-50 border border-amber-100 rounded-xl"><div class="flex items-start gap-2"><i class="fas fa-exclamation-circle text-amber-500 mt-0.5"></i><p class="text-xs text-amber-800 font-bold" id="reqText"></p></div></div>
-                    <div class="grid grid-cols-1 gap-4">
-                        <div><label class="block text-xs font-bold text-slate-500 mb-1">আপনার নাম</label><input type="text" id="userName" required autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold appearance-none" placeholder="নাম লিখুন"></div>
-                        <!-- UPDATED LABEL -->
+                    <p class="text-[10px] text-fuchsia-600 text-center -mt-2 font-black uppercase tracking-wider">* প্রোফাইল ছবি বাধ্যতামূলক</p>
+
+                    <div><label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">নাম (English)</label><input type="text" id="reg-name" required oninput="this.value = this.value.replace(/[^A-Za-z0-9\s\.,'-]/g, '')" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-bold font-mono bg-gray-50 focus:bg-white"></div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">বাবার নাম</label><input type="text" id="reg-fname" required oninput="this.value = this.value.replace(/[^A-Za-z0-9\s\.,'-]/g, '')" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono bg-gray-50 focus:bg-white"></div>
+                        <div><label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">মায়ের নাম</label><input type="text" id="reg-mname" required oninput="this.value = this.value.replace(/[^A-Za-z0-9\s\.,'-]/g, '')" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono bg-gray-50 focus:bg-white"></div>
+                    </div>
+
+                    <div><label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">ঠিকানা (English)</label><input type="text" id="reg-address" required oninput="this.value = this.value.replace(/[^A-Za-z0-9\s\.,'-/#]/g, '')" class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono bg-gray-50 focus:bg-white"></div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">ক্লাস সিলেক্ট করুন</label><select id="reg-class" required class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-bold bg-gray-50 focus:bg-white"><option value="6">Class 6</option><option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option></select></div>
+                        <div><label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">পাসওয়ার্ড</label><div class="relative"><input type="password" id="reg-pass" autocomplete="new-password" required class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono font-bold pr-8 bg-gray-50 focus:bg-white"><button type="button" onclick="togglePass('reg-pass', this)" class="absolute right-2.5 top-3 text-gray-400"><i class="fa-solid fa-eye text-xs"></i></button></div></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">আপনার নাম্বার</label><input type="tel" id="reg-phone" autocomplete="username" required class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono font-bold bg-gray-50 focus:bg-white"></div>
+                        <div><label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">গার্জিয়ান নাম্বার</label><input type="tel" id="reg-guardian" required class="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm font-mono font-bold bg-gray-50 focus:bg-white"></div>
+                    </div>
+                    <button type="submit" class="w-full bg-gray-800 text-white py-3.5 rounded-xl font-black shadow-lg hover:bg-black transition mt-4 uppercase tracking-widest">রেজিস্ট্রেশন কমপ্লিট</button>
+                </form>
+
+                <div class="mt-8 text-center border-t border-gray-100 pt-5">
+                    <button onclick="openModal('admin-login-modal')" class="text-xs font-black text-gray-300 hover:text-violet-600 transition flex items-center justify-center mx-auto gap-2 tracking-widest uppercase"><i class="fa-solid fa-fingerprint"></i> এডমিন ওভাররাইড</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. STUDENT DASHBOARD -->
+        <section id="student-dashboard" class="hidden fade-in w-full max-w-4xl mx-auto space-y-5 pb-10">
+            
+            <div id="admission-lock-overlay" class="hidden absolute inset-0 z-30 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center rounded-2xl border border-gray-100 p-8 text-center shadow-2xl min-h-[500px]">
+                <div class="w-24 h-24 bg-fuchsia-50 rounded-full flex items-center justify-center mb-6 shadow-inner border border-fuchsia-100"><i class="fa-solid fa-user-lock text-4xl text-fuchsia-500"></i></div>
+                <h2 class="text-2xl md:text-3xl font-black text-gray-800 mb-3 tracking-tight">অ্যাকাউন্ট ভেরিফিকেশন বাকি!</h2>
+                <p class="text-sm text-gray-500 mb-8 max-w-sm font-medium leading-relaxed">স্মার্ট টিউশন পোর্টালে আপনাকে স্বাগতম। পোর্টালের সকল ফিচার ব্যবহারের জন্য আপনার চলতি বছরের ভর্তি ফি প্রদান করা আবশ্যক।</p>
+                
+                <button id="btn-submit-adm" onclick="openAdmissionPaymentModal()" class="w-full max-w-xs bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white px-8 py-4 rounded-2xl font-black shadow-xl shadow-violet-200 hover:shadow-violet-300 transition active:scale-95 flex items-center justify-center gap-3 text-sm tracking-wide">
+                    <i class="fa-solid fa-bolt"></i> ভর্তি ফি দিন (৳<span id="btn-adm-fee"></span>)
+                </button>
+                <button id="btn-pending-adm" disabled class="hidden w-full max-w-xs bg-gray-100 text-gray-400 px-8 py-4 rounded-2xl font-black border border-gray-200 cursor-not-allowed flex items-center justify-center gap-3 text-sm">
+                    <div class="bounce-dots text-gray-400"><div></div><div></div><div></div></div> যাচাই হচ্ছে...
+                </button>
+                <div id="admission-pending-notice" class="hidden mt-6 text-fuchsia-600 text-xs font-bold bg-fuchsia-50 border border-fuchsia-100 px-5 py-3 rounded-xl shadow-inner tracking-wide">আপনার পেমেন্টটি বর্তমানে এডমিন প্যানেলে রিভিউ অবস্থায় আছে।</div>
+            </div>
+
+            <div id="dashboard-main-content" class="space-y-5">
+                <!-- Advanced Profile Banner -->
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm relative overflow-hidden flex flex-col md:flex-row items-center md:items-start gap-5">
+                    <div class="absolute top-0 right-0 bg-violet-100 text-violet-800 px-4 py-1.5 rounded-bl-xl text-[10px] font-black tracking-widest uppercase">স্টুডেন্ট ড্যাশবোর্ড</div>
+                    <div class="relative group">
+                        <img id="std-dp" src="" class="w-24 h-24 md:w-28 md:h-28 rounded-full border-4 border-violet-50 shadow-md object-cover transition duration-300 group-hover:scale-105">
+                        <button onclick="openModal('std-edit-profile-modal')" class="absolute bottom-0 right-0 bg-violet-600 text-white w-8 h-8 rounded-full shadow-lg flex items-center justify-center hover:bg-fuchsia-500 transition border-2 border-white"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                    </div>
+                    <div class="flex-1 text-center md:text-left mt-2 md:mt-1">
+                        <h2 id="std-name" class="text-2xl md:text-3xl font-black text-gray-800 uppercase tracking-tighter mb-2">নাম</h2>
+                        <div class="flex flex-wrap justify-center md:justify-start gap-2 items-center mb-3">
+                            <div class="bg-gray-100 text-gray-600 px-3 py-1 rounded-md font-black text-xs border border-gray-200">ক্লাস <span id="std-class" class="text-violet-600 text-sm"></span></div>
+                            <div class="bg-violet-50 text-violet-800 px-3 py-1 rounded-md font-black text-xs border border-violet-100">নির্ধারিত ফি: ৳<span id="std-monthly-fee-display" class="text-sm"></span>/মাস</div>
+                        </div>
+                        <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider"><i class="fa-solid fa-fingerprint mr-1"></i> <span id="std-history-text"></span></p>
+                    </div>
+                </div>
+
+                <!-- Alerts -->
+                <div id="std-paused-alert" class="hidden bg-yellow-50 border border-yellow-200 text-yellow-800 p-3 rounded-lg text-sm font-bold shadow-sm">
+                    <i class="fa-solid fa-pause-circle text-yellow-600 mr-1.5"></i> আপনার টিউশনি এখন সাময়িক বিরতিতে (Paused) আছে।
+                </div>
+
+                <!-- NASA Level AI Insights -->
+                <div class="bg-white rounded-2xl p-5 border border-violet-100 shadow-lg relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-violet-500 to-fuchsia-500"></div>
+                    <div class="flex items-start gap-4 pl-2">
+                        <div class="w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center shrink-0 border border-violet-100 shadow-inner ai-pulse-icon"><i class="fa-solid fa-microchip text-2xl text-violet-600"></i></div>
+                        <div class="w-full pt-1">
+                            <div id="ai-analysis-text" class="text-xs md:text-sm text-gray-600 font-medium leading-relaxed">লজিক প্রসেস হচ্ছে...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Enhanced Financial Widget -->
+                    <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative group hover:shadow-md transition flex flex-col justify-between">
                         <div>
-                            <label id="paymentLabel" class="block text-xs font-bold text-slate-500 mb-1">
-                                বিকাশ ও হোয়াটসঅ্যাপ নাম্বার 
-                                <span class="text-[10px] text-blue-500 block font-normal">(এই নাম্বারে পেমেন্ট কনফার্মেশন মেসেজ যাবে)</span>
-                            </label>
-                            <input type="tel" id="userContact" oninput="debouncedValidate()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" required autocomplete="off" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-bold transition duration-200 appearance-none" placeholder="01XXXXXXXXX">
+                            <div class="absolute top-4 right-4 text-gray-200 group-hover:text-fuchsia-100 transition duration-500"><i class="fa-solid fa-file-invoice-dollar text-4xl"></i></div>
+                            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-50 pb-2">অর্থিক অবস্থা (Financial)</h3>
+                            
+                            <div class="mb-6">
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-1">বর্তমান বকেয়া</p>
+                                <h2 class="text-4xl font-black text-gray-800 tracking-tighter" id="txt-current-due">৳0</h2>
+                                <p id="std-payment-status" class="text-xs font-bold mt-2 h-5"></p>
+                            </div>
+                            
+                            <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 mb-6 shadow-inner">
+                                <div class="flex justify-between items-center text-xs text-gray-500 font-medium mb-2"><span>টিউশন ফি:</span><span id="txt-t-fee" class="font-mono">৳0</span></div>
+                                <div class="flex justify-between items-center text-xs text-gray-500 font-medium mb-2"><span>ম্যানেজমেন্ট ফি:</span><span id="txt-m-fee" class="font-mono">৳0</span></div>
+                                <div class="flex justify-between items-center text-xs text-gray-500 font-medium mb-3"><span>বিকাশ চার্জ (১.৮৫%):</span><span id="txt-c-fee" class="font-mono">৳0</span></div>
+                                <div class="flex justify-between items-center text-sm text-violet-700 pt-2 border-t border-dashed border-gray-200"><b class="uppercase tracking-widest text-[10px]">সর্বমোট রেট:</b><b id="txt-total-fee" class="font-black font-mono">৳0</b></div>
+                            </div>
+                        </div>
+                        <button id="btn-pay-monthly" onclick="openPaymentModal()" class="w-full bg-gray-900 hover:bg-black text-white font-black py-4 rounded-xl shadow-lg transition active:scale-95 text-xs uppercase tracking-widest mt-auto">বেতন পরিশোধ করুন</button>
+                    </div>
+
+                    <div class="space-y-5">
+                        <!-- Schedule Widget -->
+                        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm relative overflow-hidden">
+                            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-50 pb-2">একাডেমিক রুটিন</h3>
+                            <div class="space-y-3">
+                                <div class="bg-violet-50/50 p-4 rounded-xl border border-violet-100/50 flex justify-between items-center"><span class="text-[10px] text-violet-400 uppercase font-black tracking-wider"><i class="fa-solid fa-play text-[8px] mr-1"></i> আজকের সেশন</span><span id="std-today-class" class="font-black text-violet-700 text-sm font-mono">...</span></div>
+                                <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 flex justify-between items-center"><span class="text-[10px] text-gray-400 uppercase font-black tracking-wider"><i class="fa-solid fa-forward-step text-[8px] mr-1"></i> পরবর্তী সেশন</span><span id="std-next-class" class="font-bold text-gray-600 text-sm font-mono">...</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Payment History Widget -->
+                        <div class="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex-1">
+                            <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-4 border-b border-gray-50 pb-2">ট্রানজেকশন হিস্ট্রি</h3>
+                            <div class="table-scroll border border-gray-50 rounded-xl overflow-hidden max-h-48 overflow-y-auto">
+                                <table class="w-full text-left whitespace-nowrap text-xs">
+                                    <thead><tr class="bg-gray-50 text-gray-400 text-[9px] uppercase tracking-widest font-black sticky top-0"><th class="p-3">তারিখ</th><th class="p-3">বিবরণ</th><th class="p-3 text-right">টাকা</th><th class="p-3 text-center">স্ট্যাটাস</th></tr></thead>
+                                    <tbody id="std-payment-history" class="divide-y divide-gray-50 bg-white"></tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                    <div id="dynamicInputArea" class="hidden">
-                        <div class="flex flex-wrap justify-between items-end mb-2 gap-2">
-                            <div class="flex items-center gap-2"><label id="dynamicLabel" class="block text-xs font-bold text-slate-500">লিস্ট পেস্ট করুন</label><span id="lineCountDisplay" class="text-[10px] font-black px-2 py-0.5 rounded bg-slate-100 text-slate-600">Total: 0</span></div>
-                            <button type="button" onclick="performAutoFormat()" id="autoFormatBtn" class="hidden text-[10px] px-3 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-lg font-bold shadow-md hover:shadow-lg transition transform hover:scale-105 flex items-center gap-1"><i class="fas fa-magic"></i> অটো-সাজিয়ে নিন (Auto)</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. ADMIN DASHBOARD -->
+        <section id="admin-dashboard" class="hidden fade-in w-full space-y-5 pb-10">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <h2 class="text-lg md:text-xl font-black text-gray-800 flex items-center gap-2 uppercase tracking-tighter"><div class="w-8 h-8 bg-violet-100 text-violet-600 rounded-lg flex items-center justify-center"><i class="fa-solid fa-terminal text-sm"></i></div> এডমিন প্যানেল</h2>
+                <div class="flex gap-2 overflow-x-auto pb-1 table-scroll no-scrollbar p-1 bg-gray-50 rounded-xl border border-gray-200/60">
+                    <button onclick="showAdminTab('overview')" class="admin-tab-btn active bg-white text-violet-700 px-4 py-2 rounded-lg shadow-sm text-xs font-black whitespace-nowrap transition uppercase tracking-wider relative">ওভারভিউ <span id="badge-overview" class="red-dot hidden"></span></button>
+                    <button onclick="showAdminTab('students')" class="admin-tab-btn text-gray-500 hover:text-gray-800 px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition uppercase tracking-wider hover:bg-gray-100 relative">শিক্ষার্থী <span id="badge-students" class="red-dot hidden"></span></button>
+                    <button onclick="showAdminTab('payments')" class="admin-tab-btn text-gray-500 hover:text-gray-800 px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap relative transition uppercase tracking-wider hover:bg-gray-100">পেমেন্ট <span id="badge-payments" class="red-dot hidden"></span></button>
+                    <button onclick="showAdminTab('requests')" class="admin-tab-btn text-gray-500 hover:text-gray-800 px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap relative transition uppercase tracking-wider hover:bg-gray-100">রিকোয়েস্ট <span id="badge-requests" class="red-dot hidden"></span></button>
+                    <button onclick="showAdminTab('schedule')" class="admin-tab-btn text-gray-500 hover:text-gray-800 px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition uppercase tracking-wider hover:bg-gray-100">রুটিন</button>
+                    <button onclick="showAdminTab('settings')" class="admin-tab-btn text-gray-500 hover:text-gray-800 px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition uppercase tracking-wider hover:bg-gray-100">সেটিংস</button>
+                </div>
+            </div>
+
+            <!-- Admin: Overview -->
+            <div id="admin-tab-overview" class="admin-tab-content space-y-5">
+                <!-- NASA Level Admin AI -->
+                <div class="nasa-panel p-6 rounded-3xl shadow-2xl border border-slate-700/50 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
+                    <div class="bg-slate-800/80 text-blue-400 p-4 rounded-2xl ai-pulse-icon shrink-0 shadow-inner border border-slate-600/50 backdrop-blur"><i class="fa-solid fa-satellite-dish text-3xl"></i></div>
+                    <div class="w-full text-center md:text-left z-10">
+                        <h3 class="font-black text-slate-300 text-xs mb-3 border-b border-slate-700/50 pb-2 uppercase tracking-[0.2em] flex items-center justify-center md:justify-start gap-2"><div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div> Quantum Core Diagnostic</h3>
+                        <div id="admin-ai-insights-box" class="text-xs text-slate-400 leading-relaxed font-mono space-y-2">সিস্টেম এনালাইসিস চলছে...</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 flex flex-col justify-center shadow-sm"><p class="text-[9px] text-gray-400 font-black uppercase tracking-widest mb-1">মোট শিক্ষার্থী</p><h3 id="stat-total-std" class="text-3xl font-black text-gray-800 font-mono">0</h3></div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 flex flex-col justify-center shadow-sm relative overflow-hidden"><div class="absolute top-0 right-0 w-2 h-full bg-green-400"></div><p class="text-[9px] text-green-500 font-black uppercase tracking-widest mb-1">মাসিক আয় (নেট)</p><h3 id="stat-income" class="text-2xl font-black text-gray-800 font-mono">৳0</h3></div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 flex flex-col justify-center shadow-sm relative overflow-hidden"><div class="absolute top-0 right-0 w-2 h-full bg-blue-400"></div><p class="text-[9px] text-blue-500 font-black uppercase tracking-widest mb-1">ভর্তি ফি আদায়</p><h3 id="stat-adm-income" class="text-2xl font-black text-gray-800 font-mono">৳0</h3></div>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 flex flex-col justify-center shadow-sm relative overflow-hidden"><div class="absolute top-0 right-0 w-2 h-full bg-red-400"></div><p class="text-[9px] text-red-500 font-black uppercase tracking-widest mb-1">বকেয়া/ডিউ</p><h3 id="stat-unpaid" class="text-2xl font-black text-red-600 font-mono">0<span class="text-sm text-gray-400 ml-1">জন</span></h3></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                        <div class="flex justify-between items-center mb-4 border-b border-gray-50 pb-3">
+                            <h3 class="text-xs font-black text-red-600 uppercase tracking-widest flex items-center gap-1.5"><i class="fa-solid fa-circle-exclamation"></i> মাসিক বকেয়া ও ডিউ</h3>
+                            <button onclick="sendDueReminders()" class="text-[9px] font-black text-white bg-gray-800 hover:bg-black px-3 py-2 rounded-lg shadow transition uppercase tracking-wider"><i class="fa-solid fa-paper-plane mr-1"></i> তাগাদা দিন</button>
                         </div>
-                        <div class="relative"><textarea id="dynamicText" rows="6" oninput="debouncedValidate()" autocomplete="off" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:border-blue-500 focus:ring-2 focus:ring-blue-100 outline-none text-sm font-mono shadow-inner transition whitespace-pre overflow-x-auto appearance-none" placeholder=""></textarea></div>
-                        <div id="validationFeedback" class="mt-3 hidden p-3 bg-slate-50 rounded-lg border border-slate-200"></div>
-                        <div id="duplicateErrorBox" class="mt-2 hidden bg-red-50 border border-red-200 rounded-xl p-3"><p class="text-xs font-bold text-red-600 mb-2 border-b border-red-100 pb-1 flex items-center gap-1"><i class="fas fa-exclamation-triangle"></i> নিচের ডুপ্লিকেটগুলো ডিলিট করুন:</p><ul id="duplicateList" class="list-disc list-inside text-[10px] text-red-700 font-mono space-y-1 max-h-24 overflow-y-auto"></ul></div>
+                        <div class="table-scroll"><table class="w-full text-left whitespace-nowrap text-xs"><tbody id="unpaid-table-body" class="divide-y divide-gray-50"></tbody></table></div>
                     </div>
-                    <button type="submit" id="sellSubmitBtn" disabled class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold text-base hover:bg-slate-800 shadow-xl hover:shadow-2xl transition transform active:scale-95 flex justify-center items-center gap-2 mt-2 opacity-50 cursor-not-allowed"><span>জমা দিন</span> <i class="fab fa-telegram-plane"></i></button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- INSTAGRAM MODAL (KEPT AS IS) -->
-    <div id="instaCookieModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/70 backdrop-blur-md">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden modal-content flex flex-col max-h-[90vh] relative z-50">
-            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-gradient-to-r from-pink-500 to-purple-600 text-white">
-                <h3 class="text-lg font-bold flex items-center gap-2"><i class="fab fa-instagram"></i> <span id="instaModalTitle">Cookies Sell Form</span></h3>
-                <button onclick="closeInstaModal()" class="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar">
-                <div class="bg-purple-50 border border-purple-100 p-3 rounded-xl mb-4 flex items-start gap-2"><i class="fas fa-info-circle text-purple-600 mt-1"></i><p class="text-xs text-purple-800 font-bold">সতর্কতা: দিনে একবারই সাবমিট করতে পারবেন। তাই সব লিংক একসাথে একটি শিটে সাজিয়ে তারপর লিংক দিন।</p></div>
-                <form id="instaForm" onsubmit="handleInstaSubmit(event)" class="space-y-4">
-                    <div><label class="block text-xs font-bold text-slate-500 mb-1">আপনার নাম</label><input type="text" name="name" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none text-sm font-bold appearance-none" placeholder="নাম লিখুন"></div>
-                    <div><label class="block text-xs font-bold text-slate-500 mb-1">বিকাশ নাম্বার <span class="text-[10px] text-blue-500">(যেটাতে পেমেন্ট নিবেন)</span></label><input type="tel" name="whatsapp" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none text-sm font-bold appearance-none" placeholder="01XXXXXXXXX"></div>
-                    <div><label class="block text-xs font-bold text-slate-500 mb-1">Google Sheet Link (Data)</label><input type="url" name="sheet_link" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-pink-500 focus:ring-2 focus:ring-pink-100 outline-none text-sm font-bold appearance-none" placeholder="https://docs.google.com/spreadsheets/..."></div>
-                    <button type="submit" id="instaSubmitBtn" class="w-full py-3.5 bg-slate-900 text-white rounded-xl font-bold text-base hover:bg-slate-800 shadow-xl transition transform active:scale-95 flex justify-center items-center gap-2 mt-4"><span>জমা দিন</span> <i class="fas fa-paper-plane"></i></button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- BUY MODAL -->
-    <div id="buyModal" class="modal fixed inset-0 flex items-center justify-center px-4 bg-slate-900/70 backdrop-blur-md">
-        <div class="bg-white w-full max-w-md rounded-3xl shadow-2xl overflow-hidden modal-content flex flex-col max-h-[95vh] relative z-50">
-            <div class="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-5 text-white flex justify-between items-center">
-                <div><h3 class="text-lg font-black flex items-center gap-2"><i class="fas fa-shopping-cart"></i> অর্ডার ফর্ম</h3><p class="text-xs text-emerald-100 font-medium">অ্যাকাউন্ট কিনতে তথ্য দিন</p></div>
-                <button onclick="closeBuyModal()" class="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar">
-                <div id="buyVideoContainer" class="mb-4 hidden">
-                    <div class="bg-blue-50 border border-blue-100 rounded-xl p-3 flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-3"><div class="w-8 h-8 bg-white rounded-full flex items-center justify-center text-red-600 shadow-sm shrink-0"><i class="fab fa-youtube text-sm"></i></div><div class="text-left"><p class="text-xs font-bold text-slate-800">ভিডিও দেখুন</p><p class="text-[10px] text-slate-500 font-bold">কিভাবে কিনবেন?</p></div></div>
-                        <a id="buyVideoLinkBtn" href="#" target="_blank" class="px-3 py-1.5 bg-red-600 text-white text-[10px] font-bold rounded-lg hover:bg-red-700 transition shadow-md whitespace-nowrap flex items-center gap-1"><i class="fas fa-play"></i> দেখুন</a>
+                    <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                        <h3 class="text-xs font-black mb-4 text-orange-600 border-b border-gray-50 pb-3 uppercase tracking-widest flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> ভর্তি ফি বকেয়া</h3>
+                        <div class="table-scroll"><table class="w-full text-left whitespace-nowrap text-xs">
+                            <thead><tr class="text-[9px] text-gray-400 uppercase tracking-widest border-b border-gray-100"><th class="pb-2 font-black">নাম ও ক্লাস</th><th class="pb-2 font-black">ঠিকানা</th><th class="pb-2 font-black text-right">অ্যাকশন</th></tr></thead>
+                            <tbody id="unpaid-adm-body" class="divide-y divide-gray-50 text-xs"></tbody>
+                        </table></div>
                     </div>
                 </div>
-                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-6">
-                    <div class="flex justify-between items-center mb-3 pb-3 border-b border-slate-200">
-                        <span class="text-slate-500 text-xs font-bold uppercase">Product</span><span class="text-slate-800 font-bold" id="buyProductName">--</span>
-                        <div id="buyVariableSelectContainer" class="hidden w-2/3"><select id="buyVariableSelect" onchange="updateBuyTotal()" class="w-full bg-white border border-slate-300 text-slate-800 text-xs font-bold rounded-lg focus:ring-emerald-500 focus:border-emerald-500 p-2 outline-none"></select></div>
+            </div>
+
+            <!-- Admin: Students -->
+            <div id="admin-tab-students" class="admin-tab-content hidden space-y-4">
+                <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+                    <div class="flex flex-col md:flex-row gap-3 w-full mb-6 bg-gray-50 p-2 rounded-xl border border-gray-100">
+                        <select id="filter-class" class="p-3 border-none rounded-lg text-xs bg-white w-full md:w-1/4 font-bold outline-none shadow-sm" onchange="renderStudents()"><option value="all">All Class</option><option value="6">Class 6</option><option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option></select>
+                        <input type="text" id="search-student" placeholder="নাম বা নাম্বার দিয়ে খুঁজুন..." class="p-3 border-none rounded-lg text-xs bg-white flex-1 font-mono outline-none shadow-sm" oninput="renderStudents()">
                     </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-1"><label class="block text-[10px] font-bold text-slate-500 uppercase">পরিমাণ (Quantity)</label><span id="buyUnitPriceDisplay" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md"></span></div>
-                        <input type="number" id="buyQuantity" min="1" step="1" value="" oninput="updateBuyTotal()" onkeypress="return event.charCode >= 48 && event.charCode <= 57" placeholder="যেমন: 1" class="w-full px-4 py-3 bg-white border border-slate-300 rounded-xl font-bold text-lg text-slate-800 focus:border-emerald-500 outline-none appearance-none">
-                    </div>
-                    <div id="buyTotalDisplayBox" class="mt-3 p-2 bg-emerald-100 border border-emerald-200 rounded-lg text-center hidden"><p class="text-xs text-emerald-800 font-bold">মোট দাম: <span id="buyTotalPrice" class="text-lg">0</span> টাকা</p></div>
+                    <div id="students-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
-                <form onsubmit="handleBuySubmit(event)" class="space-y-4" autocomplete="off">
-                    <div><label class="block text-xs font-bold text-slate-500 mb-1">আপনার নাম</label><input type="text" id="buyerName" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold appearance-none" placeholder="আপনার নাম লিখুন"></div>
-                    <div><label id="buyerPhoneLabel" class="block text-xs font-bold text-slate-500 mb-1">মোবাইল নাম্বার (যোগাযোগের জন্য)</label><input type="tel" id="buyerPhone" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 outline-none text-sm font-bold appearance-none" placeholder="01XXXXXXXXX"></div>
-                    <div class="bg-blue-50 border border-blue-100 p-3 rounded-xl flex items-start gap-2"><i class="fas fa-info-circle text-blue-500 mt-0.5 text-xs"></i><p class="text-[11px] text-blue-800 font-bold">অর্ডার কনফার্ম করার পর টেলিগ্রামে আমাদের সাথে কথা বলে পেমেন্ট এবং ডেলিভারি বুঝে নিবেন।</p></div>
-                    <button type="submit" class="w-full py-4 bg-emerald-600 text-white rounded-xl font-bold text-base hover:bg-emerald-700 shadow-xl hover:shadow-emerald-500/30 transition transform active:scale-95 flex justify-center items-center gap-2 mt-2 cursor-pointer"><span>জমা দিন</span> <i class="fab fa-telegram-plane text-lg"></i></button>
-                </form>
+            </div>
+
+            <!-- Admin: Payments -->
+            <div id="admin-tab-payments" class="admin-tab-content hidden space-y-4">
+                <div class="bg-white p-5 border border-gray-100 shadow-sm rounded-2xl">
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2"><i class="fa-solid fa-file-invoice-dollar text-violet-500 text-base"></i> পেমেন্ট রিকোয়েস্ট</h3>
+                    <div class="table-scroll rounded-xl border border-gray-100">
+                        <table class="w-full text-left border-collapse min-w-[650px] text-xs">
+                            <thead><tr class="bg-gray-50 text-gray-400 font-black text-[9px] uppercase tracking-widest border-b border-gray-200"><th class="p-3.5">তারিখ</th><th class="p-3.5">শিক্ষার্থী</th><th class="p-3.5">ফি বিবরণ</th><th class="p-3.5">সোর্স</th><th class="p-3.5 text-right">টাকা</th><th class="p-3.5 text-right">অ্যাকশন</th></tr></thead>
+                            <tbody id="admin-payments-body" class="divide-y divide-gray-50 bg-white"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin: Requests -->
+            <div id="admin-tab-requests" class="admin-tab-content hidden space-y-4">
+                <div class="bg-white p-5 border border-gray-100 shadow-sm rounded-2xl">
+                    <h3 class="text-xs font-black text-gray-400 uppercase tracking-widest mb-5 flex items-center gap-2"><i class="fa-solid fa-bell text-violet-500 text-base"></i> রিকোয়েস্ট সমূহ</h3>
+                    <div class="table-scroll border border-gray-100 rounded-xl"><table class="w-full text-left whitespace-nowrap text-xs"><tbody id="admin-requests-body" class="divide-y divide-gray-50"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- Admin: Schedule -->
+            <div id="admin-tab-schedule" class="admin-tab-content hidden grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="bg-white p-6 border border-gray-100 shadow-sm rounded-2xl">
+                    <h3 class="text-xs font-black mb-5 border-b border-gray-100 pb-3 text-gray-400 uppercase tracking-widest"><i class="fa-solid fa-calendar-alt text-violet-500 mr-1.5 text-base"></i> রুটিন সেটআপ</h3>
+                    <form id="add-schedule-form" class="space-y-4 text-sm">
+                        <select id="sch-class-select" class="w-full p-3.5 border border-gray-200 rounded-xl text-xs bg-gray-50 mb-2 font-bold shadow-inner" onchange="renderScheduleForm()"><option value="6">Class 6</option><option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option></select>
+                        <div id="sch-days-inputs" class="space-y-2.5 bg-gray-50 p-4 rounded-xl border border-gray-100 shadow-inner"></div>
+                        <button type="submit" class="w-full bg-gray-800 text-white py-4 rounded-xl font-black text-xs shadow-lg hover:bg-black transition uppercase tracking-widest mt-2">সেভ রুটিন</button>
+                    </form>
+                </div>
+                <div class="bg-white p-6 border border-gray-100 shadow-sm rounded-2xl relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-1.5 h-full bg-yellow-400"></div>
+                    <h3 class="text-xs font-black mb-5 border-b border-gray-100 pb-3 text-gray-400 uppercase tracking-widest pl-2"><i class="fa-solid fa-umbrella-beach text-yellow-500 mr-1.5 text-base"></i> ছুটি নির্ধারণ</h3>
+                    <div class="flex gap-2 mb-5 pl-2"><input type="date" id="holiday-date" class="flex-[2] p-3 border border-gray-200 rounded-xl text-xs bg-gray-50 font-mono"><input type="text" id="holiday-reason" placeholder="কারন" class="flex-[3] p-3 border border-gray-200 rounded-xl text-xs bg-gray-50 font-bold"><button type="button" onclick="addHoliday()" class="bg-gray-800 text-white px-5 rounded-xl font-bold shadow hover:bg-black"><i class="fa-solid fa-plus"></i></button></div>
+                    <ul id="holiday-list" class="divide-y divide-gray-100 text-xs ml-2"></ul>
+                </div>
+            </div>
+
+            <!-- Admin: Settings -->
+            <div id="admin-tab-settings" class="admin-tab-content hidden bg-white p-6 max-w-xl mx-auto border border-gray-100 shadow-xl rounded-3xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-green-400 to-blue-500"></div>
+                <h3 class="text-xs font-black mb-6 border-b border-gray-100 pb-3 text-gray-400 uppercase tracking-widest mt-2"><i class="fa-solid fa-gear text-gray-300 mr-1.5 text-base"></i> সিস্টেম কনফিগারেশন</h3>
+                <div class="space-y-6">
+                    <div><label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest pl-1">বিকাশ/নগদ নাম্বার</label><input type="tel" id="set-bkash" class="w-full p-3.5 border border-gray-200 rounded-xl text-sm bg-gray-50 font-mono font-bold shadow-inner"></div>
+                    <div><label class="block text-[10px] font-black text-gray-400 uppercase mb-2 tracking-widest pl-1">ভর্তি ফি (বাৎসরিক)</label><input type="number" id="set-adm-fee" class="w-full p-3.5 border border-gray-200 rounded-xl text-sm bg-gray-50 font-mono font-bold shadow-inner"></div>
+                    <div class="pt-4 border-t border-gray-50"><label class="block text-[10px] font-black text-violet-600 uppercase mb-3 tracking-widest bg-violet-50 inline-block px-3 py-1 rounded-lg">ক্লাস ভিত্তিক মাসিক ফি</label>
+                        <form id="admin-settings-form">
+                            <div class="grid grid-cols-1 gap-3" id="class-fee-inputs"></div>
+                            <button type="submit" class="w-full bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white py-4 rounded-xl font-black shadow-lg shadow-violet-200 mt-6 active:scale-95 transition uppercase tracking-widest text-xs">সিস্টেম আপডেট করুন</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODALS SECTION -->
+    <div id="admin-login-modal" class="fixed inset-0 bg-slate-900/80 hidden flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-xs w-full p-8 relative fade-in border border-white/20">
+            <button onclick="closeModal('admin-login-modal')" class="absolute top-4 right-4 text-gray-300 hover:text-gray-800 bg-gray-50 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-times"></i></button>
+            <div class="text-center mb-8"><div class="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-inner rotate-3"><i class="fa-solid fa-shield-halved text-2xl text-white -rotate-3"></i></div><h3 class="font-black text-gray-800 tracking-tighter text-xl">অ্যাডমিন ওভাররাইড</h3></div>
+            <form id="admin-login-form" class="space-y-5">
+                <div class="relative"><input type="password" id="admin-pass-input" required placeholder="সিকিউরিটি-কি দিন" class="w-full p-3.5 border-2 border-gray-100 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-slate-800 text-center font-black tracking-widest outline-none transition"><button type="button" onclick="togglePass('admin-pass-input', this)" class="absolute right-3 top-3.5 text-gray-400"><i class="fa-solid fa-eye"></i></button></div>
+                <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black shadow-xl hover:bg-black transition uppercase tracking-widest text-xs">ভেরিফাই</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- The Singular Payment Modal -->
+    <div id="payment-modal" class="fixed inset-0 bg-slate-900/80 hidden flex items-center justify-center z-50 p-4 backdrop-blur-md">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 relative fade-in max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('payment-modal')" class="absolute top-4 right-4 text-gray-400 bg-gray-50 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100"><i class="fa-solid fa-times"></i></button>
+            <div class="text-center mb-5 border-b border-gray-50 pb-4">
+                <img src="https://freelogovectors.net/wp-content/uploads/2023/11/bkash_logo-freelogovectors.net_.png" onerror="this.style.display='none'; document.getElementById('bkash-text').classList.remove('hidden');" class="h-9 mx-auto mb-2 drop-shadow-sm" alt="bKash">
+                <span id="bkash-text" class="hidden text-pink-600 font-black text-2xl tracking-tighter mb-2 block">bKash</span>
+                <h3 id="pay-modal-title" class="text-[10px] font-black text-gray-400 uppercase tracking-widest">পেমেন্ট গেটওয়ে</h3>
+            </div>
+            
+            <div class="bg-pink-50 p-5 rounded-2xl border border-pink-100 mb-6 text-center shadow-inner relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-20 h-20 bg-white/40 rounded-full blur-xl translate-x-1/2 -translate-y-1/2"></div>
+                <p id="display-bkash-num" class="text-2xl font-black text-pink-700 font-mono tracking-widest drop-shadow-sm">01318721937</p>
+                <div class="mt-4 bg-white/80 p-3 rounded-xl shadow-sm border border-white">
+                    <p class="text-[9px] text-pink-500 font-black uppercase mb-1 tracking-widest">সর্বমোট প্রদান করতে হবে</p>
+                    <p class="text-4xl font-black text-pink-600 tracking-tighter" id="pay-modal-total-amount">৳0</p>
+                </div>
+            </div>
+
+            <form id="student-payment-form" class="space-y-4">
+                <input type="hidden" id="pay-type" value="monthly">
+                <div id="month-select-container">
+                    <label class="block text-[10px] font-black text-gray-400 uppercase ml-1 mb-1.5 tracking-widest">মাসের ফি সিলেক্ট করুন</label>
+                    <select id="pay-month-select" class="w-full p-3.5 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white outline-none font-bold shadow-sm cursor-pointer" onchange="calculatePayAmount()"></select>
+                </div>
+                <div class="border border-gray-100 p-3.5 rounded-xl bg-gray-50 flex items-center justify-between shadow-sm">
+                    <span class="text-[9px] uppercase font-black text-gray-400 tracking-widest">সোর্স:</span>
+                    <div class="flex gap-5">
+                        <label class="flex items-center text-xs font-bold text-gray-700 gap-1.5 cursor-pointer"><input type="radio" name="pay_sender_type" value="own" checked onchange="togglePayMethod()" class="accent-pink-600 w-4 h-4"> নিজের নাম্বার</label>
+                        <label class="flex items-center text-xs font-bold text-gray-700 gap-1.5 cursor-pointer"><input type="radio" name="pay_sender_type" value="other" onchange="togglePayMethod()" class="accent-pink-600 w-4 h-4"> দোকান</label>
+                    </div>
+                </div>
+                <div id="pay-trx-box"><input type="text" id="pay-trxid" placeholder="Transaction ID (TrxID)" class="w-full p-4 border border-gray-200 rounded-xl text-sm uppercase bg-gray-50 font-black tracking-widest focus:bg-white outline-none shadow-inner text-center placeholder-gray-300"></div>
+                <div id="pay-sender-box" class="hidden"><input type="tel" id="pay-sender-num" placeholder="দোকান/অন্য নাম্বারটি দিন" class="w-full p-4 border border-gray-200 rounded-xl text-sm bg-gray-50 font-black tracking-widest focus:bg-white outline-none shadow-inner text-center placeholder-gray-300"></div>
+                <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white py-4 rounded-xl font-black shadow-lg shadow-pink-200 transition active:scale-95 text-xs uppercase tracking-widest mt-2 border border-pink-400">পেমেন্ট সাবমিট করুন</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Edit Student Modal -->
+    <div id="admin-edit-student-modal" class="fixed inset-0 bg-slate-900/80 hidden flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-6 relative max-h-[90vh] overflow-y-auto fade-in">
+            <button onclick="closeModal('admin-edit-student-modal')" class="absolute top-4 right-4 text-gray-400 bg-gray-50 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100"><i class="fa-solid fa-times"></i></button>
+            <h3 class="font-black text-lg mb-6 text-gray-800 border-b border-gray-100 pb-3 flex items-center gap-2"><div class="w-8 h-8 bg-indigo-100 text-indigo-600 flex items-center justify-center rounded-lg"><i class="fa-solid fa-user-pen text-sm"></i></div> ডাটা আপডেট</h3>
+            <form id="admin-edit-std-form" class="space-y-4">
+                <input type="hidden" id="edit-std-id">
+                <div><label class="text-[9px] font-black text-gray-400 uppercase ml-1 tracking-widest">নাম (লক করা)</label><input type="text" id="edit-std-name" class="w-full p-3 border-none rounded-lg text-xs bg-gray-100 text-gray-400 font-bold" disabled></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="text-[9px] font-black text-gray-500 uppercase ml-1 tracking-widest">বাবার নাম</label><input type="text" id="edit-std-fname" class="w-full p-3 border border-gray-200 rounded-lg text-xs font-bold" required></div>
+                    <div><label class="text-[9px] font-bold text-gray-500 uppercase ml-1 tracking-widest">মায়ের নাম</label><input type="text" id="edit-std-mname" class="w-full p-3 border border-gray-200 rounded-lg text-xs font-bold" required></div>
+                </div>
+                <div><label class="text-[9px] font-black text-gray-500 uppercase ml-1 tracking-widest">ঠিকানা</label><input type="text" id="edit-std-address" class="w-full p-3 border border-gray-200 rounded-lg text-xs font-bold" required></div>
+                <div class="grid grid-cols-2 gap-3 bg-blue-50/30 p-3 rounded-xl border border-blue-100 shadow-inner">
+                    <div><label class="text-[9px] font-black text-gray-400 uppercase ml-1 tracking-widest">ভর্তি তারিখ (লক)</label><input type="date" id="edit-std-joinDate" class="w-full p-2 border-none rounded text-[10px] bg-transparent text-gray-400 font-mono font-bold" readonly></div>
+                    <div><label class="text-[9px] font-black text-blue-600 uppercase ml-1 tracking-widest">বেতনের তারিখ</label><input type="number" id="edit-std-billingDay" min="1" max="31" required class="w-full p-2 border border-blue-200 rounded-lg text-xs font-black text-blue-700 bg-white shadow-sm text-center"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="text-[9px] font-black text-gray-500 uppercase ml-1 tracking-widest">ক্লাস</label><select id="edit-std-class" class="w-full p-3 border border-gray-200 rounded-lg text-xs font-bold"><option value="6">Class 6</option><option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option></select></div>
+                    <div><label class="text-[9px] font-black text-gray-500 uppercase ml-1 tracking-widest">স্টুডেন্ট নাম্বার</label><input type="tel" id="edit-std-phone" required class="w-full p-3 border border-gray-200 rounded-lg text-xs font-mono font-bold"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="text-[9px] font-black text-gray-500 uppercase ml-1 tracking-widest">গার্জিয়ান নাম্বার</label><input type="tel" id="edit-std-guardian" required class="w-full p-3 border border-gray-200 rounded-lg text-xs font-mono font-bold"></div>
+                    <div><label class="text-[9px] font-black text-gray-500 uppercase ml-1 tracking-widest">পাসওয়ার্ড</label><div class="relative"><input type="password" id="edit-std-pass" required class="w-full p-3 border border-gray-200 rounded-lg text-xs pr-10 font-mono font-bold"><button type="button" onclick="togglePass('edit-std-pass', this)" class="absolute right-3 top-3 text-gray-400"><i class="fa-solid fa-eye text-xs"></i></button></div></div>
+                </div>
+                <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-xl font-black shadow-lg hover:bg-black transition active:scale-95 text-xs uppercase tracking-widest mt-2">অপারেশন সেভ করুন</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Profile Update Modal (Student) -->
+    <div id="std-edit-profile-modal" class="fixed inset-0 bg-slate-900/80 hidden flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-6 relative fade-in border border-white/20">
+            <button onclick="closeModal('std-edit-profile-modal')" class="absolute top-4 right-4 text-gray-400 bg-gray-50 w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100"><i class="fa-solid fa-times text-sm"></i></button>
+            <h3 class="font-black text-base mb-6 text-gray-800 border-b border-gray-100 pb-3 uppercase tracking-wider text-center">প্রোফাইল সেটিংস</h3>
+            
+            <form id="std-edit-profile-form" class="space-y-5">
+                <div class="flex justify-center mb-4 relative">
+                    <div class="relative p-1 bg-white rounded-full shadow-lg border border-gray-100">
+                        <img id="edit-profile-preview" src="" class="w-24 h-24 rounded-full object-cover">
+                        <label class="absolute bottom-0 right-0 bg-violet-600 text-white w-8 h-8 rounded-full flex items-center justify-center cursor-pointer shadow-md hover:scale-110 transition border-2 border-white"><i class="fa-solid fa-camera text-xs"></i><input type="file" accept="image/*" class="hidden" onchange="triggerCropper(event, 'edit-profile-preview')"></label>
+                    </div>
+                </div>
+                <div><label class="block text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1 mb-1.5 text-center">নাম পরিবর্তন (English)</label><input type="text" id="edit-my-name" required oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')" class="w-full p-3.5 border border-gray-200 rounded-xl text-sm font-mono font-bold bg-gray-50 focus:bg-white text-center shadow-inner outline-none"></div>
+                <button type="submit" class="w-full bg-violet-600 text-white py-3.5 rounded-xl font-black shadow-lg shadow-violet-200 hover:bg-violet-700 transition active:scale-95 text-xs uppercase tracking-widest">আপডেট প্রোফাইল</button>
+            </form>
+
+            <div class="mt-6 border-t border-gray-100 pt-5">
+                <h4 class="text-[10px] font-black text-purple-500 uppercase tracking-widest mb-3 text-center flex items-center justify-center gap-1.5"><i class="fa-solid fa-arrow-up-right-dots"></i> একাডেমিক প্রমোশন</h4>
+                <div class="bg-purple-50/50 p-4 rounded-xl border border-purple-100 shadow-inner">
+                    <p class="text-[9px] text-gray-500 mb-3 text-center font-bold">নতুন ক্লাসে ওঠার জন্য রিকোয়েস্ট পাঠান:</p>
+                    <select id="promo-new-class" class="w-full p-3 border border-purple-200 rounded-lg bg-white mb-3 font-black text-center text-xs outline-none text-purple-800 shadow-sm"><option value="6">Class 6</option><option value="7">Class 7</option><option value="8">Class 8</option><option value="9">Class 9</option><option value="10">Class 10</option></select>
+                    <button type="button" onclick="submitPromotion()" class="w-full bg-purple-600 text-white py-3 rounded-lg font-black text-[10px] shadow hover:bg-purple-700 transition active:scale-95 uppercase tracking-widest border border-purple-500">রিকোয়েস্ট সাবমিট</button>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Reject Payment Modal -->
+    <div id="reject-payment-modal" class="fixed inset-0 bg-slate-900/80 hidden flex items-center justify-center z-[60] p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl w-full max-w-xs p-6 relative fade-in shadow-2xl border-t-4 border-red-500">
+            <input type="hidden" id="reject-pay-id">
+            <h3 class="font-black text-sm text-red-600 mb-3 flex items-center gap-2"><div class="bg-red-100 w-8 h-8 flex items-center justify-center rounded-full"><i class="fa-solid fa-circle-exclamation"></i></div> পেমেন্ট বাতিল</h3>
+            <p class="text-[10px] text-gray-500 mb-3 font-bold leading-relaxed">বাতিল করার সঠিক কারণ লিখে দিন (স্টুডেন্ট এটি তার ড্যাশবোর্ডে দেখতে পাবে):</p>
+            <textarea id="reject-reason-text" rows="3" class="w-full p-3 border border-gray-200 rounded-xl text-xs bg-gray-50 mb-4 outline-none focus:bg-white shadow-inner font-mono font-medium" placeholder="যেমন: TrxID ভুল, টাকা আসেনি..."></textarea>
+            <div class="flex gap-2">
+                <button type="button" onclick="closeModal('reject-payment-modal')" class="flex-1 bg-gray-100 text-gray-500 py-3 rounded-xl font-black text-[10px] uppercase tracking-wider hover:bg-gray-200 transition">ক্যান্সেল</button>
+                <button type="button" onclick="confirmRejectPayment()" class="flex-[2] bg-red-600 text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-wider shadow-lg shadow-red-200 transition hover:bg-red-700 active:scale-95 border border-red-500">কনফার্ম বাতিল</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cropper Modal -->
+    <div id="cropper-modal" class="fixed inset-0 bg-black/95 hidden flex items-center justify-center z-[999] p-4 backdrop-blur-sm">
+        <div class="bg-gray-900 rounded-3xl p-4 w-full max-w-md shadow-2xl border border-gray-800">
+            <div class="text-center mb-3"><h3 class="text-white font-black text-xs uppercase tracking-widest">ছবি ক্রপ করুন</h3></div>
+            <div class="img-container bg-black mb-4 h-[55vh] flex justify-center items-center rounded-2xl overflow-hidden border border-gray-800 shadow-inner"><img id="crop-image" src=""></div>
+            <div class="flex gap-3">
+                <button type="button" onclick="cancelCrop()" class="flex-1 bg-gray-800 hover:bg-gray-700 text-white py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest transition">বাতিল</button>
+                <button type="button" onclick="saveCrop()" class="flex-[2] bg-violet-600 text-white py-3.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-violet-900 transition hover:bg-violet-500 border border-violet-500">ক্রপ করে সেভ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
     <script>
-        const MASTER_CONTROL = {
-            admin: {
-                telegramUser: "mftiforofficial",
-                sheetScriptUrl: "https://script.google.com/macros/s/AKfycbwY6e_OZfIGdiSA6MWThJsxo7vd4m_DRuf8BRppI9DBeE_YQ4i9HqkhxRf1xqg8lk84Iw/exec",
-                instaTwoFaUrl: "https://script.google.com/macros/s/AKfycbxVXi54ygWQLm7BTrU-QNLLz18ILyln0RvkmCSaqGf52mVHxOhg7KehnbKNLi60dhJXyA/exec"
-            },
-            socialLinks: { youtube: "https://youtube.com/@mftifor?si=7LBOs8C9pN587s7j", whatsappGroup: "https://t.me/mftiforofficial", telegram: "https://t.me/mftiforchannel" },
-            vpnList: ["Express VPN", "Nord VPN", "PIA VPN", "Surfshark", "Hotspot Shield", "HMA VPN", "IP Vanish", "Pure VPN", "Turbo VPN", "Avast Seculine", "Sky VPN", "X VPN", "Panda VPN", "Cyberghost", "Vypr VPN"],
-            jobs: {
-                website_build: { id: "website_build", title: "ওয়েবসাইট বানিয়ে নিন!", category: "hybrid", icon: "💻", sellPrice: null, buyPriceUnit: 1500, buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৩৬০০ ৳</span> ১৫০০-২০০০ ৳", buyName: "Website Service", type: "buy_only", status: "active", isUnique: true, deliveryTime: "ডেলিভারি ১ থেকে ২ দিন" },
-                instagram_cookies: { id: "instagram_cookies", title: "Instagram Service", category: "hybrid", icon: '<i class="fab fa-instagram text-pink-600"></i>', sellPriceUnit: 3.85, sellPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>২.৫০ ৳</span> ৩.৮৫ ৳", buyPriceDisplay: "--", hasBuyOption: false, status: "active", isUnique: true, type: "insta_special" },
-                youtube_premium: { id: "youtube_premium", title: "YouTube Premium", category: "hybrid", icon: '<i class="fab fa-youtube text-red-600"></i>', sellPrice: null, buyPriceUnit: 35, buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৬০ ৳</span> ৩৫ ৳ (১ মাস)", buyName: "YouTube Premium (1 Month)", type: "buy_only", status: "active", isUnique: true },
-                microsoft_mails: { id: "microsoft_mails", title: "Microsoft & Edu Mails", category: "mail", icon: "📫", type: "variable_product", options: { edumail: { name: "Edu Mail", price: 2, status: "active" }, hotmail: { name: "Hotmail", price: 1.5, status: "active" }, outlook: { name: "Outlook Mail", price: 1.5, status: "active" } }, sellPrice: null, buyPriceDisplay: "Edu: ২ ৳ | Hot: ১.৫০ ৳ | Outlook: ১.৫০ ৳", status: "active" },
-                all_vpn_promo: { id: "all_vpn_promo", title: "All VPN Premium (7 Days)", category: "vpn", icon: "🛡️", sellPrice: null, buyPriceUnit: 30, buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৪৫ ৳</span> ৩০ ৳", buyName: "VPN Service", type: "vpn_bundle", status: "active" },
-                facebook: { id: "facebook", title: "Facebook সার্ভিস", category: "hybrid", icon: "👤", sellPriceUnit: 0, sellPriceDisplay: "--", sellRequirements: ["UID, Password, 2FA/Key সঠিক"], sellPlaceholder: "10001234567890 password123 2FAKEYCODE", sellVideo: "https://youtu.be/2aan-2krI14?si=ASAxOEeZbYrT6Oti", hasBuyOption: true, buyPriceUnit: 6, buyPriceDisplay: "<span class='text-slate-400 line-through text-xs mr-1'>৮ ৳</span> ৬ ৳", buyName: "Facebook Account", status: "closed", type: "buy_only" },
-                gmail: { id: "gmail", title: "Gmail সার্ভিস", category: "hybrid", icon: "📧", sellPriceUnit: 18, sellPriceDisplay: "--", hasBuyOption: false, buyPriceUnit: 20, buyPriceDisplay: "--", buyName: "Fresh Gmail Account", status: "closed", isUnique: true },
-                whatsapp: { id: "whatsapp_rent", title: "WhatsApp ভাড়া", category: "rent", icon: "📞", sellPriceUnit: 0, sellPriceDisplay: "আলোচনা সাপেক্ষে", sellRequirements: ["৪৮ ঘন্টা পর রেফার বোনাস দিবে সাইট টি"], sellPlaceholder: "আপনার নাম্বারটি লিখুন...", sellVideo: "https://youtu.be/wLKjFMIFfn0?si=lneNC4iltVL4Hprj", hasBuyOption: false, status: "closed" },
-                other: { id: "other", title: "অন্যান্য / সাপোর্ট", category: "all", icon: "📦", sellPriceUnit: 0, sellPriceDisplay: "--", sellRequirements: [], sellPlaceholder: "বিস্তারিত লিখুন...", hasBuyOption: false, status: "active" }
-            }
+        // CONFIG
+        const SUPABASE_URL = 'https://vzcvosyblycquldsgtph.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_BvijCblv7uteLo5FhyreXQ_8v8rFA1a';
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const ADMIN_PASS = 'Ff1234f@#'; 
+        const classesList = ['6', '7', '8', '9', '10'];
+        
+        let db = { students: [], schedules: [], holidays: [], payments: [], requests: [], settings: { bkashNumber: '01318721937', admissionFee: 50, fees: {"6":0,"7":0,"8":0,"9":0,"10":0}, managementFees: {"6":0,"7":0,"8":0,"9":0,"10":0} } };
+        let currentUser = null; let cropper = null; let currentCropTarget = ''; let calculatedPayData = {};
+
+        // NULL-SAFE DOM UTILS
+        const getEl = id => document.getElementById(id);
+        const setTxt = (id, txt) => { const el = getEl(id); if (el) el.innerText = txt; };
+        const setHtml = (id, html) => { const el = getEl(id); if (el) el.innerHTML = html; };
+        const setVal = (id, val) => { const el = getEl(id); if (el) el.value = val; };
+        const setSrc = (id, src) => { const el = getEl(id); if (el) el.src = src; };
+        
+        const openModal = id => { const el = getEl(id); if(el) el.classList.remove('hidden'); };
+        const closeModal = id => { const el = getEl(id); if(el) el.classList.add('hidden'); };
+        const showLoader = () => { const el = getEl('loader'); if(el) el.classList.remove('hidden'); };
+        const hideLoader = () => { const el = getEl('loader'); if(el) el.classList.add('hidden'); };
+        
+        function setSession(data) { localStorage.setItem('tuitionSession', JSON.stringify(data)); currentUser = data; }
+
+        const showToast = (msg, type='success') => { 
+            const t = document.createElement('div'); 
+            t.className = `fixed top-10 left-1/2 -translate-x-1/2 text-white px-5 py-2.5 rounded-full shadow-2xl z-[9999] fade-in text-xs font-bold whitespace-nowrap flex items-center gap-2 border border-white/20 ${type === 'error' ? 'bg-red-500' : 'bg-slate-800'}`; 
+            t.innerHTML = `<i class="fa-solid ${type === 'error' ? 'fa-triangle-exclamation' : 'fa-circle-check'} text-lg"></i> ${msg}`; 
+            document.body.appendChild(t); 
+            setTimeout(() => t.remove(), 3000); 
         };
 
-        let INSTA_CONFIG = { start: 15, end: 23 };
+        const togglePass = (id, btn) => { const el = getEl(id); if(!el) return; const icon = btn.querySelector('i'); if(el.type === 'password'){ el.type='text'; icon.classList.replace('fa-eye','fa-eye-slash');} else { el.type='password'; icon.classList.replace('fa-eye-slash','fa-eye');} };
+        const daysBn = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+        const monthsBn = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+        const formatTime = time => { if(!time) return ''; let [h,m]=time.split(':'); let ap=h>=12?'PM':'AM'; h=h%12||12; return `${h}:${m} ${ap}`; };
+        const formatFullDate = isoStr => { const d=new Date(isoStr); return `${d.toLocaleDateString('bn-BD')} ${formatTime(d.toTimeString().substring(0,5))}`; };
 
-        function checkShopStatus(jobId = null) {
-            const now = new Date();
-            const options = { timeZone: "Asia/Dhaka", hour: 'numeric', hour12: false };
-            const formatter = new Intl.DateTimeFormat('en-US', options);
-            const hours = parseInt(formatter.format(now));
-            return hours >= 5 && hours < 22;
+        function isHoliday(dObj) { 
+            if (!dObj) return false;
+            const y = dObj.getFullYear(); const m = String(dObj.getMonth() + 1).padStart(2, '0'); const d = String(dObj.getDate()).padStart(2, '0');
+            const dateStr = `${y}-${m}-${d}`;
+            return dObj.getDay() === 6 || (db.holidays && db.holidays.some(h => h.date === dateStr)); 
         }
 
-        function checkInstaTime() { return true; }
-
-        function getBengaliDateTime() {
-            const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, timeZone: 'Asia/Dhaka' };
-            return now.toLocaleString('bn-BD', options);
-        }
-
-        function updateShopStatusBanner(isOpen) {
-            const banner = document.getElementById('shopStatusBanner');
-            if(isOpen) {
-                banner.className = "mt-4 inline-block px-4 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 animate-pulse";
-                banner.innerHTML = "🟢 MF Tifor খোলা আছে (সকাল ৫টা - রাত ১০টা)";
-            } else {
-                banner.className = "mt-4 inline-block px-4 py-1 rounded-full text-xs font-bold bg-red-100 text-red-600";
-                banner.innerHTML = "🔴 MF Tifor বন্ধ (রাত ১০টা - সকাল ৫টা)";
+        function safeMergeDB(newData) {
+            if(!newData) return;
+            if(newData.students) db.students = newData.students;
+            if(newData.schedules) db.schedules = newData.schedules;
+            if(newData.holidays) db.holidays = newData.holidays;
+            if(newData.payments) db.payments = newData.payments;
+            if(newData.requests) db.requests = newData.requests;
+            if(newData.settings) {
+                db.settings = { ...db.settings, ...newData.settings };
+                if(!db.settings.fees) db.settings.fees = {"6":0,"7":0,"8":0,"9":0,"10":0};
+                if(!db.settings.managementFees) db.settings.managementFees = {"6":0,"7":0,"8":0,"9":0,"10":0};
             }
         }
 
-        function attemptAction(actionName, ...args) {
-            let jobId = (actionName === 'openModalWithJob' || actionName === 'buy' || actionName === 'choice' || actionName === 'insta') ? args[0] : null;
-            if (actionName === 'insta') { openInstaChoiceModal(); return; }
-            const isOpen = checkShopStatus(jobId);
-            if (isOpen) {
-                if (actionName === 'upload') openModal();
-                else if (actionName === 'choice') openChoiceModal(...args);
-                else if (actionName === 'buy') openBuyModal(...args);
-                else if (actionName === 'openModalWithJob') openModalWithJob(...args);
-            } else {
-                document.getElementById('shopClosedPopup').classList.remove('hidden');
-                setTimeout(() => document.getElementById('shopClosedPopup').classList.add('active'), 10);
-            }
-        }
-
-        function checkInstaLimit() {
-            const today = new Date().toLocaleDateString('en-CA');
-            const storageKey = 'lastInstaSubmitDate_' + currentInstaType;
-            const lastSubmit = localStorage.getItem(storageKey);
-            if (lastSubmit === today) {
-                const serviceName = currentInstaType === '2fa' ? '2FA' : 'Cookies';
-                showToast(`দুঃখিত! আপনি আজ ${serviceName} একবার সাবমিট করেছেন।`, "error");
-                return false;
-            }
-            return true;
-        }
-
-        function markInstaSubmitted() {
-            const today = new Date().toLocaleDateString('en-CA');
-            const storageKey = 'lastInstaSubmitDate_' + currentInstaType;
-            localStorage.setItem(storageKey, today);
-        }
-
-        function closeClosedPopup() { document.getElementById('shopClosedPopup').classList.remove('active'); setTimeout(() => document.getElementById('shopClosedPopup').classList.add('hidden'), 200); }
-        function openInstaClosedPopup() { document.getElementById('instaClosedPopup').classList.remove('hidden'); setTimeout(() => document.getElementById('instaClosedPopup').classList.add('active'), 10); }
-        function closeInstaClosedPopup() { document.getElementById('instaClosedPopup').classList.remove('active'); setTimeout(() => document.getElementById('instaClosedPopup').classList.add('hidden'), 200); }
-
-        function showToast(message, type = 'info') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            let icon = '<i class="fas fa-info-circle"></i>';
-            let typeClass = 'toast-info';
-            if (type === 'success') { icon = '<i class="fas fa-check-circle text-emerald-500 text-lg"></i>'; typeClass = 'toast-success'; } 
-            else if (type === 'error') { icon = '<i class="fas fa-exclamation-circle text-red-500 text-lg"></i>'; typeClass = 'toast-error'; }
-            toast.className = `toast ${typeClass}`;
-            toast.innerHTML = `${icon} <span>${message}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => { toast.style.animation = 'fadeOut 0.3s ease-out forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
-        }
-
-        function debounce(func, wait) {
-            let timeout;
-            return function(...args) {
-                const context = this;
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(context, args), wait);
-            };
-        }
-
-        let currentCategory = 'all';
-        let searchTerm = '';
-        let statusFilterValue = 'all';
-        let selectedJobIdForChoice = null;
-        let currentInstaType = 'cookies'; 
-        let currentInstaScriptUrl = MASTER_CONTROL.admin.sheetScriptUrl;
-
-        const debouncedValidate = debounce(() => validateForm(), 300);
-
-        function copyToClipboard(text) {
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(text).then(() => {
-                    showToast("মেসেজ কপি হয়েছে! টেলিগ্রামে পেস্ট করুন।", "success");
-                }).catch(err => {
-                    fallbackCopyTextToClipboard(text);
-                });
-            } else {
-                fallbackCopyTextToClipboard(text);
-            }
-        }
-
-        function fallbackCopyTextToClipboard(text) {
-            var textArea = document.createElement("textarea");
-            textArea.value = text;
-            textArea.style.top = "0";
-            textArea.style.left = "0";
-            textArea.style.position = "fixed";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+        // NON-BLOCKING BACKGROUND SYNC
+        async function fetchFromSupabase() {
             try {
-                var successful = document.execCommand('copy');
-                if(successful) {
-                    showToast("মেসেজ কপি হয়েছে! টেলিগ্রামে পেস্ট করুন।", "success");
+                const [st, sc, h, p, rq, set] = await Promise.all([ _supabase.from('students').select('*'), _supabase.from('schedules').select('*'), _supabase.from('holidays').select('*'), _supabase.from('payments').select('*'), _supabase.from('requests').select('*'), _supabase.from('settings').select('*') ]);
+                if(st.data) db.students = st.data; if(sc.data) db.schedules = sc.data; if(h.data) db.holidays = h.data; if(p.data) db.payments = p.data; if(rq.data) db.requests = rq.data; 
+                if(set.data && set.data.length) {
+                    db.settings = { ...db.settings, ...set.data[0] };
+                    if(!db.settings.fees) db.settings.fees = {"6":0,"7":0,"8":0,"9":0,"10":0};
+                    if(!db.settings.managementFees) db.settings.managementFees = {"6":0,"7":0,"8":0,"9":0,"10":0};
+                }
+                localStorage.setItem('tuitionDB', JSON.stringify(db));
+            } catch(e) { console.error("Sync Error", e); }
+        }
+
+        async function syncAndRefresh() {
+            const indicator = getEl('sync-indicator'); if(indicator) indicator.classList.add('active');
+            await fetchFromSupabase();
+            if(indicator) indicator.classList.remove('active');
+            
+            if(currentUser) {
+                if(currentUser.role === 'admin') {
+                    const activeTag = document.activeElement ? document.activeElement.tagName : '';
+                    if(!['INPUT', 'TEXTAREA', 'SELECT'].includes(activeTag)) {
+                        updateAdminStats(); renderStudents(); renderAdminPayments(); renderRequests(); renderHolidays();
+                    }
                 } else {
-                    showToast("কপি করা যায়নি, ম্যানুয়ালি লিখুন।", "error");
+                    const studentInDB = db.students.find(s=>s.phone===currentUser.data.phone);
+                    if(studentInDB) currentUser.data = studentInDB;
+                    loadStudentDashboard(true); // Silent re-render
                 }
-            } catch (err) {
-                showToast("কপি এরর! ম্যানুয়ালি লিখুন।", "error");
             }
-            document.body.removeChild(textArea);
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const heroLink = document.getElementById('heroYoutubeLink');
-            if (heroLink) heroLink.href = MASTER_CONTROL.socialLinks.youtube;
+        // APP INITIALIZATION (0-MS FEEL)
+        function initApp() {
+            const localCache = JSON.parse(localStorage.getItem('tuitionDB'));
+            if(localCache) safeMergeDB(localCache); // Load instantly from memory
             
-            const waLink = document.getElementById('footerWhatsappLink');
-            if (waLink) waLink.href = "https://t.me/" + MASTER_CONTROL.admin.telegramUser;
-            
-            const tgLink = document.getElementById('footerTelegramLink');
-            if (tgLink) tgLink.href = MASTER_CONTROL.socialLinks.telegram;
-            
-            renderJobs();
-            populateJobSelect();
-            const isOpen = checkShopStatus();
-            updateShopStatusBanner(isOpen);
-            setInterval(() => {
-                const open = checkShopStatus();
-                updateShopStatusBanner(open);
-                renderJobs(); 
-            }, 5000); 
-        });
-
-        function renderJobs() {
-            const grid = document.getElementById('opportunitiesGrid');
-            const jobs = Object.values(MASTER_CONTROL.jobs);
-            let filteredJobs = jobs.filter(job => {
-                const categoryMatch = currentCategory === 'all' || (currentCategory === 'hybrid' && job.category === 'hybrid') || (currentCategory === 'rent' && job.category === 'rent') || (currentCategory === 'vpn' && job.category === 'vpn') || (currentCategory === 'mail' && (job.category === 'mail' || job.id === 'gmail')) || job.category === currentCategory;
-                const searchLower = searchTerm.toLowerCase();
-                const searchMatch = job.title.toLowerCase().includes(searchLower);
-                let isClosed = job.status === 'closed';
-                if (job.id !== 'instagram_cookies' && !checkShopStatus(job.id)) isClosed = true;
-                const statusMatch = statusFilterValue === 'all' || (isClosed ? 'closed' : 'active') === statusFilterValue;
-                return categoryMatch && searchMatch && statusMatch;
-            });
-
-            filteredJobs.sort((a, b) => {
-                if (a.id === 'website_build') return -1;
-                if (b.id === 'website_build') return 1;
-                if (a.id === 'instagram_cookies') return -1;
-                if (b.id === 'instagram_cookies') return 1;
-                if (a.status === 'active' && b.status === 'closed') return -1;
-                if (a.status === 'closed' && b.status === 'active') return 1;
-                return 0;
-            });
-
-            grid.innerHTML = '';
-            if (filteredJobs.length === 0) { grid.innerHTML = `<div class="col-span-full py-16 text-center opacity-60"><i class="fas fa-search text-4xl text-slate-300 mb-4"></i><p class="text-slate-500 font-bold">কোনো কাজ পাওয়া যায়নি</p></div>`; return; }
-
-            filteredJobs.forEach(job => {
-                if (job.id === 'other') return;
-                let isClosed = job.status === 'closed';
-                let badgeText = '● চলমান';
-                let badgeClass = 'bg-green-100 text-green-600';
-                if (job.id !== 'instagram_cookies' && !checkShopStatus(job.id)) { isClosed = true; }
-                if (job.id === 'instagram_cookies') { isClosed = false; badgeText = '● চলমান'; badgeClass = 'bg-green-100 text-green-600'; } 
-                else { if (isClosed) { badgeText = 'বন্ধ'; badgeClass = 'bg-red-100 text-red-600'; } }
-
-                let btnText = 'কাজটি করুন <i class="fas fa-arrow-right"></i>';
-                let btnAction = `attemptAction('openModalWithJob', '${job.id}')`;
-                
-                if (job.type === 'buy_only' || job.type === 'vpn_bundle' || job.type === 'variable_product') {
-                     btnText = 'কিনুন (Buy) <i class="fas fa-shopping-cart ml-1"></i>';
-                     btnAction = `attemptAction('buy', '${job.id}')`;
-                } else if (job.type === 'insta_special') {
-                    btnText = 'সেল দিন (Sell) <i class="fas fa-upload ml-1"></i>';
-                    btnAction = `attemptAction('insta', '${job.id}')`;
-                } else if (job.hasBuyOption) {
-                    btnText = 'কিনুন অথবা সেল করুন <i class="fas fa-exchange-alt ml-1"></i>';
-                    btnAction = `attemptAction('choice', '${job.id}')`;
-                }
-
-                let priceDisplay = job.sellPriceDisplay;
-                if (job.type === 'buy_only' || job.type === 'vpn_bundle' || job.type === 'variable_product') priceDisplay = `দাম: ${job.buyPriceDisplay}`;
-                else if (job.hasBuyOption) priceDisplay = `Sell: ${job.sellPriceDisplay} <br> Buy: ${job.buyPriceDisplay}`;
-
-                let cardClass = `glass-card p-6 rounded-3xl relative group transition duration-300 hover:-translate-y-2 border-t-4 ${isClosed ? 'border-red-400 grayscale opacity-80 order-last' : 'border-blue-500 hover:shadow-2xl'}`;
-                let extraBadge = '', extraInfo = '';
-                if (job.isUnique && !isClosed) {
-                    cardClass = `glass-card p-6 rounded-3xl relative group transition duration-300 hover:-translate-y-2 border-2 border-purple-500 shadow-xl shadow-purple-200/50 bg-gradient-to-br from-white to-purple-50`;
-                    extraBadge = `<span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm bg-gradient-to-r from-pink-500 to-purple-600 text-white animate-pulse">🔥 হট অফার</span>`;
-                    extraInfo = job.deliveryTime ? `<div class="mt-2 bg-purple-100/50 rounded-lg p-2 text-center border border-purple-100"><p class="text-xs text-purple-700 font-bold"><i class="fas fa-clock"></i> ${job.deliveryTime}</p></div>` : '';
-                }
-
-                const card = document.createElement('div');
-                card.id = `job-card-${job.id}`;
-                card.className = cardClass;
-                card.innerHTML = `${extraBadge}<div class="absolute top-4 right-4"><span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm ${badgeClass}">${badgeText}</span></div><div class="flex flex-col mb-4"><div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-2xl shadow-md mb-4 text-slate-700">${job.icon}</div><h3 class="font-bold text-xl text-slate-800 mb-1 leading-tight">${job.title}</h3><p class="text-xs text-blue-600 font-bold mt-1 leading-relaxed">${priceDisplay}</p>${extraInfo}</div><button onclick="${btnAction}" ${isClosed ? 'disabled' : ''} class="w-full py-3.5 rounded-xl font-bold text-sm transition flex items-center justify-center gap-2 cursor-pointer ${isClosed ? 'bg-slate-200 text-slate-400 cursor-not-allowed' : (job.isUnique ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-purple-500/40' : 'bg-slate-900 text-white hover:bg-gradient-to-r hover:from-blue-600 hover:to-purple-600 shadow-lg hover:shadow-blue-500/30')}">${isClosed ? 'বর্তমানে বন্ধ' : btnText}</button>`;
-                grid.appendChild(card);
-            });
-        }
-
-        function openChoiceModal(jobId) { selectedJobIdForChoice = jobId; document.getElementById('choiceModal').classList.remove('hidden'); setTimeout(() => document.getElementById('choiceModal').classList.add('active'), 10); }
-        function closeChoiceModal() { document.getElementById('choiceModal').classList.remove('active'); setTimeout(() => document.getElementById('choiceModal').classList.add('hidden'), 200); }
-        function handleChoice(action) { closeChoiceModal(); setTimeout(() => { if (action === 'buy') openBuyModal(selectedJobIdForChoice); else openModalWithJob(selectedJobIdForChoice); }, 300); }
-
-        function openInstaChoiceModal() { document.getElementById('instaChoiceModal').classList.remove('hidden'); setTimeout(() => document.getElementById('instaChoiceModal').classList.add('active'), 10); }
-        function closeInstaChoiceModal() { document.getElementById('instaChoiceModal').classList.remove('active'); setTimeout(() => document.getElementById('instaChoiceModal').classList.add('hidden'), 200); }
-        
-        function handleInstaChoice(type) {
-            closeInstaChoiceModal();
-            setTimeout(() => {
-                openInstaModal(type);
-            }, 300);
-        }
-
-        function openInstaModal(type = 'cookies') { 
-            currentInstaType = type;
-            if (type === '2fa') {
-                currentInstaScriptUrl = MASTER_CONTROL.admin.instaTwoFaUrl;
-                document.getElementById('instaModalTitle').innerText = "Instagram 2FA";
+            const session = JSON.parse(localStorage.getItem('tuitionSession'));
+            if (session) { 
+                currentUser = session; 
+                if(currentUser.role === 'admin') loadAdminDashboard(); else loadStudentDashboard();
             } else {
-                currentInstaScriptUrl = MASTER_CONTROL.admin.sheetScriptUrl;
-                document.getElementById('instaModalTitle').innerText = "Instagram Cookies";
+                const authSec = getEl('auth-section'); if(authSec) authSec.classList.remove('hidden');
             }
-            document.getElementById('instaCookieModal').classList.remove('hidden'); 
-            setTimeout(() => document.getElementById('instaCookieModal').classList.add('active'), 10); 
-        }
-
-        function closeInstaModal() { document.getElementById('instaCookieModal').classList.remove('active'); setTimeout(() => document.getElementById('instaCookieModal').classList.add('hidden'), 200); }
-
-        function handleInstaSubmit(e) {
-            e.preventDefault();
-            if (!checkInstaTime()) { closeInstaModal(); openInstaClosedPopup(); return; }
-            if(!checkInstaLimit()) return;
-            const submitBtn = document.getElementById('instaSubmitBtn');
-            const form = document.getElementById('instaForm');
-            const formData = new FormData(form);
-            formData.append("timestamp", new Date().toLocaleString());
-            formData.append("service_type", currentInstaType);
-            const originalBtnContent = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> পাঠানো হচ্ছে...';
-            submitBtn.disabled = true;
-            fetch(currentInstaScriptUrl, {
-                method: "POST",
-                body: formData,
-                mode: 'no-cors'
-            })
-            .then(() => {
-                showToast("সফলভাবে জমা হয়েছে! ✅", "success");
-                submitBtn.innerHTML = originalBtnContent;
-                submitBtn.disabled = false;
-                markInstaSubmitted();
-                form.reset();
-                closeInstaModal();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast("নেটওয়ার্ক সমস্যা! আবার চেষ্টা করুন।", "error");
-                submitBtn.innerHTML = originalBtnContent;
-                submitBtn.disabled = false;
-            });
-        }
-
-        let currentBuyJob = null;
-        let currentUnitPrice = 0;
-
-        function openBuyModal(jobId) {
-            const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
-            if (!jobData) return;
-            currentBuyJob = jobData;
-            document.getElementById('buyQuantity').value = "";
-            document.getElementById('buyerName').value = "";
-            document.getElementById('buyerPhone').value = "";
-            document.getElementById('buyTotalDisplayBox').classList.add('hidden');
-            const phoneLabel = document.getElementById('buyerPhoneLabel');
-            const phoneInput = document.getElementById('buyerPhone');
-            if (jobData.id === 'youtube_premium') { phoneLabel.innerText = "ইমেইল এড্রেস (যেটাতে প্রিমিয়াম নিবেন)"; phoneInput.placeholder = "example@gmail.com"; phoneInput.type = "email"; phoneInput.onkeypress = null; } 
-            else { phoneLabel.innerText = "মোবাইল নাম্বার (যোগাযোগের জন্য)"; phoneInput.placeholder = "01XXXXXXXXX"; phoneInput.type = "tel"; phoneInput.onkeypress = (event) => event.charCode >= 48 && event.charCode <= 57; }
-            const staticNameEl = document.getElementById('buyProductName');
-            const variableSelectContainer = document.getElementById('buyVariableSelectContainer');
-            const variableSelect = document.getElementById('buyVariableSelect');
-            currentUnitPrice = jobData.buyPriceUnit || 0;
-            if (jobData.id === 'youtube_premium') { document.getElementById('buyQuantity').value = 1; document.getElementById('buyQuantity').disabled = true; } else { document.getElementById('buyQuantity').disabled = false; }
-            if (jobData.type === 'variable_product' || jobData.type === 'vpn_bundle') {
-                staticNameEl.classList.add('hidden'); variableSelectContainer.classList.remove('hidden'); variableSelect.innerHTML = '';
-                if (jobData.type === 'variable_product') { Object.entries(jobData.options).forEach(([key, opt]) => { if (opt.status === 'active') { const option = document.createElement('option'); option.value = key; option.text = `${opt.name}`; option.dataset.price = opt.price; variableSelect.appendChild(option); } }); } 
-                else if (jobData.type === 'vpn_bundle') { MASTER_CONTROL.vpnList.forEach(vpn => { const option = document.createElement('option'); option.value = vpn; option.text = vpn; option.dataset.price = 30; variableSelect.appendChild(option); }); }
-                if(variableSelect.options.length > 0) currentUnitPrice = parseFloat(variableSelect.options[0].dataset.price) || 0;
-            } else { staticNameEl.classList.remove('hidden'); variableSelectContainer.classList.add('hidden'); staticNameEl.innerText = jobData.buyName; }
-            updateBuyTotal();
-            const buyVideoContainer = document.getElementById('buyVideoContainer');
-            if(jobData.sellVideo) { buyVideoContainer.classList.remove('hidden'); document.getElementById('buyVideoLinkBtn').href = jobData.sellVideo; } else buyVideoContainer.classList.add('hidden');
-            document.getElementById('buyModal').classList.remove('hidden'); setTimeout(() => document.getElementById('buyModal').classList.add('active'), 10);
-        }
-
-        function updateBuyTotal() {
-            if (currentBuyJob.type === 'variable_product' || currentBuyJob.type === 'vpn_bundle') { const select = document.getElementById('buyVariableSelect'); const selectedOpt = select.options[select.selectedIndex]; if(selectedOpt) currentUnitPrice = parseFloat(selectedOpt.dataset.price); }
-            const qty = parseInt(document.getElementById('buyQuantity').value) || 0;
-            const priceDisplay = document.getElementById('buyUnitPriceDisplay');
-            const totalBox = document.getElementById('buyTotalDisplayBox');
-            if(currentUnitPrice > 0) { if(currentBuyJob.id === 'website_build') priceDisplay.innerText = "দাম: ১৫০০-২০০০ ৳"; else priceDisplay.innerText = `প্রতি পিস: ${currentUnitPrice} ৳`; priceDisplay.classList.remove('hidden'); } else priceDisplay.classList.add('hidden');
-            if (qty > 0 && currentUnitPrice > 0) { const total = (qty * currentUnitPrice).toFixed(2); document.getElementById('buyTotalPrice').innerText = total; if(currentBuyJob.id === 'website_build') document.getElementById('buyTotalPrice').innerText = total + "+"; totalBox.classList.remove('hidden'); } else totalBox.classList.add('hidden');
-        }
-
-        function closeBuyModal() { document.getElementById('buyModal').classList.remove('active'); setTimeout(() => document.getElementById('buyModal').classList.add('hidden'), 200); }
-
-        // NEW LOGIC: Modal for redirecting to Telegram
-        let currentRedirectUrl = "";
-
-        function showSuccessModal(url) {
-            currentRedirectUrl = url;
-            closeModal();
-            closeBuyModal();
-            document.getElementById('successRedirectModal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('successRedirectModal').classList.add('active'), 10);
-        }
-
-        function handleRedirect() {
-            if(currentRedirectUrl) {
-                window.open(currentRedirectUrl, '_blank');
-                document.getElementById('successRedirectModal').classList.remove('active');
-                setTimeout(() => document.getElementById('successRedirectModal').classList.add('hidden'), 200);
-            }
-        }
-
-        function handleBuySubmit(e) {
-            e.preventDefault();
-            if(!checkShopStatus(currentBuyJob ? currentBuyJob.id : null)) { closeBuyModal(); attemptAction('buy'); return; }
-            const name = document.getElementById('buyerName').value;
-            const phoneOrEmail = document.getElementById('buyerPhone').value;
-            let qty = document.getElementById('buyQuantity').value;
-            if (currentBuyJob.id === 'youtube_premium') qty = 1;
-            let productName = currentBuyJob.buyName;
-            let finalPriceText = "আলোচনা সাপেক্ষে";
-            if (currentBuyJob.type === 'variable_product' || currentBuyJob.type === 'vpn_bundle') { const select = document.getElementById('buyVariableSelect'); productName = select.options[select.selectedIndex].text; }
-            if (currentUnitPrice > 0) { const total = (parseInt(qty) * currentUnitPrice).toFixed(2); finalPriceText = `${total} টাকা (${qty} x ${currentUnitPrice})`; }
-            if(!name || !qty || !phoneOrEmail) return showToast("অনুগ্রহ করে সব তথ্য দিন", "error");
-            if (currentBuyJob.id !== 'youtube_premium') { if (!/^01\d{9}$/.test(phoneOrEmail)) return showToast("সঠিক মোবাইল নাম্বার দিন (১১ ডিজিট)", "error"); } else { if (!phoneOrEmail.includes('@')) return showToast("সঠিক ইমেইল এড্রেস দিন", "error"); }
             
-            const dateTime = getBengaliDateTime();
-            let msg = `*অর্ডার রিকোয়েস্ট (Buy)* %0Aসময়: ${dateTime} %0A------------------ %0Aপ্রোডাক্ট: ${productName} %0Aপরিমাণ: ${qty} পিস %0Aমোট দাম: ${finalPriceText} %0A------------------ %0Aক্রেতা: ${name} %0A`;
-            if (currentBuyJob.id === 'youtube_premium') msg += `ইমেইল (Premium): ${phoneOrEmail} %0A`; else msg += `নাম্বার: ${phoneOrEmail} %0A`;
-            msg += `*আমি নিতে চাই। জমা দিন।%2A`;
-
-            const decodedMsg = decodeURIComponent(msg).replace(/%0A/g, '\n');
-            copyToClipboard(decodedMsg);
-
-            // Show Success Modal instead of direct open
-            showSuccessModal(`https://t.me/${MASTER_CONTROL.admin.telegramUser}`);
+            syncAndRefresh(); // Fire async sync in background
+            setInterval(syncAndRefresh, 6000); 
         }
 
-        const uploadModal = document.getElementById('uploadModal');
-        const jobSelect = document.getElementById('jobSelector');
-        function populateJobSelect() {
-            jobSelect.innerHTML = '<option value="">এখানে ক্লিক করে সিলেক্ট করুন...</option>';
-            Object.values(MASTER_CONTROL.jobs).forEach(job => {
-                if(job.type === 'buy_only' || job.type === 'vpn_bundle' || job.type === 'variable_product' || job.type === 'insta_special') return;
-                const option = document.createElement('option');
-                option.value = job.id;
-                option.text = `${job.icon} ${job.title}`; 
-                let cleanTitle = job.title; option.text = cleanTitle; 
-                jobSelect.appendChild(option);
+        const logoutBtn = getEl('logout-btn');
+        if(logoutBtn) { logoutBtn.addEventListener('click', () => { localStorage.removeItem('tuitionSession'); location.reload(); }); }
+        
+        function switchAuthTab(tab) { 
+            const loginForm = getEl('login-form'); const regForm = getEl('register-form');
+            if(loginForm) loginForm.classList.toggle('hidden', tab !== 'login'); 
+            if(regForm) regForm.classList.toggle('hidden', tab === 'login'); 
+            
+            const tabLogin = getEl('tab-login'); const tabReg = getEl('tab-register');
+            if(tabLogin) tabLogin.className = `flex-1 py-2.5 rounded-lg transition text-sm md:text-base ${tab==='login'?'bg-white shadow text-violet-700 font-black':'text-gray-400 font-bold bg-transparent'}`; 
+            if(tabReg) tabReg.className = `flex-1 py-2.5 rounded-lg transition text-sm md:text-base ${tab==='register'?'bg-white shadow text-violet-700 font-black':'text-gray-400 font-bold bg-transparent'}`; 
+        }
+
+        function triggerCropper(e, targetId) { const file = e.target.files[0]; if(!file) return; currentCropTarget = targetId; const reader = new FileReader(); reader.onload = (event) => { const cropImg = getEl('crop-image'); if(cropImg) cropImg.src = event.target.result; openModal('cropper-modal'); if(cropper) cropper.destroy(); cropper = new Cropper(getEl('crop-image'), { aspectRatio: 1, viewMode: 1 }); }; reader.readAsDataURL(file); }
+        function cancelCrop() { closeModal('cropper-modal'); } 
+        function saveCrop() { if(!cropper) return; const canvas = cropper.getCroppedCanvas({ width: 250, height: 250 }); const dataUrl = canvas.toDataURL('image/jpeg', 0.8); const tgt = getEl(currentCropTarget); if(tgt) { tgt.src = dataUrl; tgt.dataset.base64 = dataUrl; } closeModal('cropper-modal'); }
+
+        // AUTH HANDLERS
+        const loginFormEl = getEl('login-form');
+        if(loginFormEl) {
+            loginFormEl.addEventListener('submit', async (e) => { 
+                e.preventDefault(); const pBtn = e.submitter; if(pBtn) pBtn.innerHTML = '<div class="bounce-dots"><div></div><div></div><div></div></div>';
+                const { data } = await _supabase.from('students').select('*').eq('phone', getEl('login-phone').value).eq('password', getEl('login-pass').value); 
+                if(pBtn) pBtn.innerText = 'প্রবেশ করুন';
+                if(data && data.length) { setSession({ role: 'student', data: data[0] }); const authSec = getEl('auth-section'); if(authSec) authSec.classList.add('hidden'); loadStudentDashboard(); syncAndRefresh(); } 
+                else showToast('নাম্বার বা পাসওয়ার্ড ভুল!', 'error'); 
             });
         }
 
-        function openModal() { uploadModal.classList.remove('hidden'); setTimeout(() => uploadModal.classList.add('active'), 10); resetSellForm(); }
-        function openModalWithJob(jobId) {
-            if (jobId === 'gmail') { showToast("দুঃখিত! জিমেইল সার্ভিসটি বর্তমানে বন্ধ।", "error"); return; }
-            openModal(); jobSelect.value = jobId; handleJobChange(); 
-        }
-        function closeModal() { uploadModal.classList.remove('active'); setTimeout(() => { uploadModal.classList.add('hidden'); resetSellForm(); }, 200); }
-
-        function resetSellForm() {
-            document.getElementById('videoContainer').classList.add('hidden');
-            document.getElementById('dynamicInputArea').classList.add('hidden');
-            document.getElementById('requirementsBox').classList.add('hidden');
-            document.getElementById('validationFeedback').classList.add('hidden');
-            document.getElementById('duplicateErrorBox').classList.add('hidden');
-            document.getElementById('dynamicText').value = "";
-            document.getElementById('lineCountDisplay').innerText = "Total: 0";
-            document.getElementById('sellSubmitBtn').disabled = true;
-            document.getElementById('sellSubmitBtn').classList.add('opacity-50', 'cursor-not-allowed');
-            document.getElementById('userContact').value = "";
-            document.getElementById('userContact').classList.remove('border-red-500', 'focus:border-red-500', 'border-green-500', 'focus:border-green-500');
-            jobSelect.value = "";
+        const adminLoginFormEl = getEl('admin-login-form');
+        if(adminLoginFormEl) {
+            adminLoginFormEl.addEventListener('submit', async (e) => { 
+                e.preventDefault(); 
+                if(getEl('admin-pass-input').value === ADMIN_PASS) { setSession({ role: 'admin' }); closeModal('admin-login-modal'); const authSec = getEl('auth-section'); if(authSec) authSec.classList.add('hidden'); loadAdminDashboard(); syncAndRefresh(); } 
+                else showToast('পাসওয়ার্ড ভুল!', 'error'); 
+            });
         }
 
-        function handleJobChange() {
-            const jobId = jobSelect.value;
-            if (!jobId) { resetSellForm(); return; }
-            const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
-            if (jobData) {
-                if (jobData.sellVideo) { document.getElementById('videoContainer').classList.remove('hidden'); document.getElementById('videoLinkBtn').href = jobData.sellVideo; } else document.getElementById('videoContainer').classList.add('hidden');
-                const dynArea = document.getElementById('dynamicInputArea'); dynArea.classList.remove('hidden'); document.getElementById('dynamicText').placeholder = jobData.sellPlaceholder || "";
-                const isAuto = (jobId === 'gmail'); document.getElementById('autoFormatBtn').classList.toggle('hidden', !isAuto);
+        const registerFormEl = getEl('register-form');
+        if(registerFormEl) {
+            registerFormEl.addEventListener('submit', async (e) => {
+                e.preventDefault(); 
+                const photoData = getEl('profile-preview').dataset.base64;
+                if(!photoData || photoData.includes('via.placeholder.com')) return showToast('অবশ্যই শিক্ষার্থীর ছবি দিতে হবে!', 'error');
+                const phone = getEl('reg-phone').value; const pBtn = e.submitter; if(pBtn) pBtn.innerHTML = '<div class="bounce-dots"><div></div><div></div><div></div></div>';
+                const { data: ext } = await _supabase.from('students').select('phone').eq('phone', phone); 
+                if(ext && ext.length) { if(pBtn) pBtn.innerText = 'রেজিস্ট্রেশন কমপ্লিট'; return showToast('ইতিমধ্যে অ্যাকাউন্ট আছে!', 'error'); } 
                 
-                // Keep the label static as per new requirement, or conditionally update if really needed, 
-                // but user asked for a specific static text change in the HTML. 
-                // We will ensure the HTML static text is used, but if JS overrides it, we need to fix it here.
-                // The HTML has the new text. We should only override if it's "whatsapp_rent".
-                const paymentLabel = document.getElementById('paymentLabel');
-                if (jobId === 'whatsapp_rent') {
-                    paymentLabel.innerHTML = 'WhatsApp নাম্বার <span class="text-[10px] text-blue-500 block font-normal">(এই নাম্বারে পেমেন্ট কনফার্মেশন মেসেজ যাবে)</span>';
-                } else {
-                    paymentLabel.innerHTML = 'বিকাশ ও হোয়াটসঅ্যাপ নাম্বার <span class="text-[10px] text-blue-500 block font-normal">(এই নাম্বারে পেমেন্ট কনফার্মেশন মেসেজ যাবে)</span>';
-                }
-
-                if (jobData.sellRequirements.length > 0) { document.getElementById('requirementsBox').classList.remove('hidden'); document.getElementById('reqText').innerText = "অবশ্যই দেখুন: " + jobData.sellRequirements.join(", "); } else document.getElementById('requirementsBox').classList.add('hidden');
-                validateForm();
-            }
-        }
-
-        function performAutoFormat() {
-            const input = document.getElementById('dynamicText');
-            let text = input.value; text = text.replace(/^\s*\d+[\.)]\s*/gm, ' '); text = text.replace(/\s\d+[\.)]\s/g, ' '); text = text.replace(/gmail:|email:|user:|id:|pass:|password:|p:|u:/gi, ' '); text = text.replace(/[:;|]/g, ' ');
-            const tokens = text.trim().split(/\s+/);
-            if (tokens.length === 0) return showToast("দয়া করে আগে কিছু লিখুন", "error");
-            const emailIndices = []; const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            tokens.forEach((t, i) => { if (emailRegex.test(t)) emailIndices.push(i); });
-            if (emailIndices.length === 0) return showToast("কোনো ইমেইল পাওয়া যায়নি", "error");
-            let leftScore = 0; let rightScore = 0;
-            emailIndices.forEach(index => { if (index > 0 && !emailRegex.test(tokens[index - 1])) leftScore++; if (index < tokens.length - 1 && !emailRegex.test(tokens[index + 1])) rightScore++; });
-            const isPassBeforeEmail = leftScore > rightScore;
-            let formattedLines = []; let usedIndices = new Set(); let errors = [];
-            emailIndices.forEach((emailIdx, i) => {
-                const email = tokens[emailIdx]; let password = "???"; let passIdx = -1;
-                if (isPassBeforeEmail) { if (emailIdx > 0 && !emailRegex.test(tokens[emailIdx - 1]) && !usedIndices.has(emailIdx - 1)) { passIdx = emailIdx - 1; password = tokens[passIdx]; } } 
-                else { if (emailIdx < tokens.length - 1 && !emailRegex.test(tokens[emailIdx + 1]) && !usedIndices.has(emailIdx + 1)) { passIdx = emailIdx + 1; password = tokens[passIdx]; } }
-                if (passIdx !== -1) { usedIndices.add(passIdx); usedIndices.add(emailIdx); formattedLines.push(`${email} ${password}`); } else { errors.push(`Line ${i + 1}: ${email} (পাসওয়ার্ড পাওয়া যায়নি)`); formattedLines.push(`${email} ???`); }
+                const jD = new Date(); 
+                const newStd = { id: Date.now().toString(), name: getEl('reg-name').value, fathersName: getEl('reg-fname').value, mothersName: getEl('reg-mname').value, address: getEl('reg-address').value, class: getEl('reg-class').value, originalClass: getEl('reg-class').value, originalYear: jD.getFullYear(), password: getEl('reg-pass').value, phone, guardianPhone: getEl('reg-guardian').value, photo: photoData, joinDate: jD.toISOString().split('T')[0], admissionYear: 0, isPaused: false, billingDay: jD.getDate() }; 
+                const { error } = await _supabase.from('students').insert([newStd]); 
+                if(pBtn) pBtn.innerText = 'রেজিস্ট্রেশন কমপ্লিট';
+                if(!error) { showToast('রেজিস্ট্রেশন সফল!'); setSession({ role: 'student', data: newStd }); const authSec = getEl('auth-section'); if(authSec) authSec.classList.add('hidden'); loadStudentDashboard(); syncAndRefresh(); } 
+                else showToast('সার্ভার এরর!', 'error'); 
             });
-            input.value = formattedLines.join('\n');
-            const feedback = document.getElementById('validationFeedback');
-            if (errors.length > 0) { feedback.innerHTML = `<div class="text-red-600 font-bold text-xs">⚠️ কিছু পাসওয়ার্ড পাওয়া যায়নি:<br>${errors.slice(0, 3).join('<br>')}${errors.length > 3 ? '<br>...' : ''}</div>`; feedback.classList.remove('hidden'); showToast(`${errors.length} টি ইমেইলের পাসওয়ার্ড মিসিং!`, "error"); } 
-            else { showToast("সাজানো সম্পন্ন হয়েছে!", "success"); validateForm(); }
         }
 
-        let globalUniqueCount = 0;
-        function validateForm() {
-            const jobId = jobSelect.value;
-            const contact = document.getElementById('userContact').value;
-            const contactInput = document.getElementById('userContact');
-            let bkashValid = true;
-            if (jobId !== 'whatsapp_rent' && jobId !== '') { const bkashRegex = /^01\d{9}$/; if (!bkashRegex.test(contact)) { bkashValid = false; if(contact.length > 0) { contactInput.classList.add('border-red-500', 'focus:border-red-500'); contactInput.classList.remove('border-green-500', 'focus:border-green-500'); } } else { contactInput.classList.remove('border-red-500', 'focus:border-red-500'); contactInput.classList.add('border-green-500', 'focus:border-green-500'); } }
-            const text = document.getElementById('dynamicText').value;
-            const lines = text.split('\n').filter(line => line.trim() !== '');
-            const feedback = document.getElementById('validationFeedback');
-            const dupBox = document.getElementById('duplicateErrorBox');
-            const dupList = document.getElementById('duplicateList');
-            const submitBtn = document.getElementById('sellSubmitBtn');
-            let listValid = true; globalUniqueCount = 0; let foundDuplicates = [];
-            if (lines.length === 0) { listValid = false; feedback.classList.add('hidden'); dupBox.classList.add('hidden'); document.getElementById('lineCountDisplay').innerText = "Total: 0"; } 
-            else if (jobId === 'gmail' || jobId === 'facebook') {
-                const identifiers = new Set(); let invalidFormat = 0;
-                lines.forEach(line => {
-                    const parts = line.trim().split(/\s+/); let id = ''; let isValidLine = false;
-                    if (jobId === 'gmail') { if (parts.length >= 2 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(parts[0])) { id = parts[0]; isValidLine = true; } else invalidFormat++; } 
-                    else if (jobId === 'facebook') { if (parts.length >= 2 && /^\d+$/.test(parts[0])) { id = parts[0]; isValidLine = true; } else invalidFormat++; }
-                    if (isValidLine) { if (identifiers.has(id)) foundDuplicates.push(id); else identifiers.add(id); }
-                });
-                globalUniqueCount = identifiers.size;
-                if (foundDuplicates.length > 0) { listValid = false; dupList.innerHTML = foundDuplicates.map(d => `<li>❌ Duplicate: ${d}</li>`).join(''); dupBox.classList.remove('hidden'); } else dupBox.classList.add('hidden');
-                if (invalidFormat > 0 || foundDuplicates.length > 0) { listValid = false; let msg = ''; if (invalidFormat > 0) msg += `<div class="text-red-600 mb-1">❌ ${invalidFormat} টি লাইনের ফরম্যাট ভুল।</div>`; if (foundDuplicates.length > 0) msg += `<div class="text-red-600 mb-1">❌ ${foundDuplicates.length} টি ডুপ্লিকেট।</div>`; feedback.innerHTML = `<div class="text-xs font-bold">${msg}</div>`; feedback.classList.remove('hidden'); } 
-                else { feedback.innerHTML = `<div class="text-emerald-600 text-xs font-bold"><i class="fas fa-check"></i> ${globalUniqueCount} টি আইডি সঠিক (Unique)!</div>`; feedback.classList.remove('hidden'); }
-                document.getElementById('lineCountDisplay').innerText = `Valid: ${globalUniqueCount}`;
-            } else { listValid = true; globalUniqueCount = lines.length; document.getElementById('lineCountDisplay').innerText = `Total: ${lines.length}`; feedback.classList.add('hidden'); dupBox.classList.add('hidden'); }
-            let finalCondition = (jobId === 'whatsapp_rent' || jobId === 'other') ? (lines.length > 0 && contact.length > 0) : (bkashValid && listValid && lines.length > 0 && foundDuplicates.length === 0);
-            if (finalCondition) { submitBtn.disabled = false; submitBtn.classList.remove('opacity-50', 'cursor-not-allowed'); } else { submitBtn.disabled = true; submitBtn.classList.add('opacity-50', 'cursor-not-allowed'); }
+        // DUE LOGIC (Smart Cycle)
+        function getNextDueDate(std) {
+            const joinDate = new Date(std.joinDate || new Date().toISOString());
+            const dueDay = std.billingDay || joinDate.getDate();
+            const monthlyPaid = db.payments.filter(p => p.phone === std.phone && p.paymentType === 'monthly' && p.status === 'accepted');
+            
+            if (monthlyPaid.length === 0) return new Date(joinDate.getFullYear(), joinDate.getMonth() + 1, dueDay); // Due 1 month after join
+            
+            monthlyPaid.sort((a,b) => b.year - a.year || b.month - a.month);
+            const last = monthlyPaid[0];
+            let nM = last.month + 1, nY = last.year; if(nM > 11){ nM=0; nY++; }
+            let nD = new Date(nY, nM, dueDay); if(nD.getMonth() !== nM) nD = new Date(nY, nM + 1, 0);
+            return nD;
         }
 
-        function handleSellSubmit(e) {
-            e.preventDefault();
-            if(!checkShopStatus(jobSelect.value)) { closeModal(); document.getElementById('shopClosedPopup').classList.remove('hidden'); setTimeout(() => document.getElementById('shopClosedPopup').classList.add('active'), 10); return; }
-            
-            const jobId = jobSelect.value;
-            const jobData = Object.values(MASTER_CONTROL.jobs).find(j => j.id === jobId);
-            const name = document.getElementById('userName').value;
-            const contact = document.getElementById('userContact').value;
-            const details = document.getElementById('dynamicText').value;
-            const countToSend = (jobId === 'gmail' || jobId === 'facebook') ? globalUniqueCount : details.split('\n').filter(l => l.trim() !== '').length;
-            
-            let totalSellPriceMsg = "";
-            if (jobData.sellPriceUnit && jobData.sellPriceUnit > 0) { 
-                const total = countToSend * jobData.sellPriceUnit; 
-                totalSellPriceMsg = `সম্ভাব্য বিল: ${total} টাকা (${countToSend} x ${jobData.sellPriceUnit})`; 
+        // STUDENT DASHBOARD RENDER
+        function loadStudentDashboard(isSilent = false) {
+            if(!isSilent) { 
+                const stdDash = getEl('student-dashboard'); if(stdDash) stdDash.classList.remove('hidden'); 
+                const logoutBtn = getEl('logout-btn'); if(logoutBtn) logoutBtn.classList.remove('hidden'); 
             }
+            const std = currentUser.data; const cY = new Date().getFullYear();
+            const isUnpaidAdm = (std.admissionYear || 0) < cY;
             
-            const dateTime = getBengaliDateTime();
-            
-            // MOVED LOGIC: Using Telegram logic
-            let msg = `*নতুন কাজ জমা (Sell)* %0Aসময়: ${dateTime} %0A------------------ %0Aকাজ: ${jobData.title} %0Aনাম: ${name} %0Aপেমেন্ট নাম্বার: ${contact} %0A`;
-            if (jobId === 'gmail' || jobId === 'facebook') {
-                msg += `মোট পরিমাণ (Unique): ${countToSend} পিস %0A`;
-            }
-            
-            if (totalSellPriceMsg) {
-                msg += `${totalSellPriceMsg} %0A`;
-            }
-            
-            msg += `------------------ %0A`;
-            
-            if (details) {
-                msg += `লিস্ট:%0A${encodeURIComponent(details)}`;
+            const overlay = getEl('admission-lock-overlay'); if(overlay) overlay.classList.toggle('hidden', !isUnpaidAdm);
+            const mainCont = getEl('dashboard-main-content'); if(mainCont) mainCont.classList.toggle('hidden', isUnpaidAdm);
+
+            const pendingAdm = db.payments.find(p=>p.phone===std.phone&&p.paymentType==='admission'&&p.year===cY&&p.status==='pending');
+            if(isUnpaidAdm) {
+                setTxt('btn-adm-fee', db.settings.admissionFee);
+                setTxt('lock-adm-fee', db.settings.admissionFee);
+                const btnSubmit = getEl('btn-submit-adm');
+                const btnPending = getEl('btn-pending-adm');
+                const notice = getEl('admission-pending-notice');
+                if(pendingAdm) {
+                    if(btnSubmit) btnSubmit.classList.add('hidden');
+                    if(btnPending) btnPending.classList.remove('hidden');
+                    if(notice) notice.classList.remove('hidden');
+                } else {
+                    if(btnSubmit) btnSubmit.classList.remove('hidden');
+                    if(btnPending) btnPending.classList.add('hidden');
+                    if(notice) notice.classList.add('hidden');
+                }
             }
 
-            const decodedMsg = decodeURIComponent(msg).replace(/%0A/g, '\n');
-            copyToClipboard(decodedMsg);
+            setSrc('std-dp', std.photo);
+            setTxt('std-name', std.name);
+            setTxt('std-class', std.class);
+            setTxt('std-history-text', `${std.originalYear || cY} (Class ${std.originalClass || std.class})`);
+            
+            const tF = (db.settings.fees && db.settings.fees[std.class]) || 0;
+            const mF = (db.settings.managementFees && db.settings.managementFees[std.class]) || 0;
+            const rawTot = tF+mF; const cF = Math.ceil(rawTot * 0.0185); const totalMonthlyRate = rawTot+cF;
 
-            // Show Success Modal instead of direct open
-            showSuccessModal(`https://t.me/${MASTER_CONTROL.admin.telegramUser}`);
+            setTxt('std-monthly-fee-display', totalMonthlyRate); // Show total combined rate on header
+            
+            const pAlert = getEl('std-paused-alert'); if(pAlert) pAlert.classList.toggle('hidden', !std.isPaused);
+
+            if(!isSilent) { 
+                setVal('edit-my-name', std.name); 
+                setSrc('edit-profile-preview', std.photo); 
+                const ePP = getEl('edit-profile-preview'); if(ePP) ePP.dataset.base64 = std.photo; 
+                setTxt('promo-current-class', std.class); 
+                setVal('promo-new-class', std.class); // Fix Dropdown Default Selection
+            }
+
+            const schs = db.schedules.filter(s=>s.class===std.class).sort((a,b)=>a.day-b.day); const now = new Date(); let tC="আজ ছুটি", nC="নির্ধারিত নেই";
+            if(!isHoliday(now) && schs.find(s=>s.day===now.getDay())) tC=`আজ ${formatTime(schs.find(s=>s.day===now.getDay()).time)}`;
+            for(let i=1;i<=7;i++){ let d=new Date(now); d.setDate(d.getDate()+i); if(!isHoliday(d)&&schs.find(s=>s.day===d.getDay())){nC=`${i===1?'আগামীকাল':daysBn[d.getDay()]}, ${formatTime(schs.find(s=>s.day===d.getDay()).time)}`; break;} }
+            
+            setTxt('std-today-class', tC);
+            setTxt('std-next-class', nC);
+
+            const nextDue = getNextDueDate(std);
+            const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const dueMidnight = new Date(nextDue.getFullYear(), nextDue.getMonth(), nextDue.getDate());
+            const diffDays = Math.ceil((dueMidnight - todayMidnight) / (1000 * 60 * 60 * 24));
+            const pendingPay = db.payments.find(p=>p.phone===std.phone && p.month===nextDue.getMonth() && p.year===nextDue.getFullYear() && p.paymentType==='monthly' && p.status==='pending');
+
+            let currentDueAmount = 0;
+            if(diffDays <= 0) currentDueAmount = totalMonthlyRate;
+            
+            setTxt('txt-current-due', `৳${currentDueAmount}`);
+            setTxt('txt-t-fee', `৳${tF}`);
+            setTxt('txt-m-fee', `৳${mF}`);
+            setTxt('txt-c-fee', `৳${cF}`);
+            setTxt('txt-total-fee', `৳${totalMonthlyRate}`);
+
+            const sDiv = getEl('std-payment-status'); const pBtn = getEl('btn-pay-monthly');
+            let pS = ""; let pStatusText = "";
+            if(std.isPaused) { 
+                if(sDiv) sDiv.innerHTML = `<span class="text-gray-500">বিরতির কারণে ফি নেই</span>`; 
+                if(pBtn) pBtn.classList.add('hidden'); 
+                pStatusText = "<span class='text-gray-500'>সাময়িক বিরতি</span>"; 
+            } 
+            else if (pendingPay) { 
+                if(sDiv) sDiv.innerHTML = `<span class="text-yellow-600 font-bold flex items-center justify-center gap-1"><div class="bounce-dots text-yellow-600"><div></div><div></div><div></div></div> যাচাই হচ্ছে...</span>`; 
+                if(pBtn) pBtn.classList.add('hidden'); 
+                pStatusText = "<span class='text-yellow-600 font-bold'>পেমেন্ট ভেরিফিকেশন চলছে</span>"; 
+            } 
+            else {
+                if (diffDays <= 0) { 
+                    if(sDiv) sDiv.innerHTML = `<span class="text-red-600 font-bold">বকেয়া! ডিউ ডেট: ${nextDue.toLocaleDateString('bn-BD')}</span>`; 
+                    if(pBtn) pBtn.classList.remove('hidden'); 
+                    pStatusText = "<span class='text-red-600 font-bold'>আপনার বেতন বকেয়া আছে, দ্রুত পরিশোধ করুন। ⚠️</span>"; 
+                } 
+                else if (diffDays <= 5) { 
+                    if(sDiv) sDiv.innerHTML = `<span class="text-orange-600 font-bold">পরবর্তী ডিউ: ${nextDue.toLocaleDateString('bn-BD')}</span>`; 
+                    if(pBtn) pBtn.classList.remove('hidden'); 
+                    pStatusText = `<span class='text-orange-500 font-bold'>আপনার বেতন ডিউ হতে আর মাত্র ${diffDays} দিন বাকি।</span>`; 
+                } 
+                else { 
+                    if(sDiv) sDiv.innerHTML = `<span class="text-green-600 font-bold">আপনার বেতন ক্লিয়ার আছে</span>`; 
+                    if(pBtn) pBtn.classList.remove('hidden'); 
+                    pStatusText = "<span class='text-green-600 font-bold'>আপনার অ্যাকাউন্টে কোনো বকেয়া নেই। ধন্যবাদ! 💚</span>"; 
+                }
+            }
+
+            setHtml('ai-analysis-text', `<div class="mb-2"><b class="ai-text-gradient uppercase tracking-widest text-[10px] font-black"><i class="fa-solid fa-satellite-dish"></i> NOVA-Core Analytics</b></div><p class="mb-1 text-gray-800 font-bold">সুপ্রভাত, ${std.name}!</p><p class="text-[11px] text-gray-500 mb-2 font-mono"><b>System Status:</b> ${pStatusText}</p><div class="bg-violet-50/50 border border-violet-100 p-2.5 rounded-lg text-violet-800 font-medium text-[11px] shadow-inner"><i class="fa-solid fa-calendar-check mr-1 text-violet-500"></i> আপনার পরবর্তী নির্ধারিত ক্লাস <b>${nC}</b>। আপনার শেখার ধারাবাহিকতা বজায় রাখতে রুটিনটি সঠিকভাবে অনুসরণ করুন।</div>`);
+
+            const histHTML = db.payments.filter(p=>p.phone===std.phone).sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p=>{
+                let mthd = p.senderType==='own' ? 'Own Num' : `Other (${p.senderNumber})`;
+                return `<tr><td class="p-3 text-[10px] font-mono text-gray-500">${formatFullDate(p.date)}</td><td class="p-3 font-bold">${p.paymentType==='admission'?`<span class="text-blue-600">ভর্তি ফি</span> (${p.year})`:`${monthsBn[p.month]} ${p.year}`}</td><td class="p-3 text-[10px]">${mthd}<br><span class="text-violet-600 font-bold tracking-widest">${p.trxId||''}</span></td><td class="p-3 font-black text-gray-800">৳${p.totalPaid||p.amount}</td><td class="p-3 text-center"><span class="px-2 py-0.5 rounded text-[9px] uppercase font-bold tracking-widest text-${p.status==='accepted'?'green':p.status==='pending'?'yellow':'red'}-700 bg-${p.status==='accepted'?'green':p.status==='pending'?'yellow':'red'}-100 border border-${p.status==='accepted'?'green':p.status==='pending'?'yellow':'red'}-200">${p.status}</span><br><span class="text-[9px] text-red-500 font-bold">${p.rejectReason||''}</span></td></tr>`;
+            }).join('') || `<tr><td colspan="5" class="p-8 text-center text-gray-300 font-black uppercase tracking-widest text-[10px]">কোনো পেমেন্ট রেকর্ড নেই</td></tr>`;
+            setHtml('std-payment-history', histHTML);
         }
 
-        const menuBtn = document.getElementById('mobileMenuBtn');
-        const mobileMenu = document.getElementById('mobileMenu');
-        function toggleMobileMenu() {
-            const isOpen = mobileMenu.classList.contains('scale-y-100');
-            if (isOpen) { mobileMenu.classList.remove('scale-y-100', 'opacity-100'); mobileMenu.classList.add('scale-y-0', 'opacity-0'); menuBtn.innerHTML = '<i class="fas fa-bars text-lg"></i>'; } 
-            else { mobileMenu.classList.remove('scale-y-0', 'opacity-0'); mobileMenu.classList.add('scale-y-100', 'opacity-100'); menuBtn.innerHTML = '<i class="fas fa-times text-lg"></i>'; }
+        const stdProfFormEl = getEl('std-edit-profile-form');
+        if(stdProfFormEl) {
+            stdProfFormEl.addEventListener('submit', async (e) => { 
+                e.preventDefault(); const pBtn = e.submitter; if(pBtn) pBtn.innerHTML = '<div class="bounce-dots"><div></div><div></div><div></div></div>'; 
+                const nm = getEl('edit-my-name').value, ph = getEl('edit-profile-preview').dataset.base64; 
+                await _supabase.from('students').update({name:nm, photo:ph}).eq('phone', currentUser.data.phone); 
+                if(pBtn) pBtn.innerText = 'আপডেট';
+                closeModal('std-edit-profile-modal'); await syncAndRefresh(); showToast('প্রোফাইল আপডেট হয়েছে'); 
+            });
         }
-        menuBtn.addEventListener('click', toggleMobileMenu);
+        
+        async function submitPromotion() { const nc = getEl('promo-new-class').value; await _supabase.from('requests').insert([{phone:currentUser.data.phone, type:'promotion', data:{toClass:nc}}]); closeModal('request-promotion-modal'); showToast('রিকোয়েস্ট পাঠানো হয়েছে'); syncAndRefresh(); }
 
-        function setCategory(type) {
-            currentCategory = type;
-            document.querySelectorAll('.filter-btn').forEach(btn => { btn.className = 'filter-btn px-6 py-2.5 rounded-xl text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 transition border border-slate-200 whitespace-nowrap'; });
-            document.getElementById(`btn-${type}`).className = 'filter-btn px-6 py-2.5 rounded-xl text-sm font-bold bg-slate-900 text-white transition shadow-md whitespace-nowrap';
-            renderJobs();
+        function togglePayMethod() { 
+            const checkedRad = document.querySelector('input[name="pay_sender_type"]:checked');
+            if(!checkedRad) return;
+            const isOwn = checkedRad.value === 'own'; 
+            const trxBox = getEl('pay-trx-box'); const sendBox = getEl('pay-sender-box');
+            if(trxBox) trxBox.classList.toggle('hidden', !isOwn); 
+            if(sendBox) sendBox.classList.toggle('hidden', isOwn); 
+            const trxInput = getEl('pay-trxid'); 
+            if(trxInput) { trxInput.required = isOwn; if(!isOwn) trxInput.value = ''; } 
+            const sndInput = getEl('pay-sender-num'); 
+            if(sndInput) { sndInput.required = !isOwn; if(isOwn) sndInput.value = ''; } 
         }
-        document.getElementById('searchInput').addEventListener('input', (e) => { searchTerm = e.target.value; renderJobs(); });
-        document.getElementById('statusFilter').addEventListener('change', (e) => { statusFilterValue = e.target.value; renderJobs(); });
+        
+        function calculatePayAmount() {
+            const payTypeEl = getEl('pay-type'); if(!payTypeEl) return;
+            const payType = payTypeEl.value;
+            if(payType === 'admission') {
+                const f = db.settings.admissionFee; 
+                calculatedPayData = { amount: f, mFee: 0, cFee: 0, total: f }; 
+            } else {
+                const c = currentUser.data.class; const tF = (db.settings.fees && db.settings.fees[c])||0; const mF = (db.settings.managementFees && db.settings.managementFees[c])||0; const rTot = tF+mF; const cF = Math.ceil(rTot * 0.0185);
+                
+                const nDue = getNextDueDate(currentUser.data);
+                const today = new Date(); today.setHours(0,0,0,0);
+                const dueMidnight = new Date(nDue.getFullYear(), nDue.getMonth(), nDue.getDate());
+                const diffDays = Math.ceil((dueMidnight - today) / (1000 * 60 * 60 * 24));
+                
+                let finalTotal = diffDays <= 0 ? (rTot+cF) : 0; // 0 if not due yet
+                calculatedPayData = { amount: tF, mFee: mF, cFee: cF, total: finalTotal };
+            }
+            setTxt('pay-modal-total-amount', `৳${calculatedPayData.total}`);
+            
+            const btnSubmit = getEl('student-payment-form').querySelector('button[type="submit"]');
+            if(btnSubmit) {
+                if(calculatedPayData.total === 0) { btnSubmit.disabled = true; btnSubmit.innerText = "বকেয়া নেই"; btnSubmit.classList.replace('bg-gradient-to-r', 'bg-gray-400'); }
+                else { btnSubmit.disabled = false; btnSubmit.innerText = "পেমেন্ট সাবমিট করুন"; btnSubmit.classList.replace('bg-gray-400', 'bg-gradient-to-r'); }
+            }
+        }
+
+        function openPaymentModal() { 
+            setVal('pay-type', 'monthly');
+            const mCont = getEl('month-select-container'); if(mCont) mCont.classList.remove('hidden'); 
+            const mSel = getEl('pay-month-select'); if(mSel) mSel.required = true;
+            setTxt('pay-modal-title', 'মাসিক বেতন দিন');
+            const s = getEl('pay-month-select'); 
+            if(s) {
+                s.innerHTML=''; const nextDue = getNextDueDate(currentUser.data, db.payments); const targetMonth = nextDue.getMonth(); 
+                for(let i=0;i<12;i++) s.innerHTML+=`<option value="${i}" ${i===targetMonth?'selected':''}>${monthsBn[i]}</option>`; 
+            }
+            const radios = document.querySelectorAll('input[name="pay_sender_type"]'); if(radios.length > 0) radios[0].checked=true; 
+            togglePayMethod(); calculatePayAmount(); openModal('payment-modal'); 
+        }
+
+        function openAdmissionPaymentModal() { 
+            setVal('pay-type', 'admission');
+            const mCont = getEl('month-select-container'); if(mCont) mCont.classList.add('hidden'); 
+            const mSel = getEl('pay-month-select'); if(mSel) mSel.required = false;
+            setTxt('pay-modal-title', 'ভর্তি ফি দিন');
+            const radios = document.querySelectorAll('input[name="pay_sender_type"]'); if(radios.length > 0) radios[0].checked=true; 
+            togglePayMethod(); calculatePayAmount(); openModal('payment-modal'); 
+        }
+        
+        // PAYMENT SUBMIT (Instant Feedback)
+        const stdPaymentFormEl = getEl('student-payment-form');
+        if(stdPaymentFormEl) {
+            stdPaymentFormEl.addEventListener('submit', async (e) => { 
+                e.preventDefault(); 
+                if(calculatedPayData.total === 0) return showToast('আপনার কোনো বকেয়া নেই!', 'error');
+                try {
+                    const btn = e.submitter; if(btn) btn.innerHTML = '<div class="bounce-dots"><div></div><div></div><div></div></div>';
+                    const payTypeEl = getEl('pay-type'); if(!payTypeEl) return;
+                    const tp = payTypeEl.value; const nw = new Date(); 
+                    const mSel = getEl('pay-month-select');
+                    const mo = tp === 'monthly' ? (mSel ? parseInt(mSel.value) : nw.getMonth()) : nw.getMonth();
+                    
+                    const checkedRad = document.querySelector('input[name="pay_sender_type"]:checked');
+                    const sType = checkedRad ? checkedRad.value : 'own'; 
+                    const trxInput = getEl('pay-trxid'); const trx = sType === 'own' && trxInput ? trxInput.value.trim().toUpperCase() : ''; 
+                    const sndInput = getEl('pay-sender-num'); const sNum = sType === 'other' && sndInput ? sndInput.value.trim() : '';
+                    
+                    const newEntry = {phone:currentUser.data.phone, month:mo, year:nw.getFullYear(), amount:calculatedPayData.amount, managementFee:calculatedPayData.mFee, cashoutCharge:calculatedPayData.cFee, totalPaid:calculatedPayData.total, date:nw.toISOString(), trxId:trx, senderType:sType, senderNumber:sNum, status:'pending', paymentType:tp};
+                    
+                    // Optimistic UI Update
+                    db.payments.push({...newEntry, id: Date.now()}); 
+                    loadStudentDashboard(true);
+                    closeModal('payment-modal'); stdPaymentFormEl.reset();
+                    showToast('পেমেন্ট রিকোয়েস্ট পাঠানো হয়েছে!');
+
+                    // Background DB Update
+                    const { error } = await _supabase.from('payments').insert([newEntry]); 
+                    if(error) { throw error; }
+                    syncAndRefresh();
+                } catch(err) { showToast('সার্ভার এরর!', 'error'); console.error(err); syncAndRefresh(); }
+            });
+        }
+
+        // ADMIN LOGIC
+        function loadAdminDashboard(isSilent = false) { 
+            if(!isSilent) {
+                const admDash = getEl('admin-dashboard'); if(admDash) admDash.classList.remove('hidden'); 
+                const logoutBtn = getEl('logout-btn'); if(logoutBtn) logoutBtn.classList.remove('hidden');
+            }
+            updateAdminStats(); renderStudents(); renderAdminPayments(); renderRequests(); renderScheduleForm(); renderSchedules(); renderHolidays(); 
+            setVal('set-bkash', db.settings.bkashNumber); setVal('set-adm-fee', db.settings.admissionFee);
+        }
+
+        function getUpcomingAndOverdues() {
+            const now = new Date(); const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            let overdues = []; let upcoming = [];
+            db.students.forEach(s => {
+                if(s.isPaused) return;
+                const nextDue = getNextDueDate(s, db.payments);
+                const dueMidnight = new Date(nextDue.getFullYear(), nextDue.getMonth(), nextDue.getDate());
+                const diffDays = Math.ceil((dueMidnight - todayMidnight) / (1000 * 60 * 60 * 24));
+                const isPending = db.payments.some(p => p.phone === s.phone && p.month === nextDue.getMonth() && p.year === nextDue.getFullYear() && p.paymentType === 'monthly' && p.status === 'pending');
+                
+                if(!isPending) {
+                    if(diffDays <= 0) overdues.push({ s, nextDue: nextDue });
+                    else if(diffDays <= 5) upcoming.push({ s, diffDays });
+                }
+            });
+            return { overdues, upcoming };
+        }
+
+        function updateAdminStats() {
+            const now = new Date(); const pR=db.payments.filter(x=>x.status==='pending').length; const rR=db.requests.filter(x=>x.status==='pending').length;
+            const bdgPay = getEl('badge-payments'); if(bdgPay) bdgPay.classList.toggle('hidden', pR===0); 
+            const bdgReq = getEl('badge-requests'); if(bdgReq) bdgReq.classList.toggle('hidden', rR===0);
+            
+            let mI = db.payments.filter(p=>p.month===now.getMonth()&&p.year===now.getFullYear()&&p.status==='accepted'&&p.paymentType==='monthly').reduce((s,x)=>s+(x.totalPaid||x.amount),0);
+            setTxt('stat-income', `৳${mI}`); 
+            const eAdm = db.payments.filter(p=>p.year===now.getFullYear()&&p.status==='accepted'&&p.paymentType==='admission').reduce((s,x)=>s+(x.totalPaid||x.amount),0);
+            setTxt('stat-adm-income', `৳${eAdm}`);
+            
+            const dues = getUpcomingAndOverdues();
+            const ovCount = dues.overdues.length; const upcCount = dues.upcoming.length;
+            setTxt('stat-unpaid', `${ovCount} জন`); 
+            setTxt('stat-total-std', db.students.length);
+
+            const overviewActionNeeded = ovCount > 0 || upcCount > 0 || (db.students.filter(s=>(s.admissionYear||0)<now.getFullYear()).length > 0);
+            const bdgOv = getEl('badge-overview'); if(bdgOv) bdgOv.classList.toggle('hidden', !overviewActionNeeded);
+            const stdNewCount = db.students.filter(s=>new Date(s.joinDate).getMonth() === now.getMonth() && new Date(s.joinDate).getFullYear() === now.getFullYear()).length;
+            const bdgStd = getEl('badge-students'); if(bdgStd) bdgStd.classList.toggle('hidden', stdNewCount === 0);
+            
+            let aiText = `চলতি মাসে মোট আদায়: <b>৳${mI}</b> (টিউশন ফি) এবং <b>৳${eAdm}</b> (ভর্তি ফি)।<br>`;
+            if (ovCount > 0) aiText += `<span class="text-red-400 font-bold"><i class="fa-solid fa-triangle-exclamation"></i> ক্রিটিক্যাল অ্যালার্ট: ${ovCount} জন শিক্ষার্থীর বেতন বকেয়া রয়েছে।</span><br>`;
+            else aiText += `<span class="text-green-400"><i class="fa-solid fa-check-circle"></i> কোনো বকেয়া নেই, পারফরম্যান্স অপ্টিমাল।</span><br>`;
+            if (upcCount > 0) aiText += `<span class="text-yellow-400"><i class="fa-solid fa-clock"></i> ${upcCount} জন শিক্ষার্থীর পেমেন্ট আগামী ৫ দিনে শিডিউল করা আছে।</span>`;
+            setHtml('admin-ai-insights-box', aiText);
+
+            let dueHTML = dues.overdues.map(d=>`<tr><td class="p-3"><span class="font-bold text-gray-800">${d.s.name}</span><br><span class="text-[10px] text-violet-600 bg-violet-50 px-1.5 rounded font-black border border-violet-100">Class ${d.s.class}</span></td><td class="p-3 text-[10px] text-red-600 font-bold bg-red-50 rounded-lg border border-red-100">বকেয়া (${d.nextDue.toLocaleDateString('bn-BD')})</td><td class="p-3 text-right"><a href="sms:${d.s.guardianPhone}?body=আপনার সন্তানের প্রাইভেটের বেতন বকেয়া আছে। দয়া করে পরিশোধ করুন।" class="bg-gray-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-black hover:bg-black transition shadow">SMS</a></td></tr>`);
+            let upcHTML = dues.upcoming.map(d=>`<tr><td class="p-3"><span class="font-bold text-gray-800">${d.s.name}</span><br><span class="text-[10px] text-violet-600 bg-violet-50 px-1.5 rounded font-black border border-violet-100">Class ${d.s.class}</span></td><td class="p-3 text-[10px] text-orange-600 font-bold bg-orange-50 rounded-lg border border-orange-100">${d.diffDays} দিন পর ডিউ</td><td class="p-3 text-right"><a href="sms:${d.s.guardianPhone}?body=আপনার সন্তানের টিউশন ফি দেওয়ার তারিখ ঘনিয়ে এসেছে।" class="bg-gray-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-black hover:bg-black transition shadow">SMS</a></td></tr>`);
+            setHtml('unpaid-table-body', [...dueHTML, ...upcHTML].join('') || `<tr><td colspan="3" class="p-8 text-xs text-center text-gray-400 font-bold uppercase tracking-wide">সব ক্লিয়ার!</td></tr>`);
+            
+            setHtml('unpaid-adm-body', db.students.filter(s=>(s.admissionYear || 0)<now.getFullYear()).map(s=>`<tr><td class="p-3 font-bold text-gray-800">${s.name}<br><span class="text-[10px] bg-violet-50 text-violet-600 px-1.5 rounded font-black border border-violet-100">Class ${s.class}</span></td><td class="p-3 text-[10px] whitespace-normal min-w-[120px] text-gray-500 font-medium leading-relaxed">${s.address || '-'}</td><td class="p-3 text-right"><a href="sms:${s.guardianPhone}?body=আপনার সন্তানের প্রাইভেটের ভর্তি ফি বকেয়া আছে। দয়া করে পরিশোধ করুন।" class="bg-gray-800 text-white px-3 py-1.5 rounded-lg text-[10px] font-black hover:bg-black transition shadow">SMS</a></td></tr>`).join('')||`<tr><td colspan="3" class="p-8 text-xs text-center text-gray-400 font-bold uppercase tracking-wide">সবার ভর্তি ফি ক্লিয়ার!</td></tr>`);
+
+            setHtml('class-fee-inputs', classesList.map(c=>`<div class="border border-violet-100 p-3 rounded-xl bg-violet-50/30 shadow-inner"><label class="block text-[10px] font-black text-violet-700 mb-2 border-b border-violet-100 pb-1 uppercase tracking-widest">Class ${c}</label><div class="space-y-2"><div class="flex items-center justify-between"><span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">টিউশন ফি</span> <input type="number" id="fee-${c}" value="${(db.settings.fees && db.settings.fees[c])||0}" class="w-20 p-1.5 border border-gray-200 rounded-lg text-xs text-right font-mono font-bold focus:bg-white shadow-sm outline-none"></div><div class="flex items-center justify-between"><span class="text-[10px] text-gray-600 font-bold uppercase tracking-widest">ম্যানেজমেন্ট</span> <input type="number" id="mfee-${c}" value="${(db.settings.managementFees && db.settings.managementFees[c])||0}" class="w-20 p-1.5 border border-gray-200 rounded-lg text-xs text-right font-mono font-bold focus:bg-white shadow-sm outline-none"></div></div></div>`).join(''));
+        }
+
+        function showAdminTab(t) { document.querySelectorAll('.admin-tab-content').forEach(e=>e.classList.add('hidden')); document.querySelectorAll('.admin-tab-btn').forEach(e=>{e.classList.replace('bg-gray-800','bg-white'); e.classList.replace('text-white','text-gray-600');}); const tEl = getEl(`admin-tab-${t}`); if(tEl) tEl.classList.remove('hidden'); const b=Array.from(document.querySelectorAll('.admin-tab-btn')).find(x=>x.getAttribute('onclick').includes(t)); if(b){b.classList.replace('bg-white','bg-gray-800'); b.classList.replace('text-gray-600','text-white');} }
+        
+        function renderStudents() { 
+            const fEl = getEl('filter-class'); const sEl = getEl('search-student'); if(!fEl || !sEl) return; const f=fEl.value, s=sEl.value.toLowerCase(); 
+            setHtml('students-list-container', db.students.filter(x=>(f==='all'||x.class===f)&&(x.name.toLowerCase().includes(s)||x.phone.includes(s))).map(std=>`<div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm flex flex-col gap-3 relative hover:shadow-lg transition duration-300 group"><div class="flex items-center gap-4"><img src="${std.photo}" class="w-14 h-14 rounded-full object-cover border-2 border-violet-100 group-hover:scale-105 transition"><div><h4 class="font-black text-sm text-gray-800 leading-tight uppercase tracking-tight">${std.name}</h4><span class="text-[9px] text-violet-700 font-black bg-violet-50 px-2 py-0.5 rounded border border-violet-100 uppercase tracking-widest">Class ${std.class}</span></div></div><div class="text-[10px] text-gray-600 mt-2 bg-gray-50 p-3 rounded-xl border border-gray-100 leading-relaxed shadow-inner"><p><b class="text-gray-400 font-bold uppercase tracking-widest">F:</b> <span class="font-bold">${std.fathersName || '-'}</span> | <b class="text-gray-400 font-bold uppercase tracking-widest">M:</b> <span class="font-bold">${std.mothersName || '-'}</span></p><p class="mt-1"><i class="fa-solid fa-location-dot text-gray-400 w-4"></i> <span class="font-medium">${std.address || '-'}</span></p><p class="mt-1"><i class="fa-solid fa-phone text-gray-400 w-4"></i> <span class="font-mono">S: ${std.phone} | G: ${std.guardianPhone}</span></p><p class="mt-2 font-black text-violet-600 bg-violet-100/50 inline-block px-2 py-1 rounded-lg border border-violet-100/50 uppercase tracking-widest text-[9px]"><i class="fa-solid fa-fingerprint mr-1"></i>ভর্তি: ${new Date(std.joinDate || new Date().toISOString()).toLocaleDateString('bn-BD')} (বিল: ${std.billingDay || new Date(std.joinDate || new Date().toISOString()).getDate()} তাং)</p></div><div class="flex gap-2 mt-1"><button onclick="openEditStd('${std.phone}')" class="flex-1 bg-white border border-gray-200 hover:bg-gray-800 hover:text-white text-gray-700 py-2 rounded-xl text-[10px] font-black transition shadow-sm uppercase tracking-widest"><i class="fa-solid fa-pen mr-1"></i> এডিট</button><button onclick="deleteStudent('${std.phone}')" class="bg-white border border-red-200 hover:bg-red-500 hover:text-white text-red-500 px-4 rounded-xl text-xs transition shadow-sm"><i class="fa-solid fa-trash"></i></button></div></div>`).join('') || `<div class="col-span-full p-10 text-center text-gray-300 font-black uppercase tracking-widest text-sm">কোনো শিক্ষার্থী পাওয়া যায়নি</div>`); 
+        }
+        
+        function openEditStd(phone) { const s=db.students.find(x=>x.phone===phone); if(!s) return; setVal('edit-std-id', phone); setVal('edit-std-name', s.name); setVal('edit-std-class', s.class); setVal('edit-std-phone', s.phone); setVal('edit-std-guardian', s.guardianPhone); setVal('edit-std-pass', s.password); setVal('edit-std-joinDate', s.joinDate || new Date().toISOString().split('T')[0]); setVal('edit-std-billingDay', s.billingDay || new Date(s.joinDate || new Date().toISOString()).getDate()); setVal('edit-std-fname', s.fathersName || ''); setVal('edit-std-mname', s.mothersName || ''); setVal('edit-std-address', s.address || ''); openModal('admin-edit-student-modal'); }
+        
+        const admEditStdFormEl = getEl('admin-edit-std-form');
+        if(admEditStdFormEl) {
+            admEditStdFormEl.addEventListener('submit', async(e)=>{ 
+                e.preventDefault(); const btn=e.submitter; if(btn) btn.innerHTML='<div class="bounce-dots"><div></div><div></div><div></div></div>'; 
+                const oP=getEl('edit-std-id').value, nP=getEl('edit-std-phone').value, c=getEl('edit-std-class').value, g=getEl('edit-std-guardian').value, p=getEl('edit-std-pass').value, fn=getEl('edit-std-fname').value, mn=getEl('edit-std-mname').value, ad=getEl('edit-std-address').value; 
+                const bD = parseInt(getEl('edit-std-billingDay').value); 
+                await _supabase.from('students').update({phone:nP, class:c, guardianPhone:g, password:p, fathersName:fn, mothersName:mn, address:ad, billingDay: bD}).eq('phone', oP); 
+                if(oP!==nP) { await _supabase.from('payments').update({phone:nP}).eq('phone', oP); await _supabase.from('requests').update({phone:nP}).eq('phone', oP); } 
+                if(btn) btn.innerText='অপারেশন সেভ করুন'; closeModal('admin-edit-student-modal'); await syncAndRefresh(); showToast('আপডেট সম্পন্ন'); 
+            });
+        }
+        
+        async function deleteStudent(phone) { if(confirm('সতর্কতা: নিশ্চিত ডিলিট করবেন?')){ await _supabase.from('students').delete().eq('phone',phone); await syncAndRefresh(); } }
+
+        function renderAdminPayments() { setHtml('admin-payments-body', [...db.payments].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p=>{ const sN=(db.students.find(s=>s.phone===p.phone)||{}).name||p.phone; let btns=''; if(p.status==='pending') { btns=`<div class="flex gap-2 justify-end"><button onclick="updatePay(${p.id}, 'accepted')" class="bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-[10px] font-black transition shadow uppercase tracking-widest"><i class="fa-solid fa-check"></i></button><button onclick="openRejectPay(${p.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-lg text-[10px] font-black transition shadow uppercase tracking-widest"><i class="fa-solid fa-xmark"></i></button></div>`; } else { btns=`<span class="px-2.5 py-1 rounded-md text-[9px] uppercase font-black tracking-widest text-${p.status==='accepted'?'green':'red'}-700 bg-${p.status==='accepted'?'green':'red'}-50 border border-${p.status==='accepted'?'green':'red'}-200">${p.status}</span>`; } let info = p.senderType==='own' ? `<span class="text-violet-600 font-mono font-black tracking-widest bg-violet-50 px-1.5 py-0.5 rounded border border-violet-100">${p.trxId||''}</span>` : `<span class="text-gray-500 font-mono font-bold"><i class="fa-solid fa-store text-gray-400 mr-1"></i>${p.senderNumber}</span>`; return `<tr class="border-b border-gray-50 hover:bg-gray-50/50 transition"><td class="p-4 text-[10px] text-gray-400 font-mono font-bold whitespace-nowrap">${formatFullDate(p.date)}</td><td class="p-4"><b class="text-gray-800 text-sm uppercase tracking-tight">${sN}</b><br><span class="text-[10px] text-gray-400 font-mono font-bold">${p.phone}</span></td><td class="p-4 text-xs whitespace-nowrap font-bold text-gray-600">${p.paymentType==='admission'?'<span class="bg-blue-50 text-blue-700 px-2 py-1 rounded-md text-[9px] uppercase tracking-widest border border-blue-200">ভর্তি ফি</span>':monthsBn[p.month]}</td><td class="p-4 text-xs whitespace-nowrap">${info}</td><td class="p-4 font-black text-sm text-pink-600 text-right">৳${p.totalPaid||p.amount}</td><td class="p-4 text-right">${btns}</td></tr>`; }).join('') || `<tr><td colspan="6" class="p-10 text-center text-gray-300 font-black uppercase tracking-widest text-sm">কোনো রিকোয়েস্ট নেই</td></tr>`); }
+        function openRejectPay(id) { setVal('reject-pay-id', id); setVal('reject-reason-text', ''); openModal('reject-payment-modal'); }
+        async function confirmRejectPayment() { const id=getEl('reject-pay-id').value, res=getEl('reject-reason-text').value; if(!res) return showToast('কারণ লিখুন', 'error'); await _supabase.from('payments').update({status:'rejected', rejectReason:res}).eq('id',id); closeModal('reject-payment-modal'); await syncAndRefresh(); }
+        async function updatePay(id, status) { await _supabase.from('payments').update({status}).eq('id',id); const p=db.payments.find(x=>x.id===id); if(status==='accepted'&&p.paymentType==='admission') await _supabase.from('students').update({admissionYear:p.year}).eq('phone',p.phone); await syncAndRefresh(); }
+
+        function renderRequests() { setHtml('admin-requests-body', [...db.requests].sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt)).map(r=>{ const sn=(db.students.find(s=>s.phone===r.phone)||{}).name||r.phone; let bs=r.status==='pending'?`<div class="flex justify-end gap-2"><button onclick="hdReq(${r.id},'accepted')" class="bg-green-500 text-white px-3 py-2 rounded-lg text-[10px] font-black shadow-sm hover:bg-green-600 transition uppercase tracking-widest"><i class="fa-solid fa-check"></i></button> <button onclick="hdReq(${r.id},'rejected')" class="bg-red-500 text-white px-3 py-2 rounded-lg text-[10px] font-black shadow-sm hover:bg-red-600 transition uppercase tracking-widest"><i class="fa-solid fa-xmark"></i></button></div>`: `<span class="text-[9px] font-black uppercase tracking-widest px-2.5 py-1 rounded-md bg-gray-100 text-gray-500 border border-gray-200">${r.status}</span>`; return `<tr class="border-b border-gray-50 hover:bg-gray-50/50 transition"><td class="p-4 text-xs font-black text-gray-800 uppercase tracking-tight">${sn}</td><td class="p-4 text-[10px] font-bold text-gray-600 uppercase tracking-widest">${r.type==='promotion'?`<span class="text-purple-600 bg-purple-50 px-2 py-1 rounded-md border border-purple-100"><i class="fa-solid fa-arrow-up mr-1"></i> Class ${r.data.toClass}</span>`:`<span class="text-orange-600 bg-orange-50 px-2 py-1 rounded-md border border-orange-100"><i class="fa-solid fa-pause mr-1"></i> বিরতি</span>`}</td><td class="p-4 text-right">${bs}</td></tr>`; }).join('') || `<tr><td colspan="3" class="p-10 text-center text-gray-300 font-black uppercase tracking-widest text-sm">কোনো রিকোয়েস্ট নেই</td></tr>`); }
+        async function hdReq(id, st) { const r=db.requests.find(x=>x.id===id); await _supabase.from('requests').update({status:st}).eq('id',id); if(st==='accepted'){ if(r.type==='promotion') await _supabase.from('students').update({class:r.data.toClass}).eq('phone',r.phone); if(r.type==='pause') await _supabase.from('students').update({isPaused:true}).eq('phone',r.phone); } await syncAndRefresh(); }
+
+        function renderScheduleForm() { const clsEl = getEl('sch-class-select'); if(!clsEl) return; const cls = clsEl.value; const schs = db.schedules.filter(s => s.class === cls); let html = ''; for(let i=0; i<6; i++) { const existing = schs.find(s => s.day === i); let timeVal = existing ? existing.time : (i === 5 ? '08:00' : ((cls === '6') ? '16:00' : '15:00')); html += `<div class="flex items-center gap-3"><span class="w-14 text-[10px] font-black text-gray-400 uppercase tracking-widest">${daysBn[i].substring(0,3)}</span><input type="time" id="sch-time-${i}" value="${timeVal}" class="flex-1 p-2.5 border border-gray-200 rounded-xl text-xs font-bold font-mono bg-white focus:bg-gray-50 outline-none transition shadow-sm"></div>`; } setHtml('sch-days-inputs', html); }
+        
+        const addSchFormEl = getEl('add-schedule-form');
+        if(addSchFormEl) {
+            addSchFormEl.addEventListener('submit', async (e) => { 
+                e.preventDefault(); const btn=e.submitter; if(btn) btn.innerHTML='<div class="bounce-dots"><div></div><div></div><div></div></div>';
+                const cls = getEl('sch-class-select').value; 
+                await _supabase.from('schedules').delete().eq('class', cls); 
+                const newSchs = []; 
+                for(let i=0; i<6; i++) { 
+                    const time = getEl(`sch-time-${i}`).value; 
+                    if(time) newSchs.push({ class: cls, day: i, time: time }); 
+                } 
+                if(newSchs.length > 0) await _supabase.from('schedules').insert(newSchs); 
+                if(btn) btn.innerText='সেভ রুটিন'; await syncAndRefresh(); showToast('রুটিন আপডেট হয়েছে'); 
+            });
+        }
+
+        function renderSchedules() { setHtml('schedule-list', classesList.map(c=>{ const s=db.schedules.filter(x=>x.class===c).sort((a,b)=>a.day-b.day); return s.length?`<div class="bg-white p-4 rounded-2xl border border-gray-100 mb-3 shadow-sm"><h5 class="font-black text-violet-600 border-b border-gray-50 text-[10px] mb-3 pb-2 px-1 uppercase tracking-widest flex items-center gap-1.5"><i class="fa-solid fa-layer-group text-gray-300"></i> Class ${c}</h5><ul class="text-xs space-y-2">${s.map(x=>`<li class="flex justify-between items-center bg-gray-50 px-3 py-2 rounded-xl border border-gray-100"><span class="font-bold text-gray-500 text-[10px] uppercase tracking-widest">${daysBn[x.day]}</span> <span class="font-mono text-gray-800 font-black text-xs">${formatTime(x.time)}</span></li>`).join('')}</ul></div>`:'' }).join('')); }
+        async function addHoliday(){ const d=getEl('holiday-date').value, r=getEl('holiday-reason').value; if(!d)return; await _supabase.from('holidays').insert([{date:d, reason:r}]); await syncAndRefresh(); }
+        function renderHolidays(){ setHtml('holiday-list', db.holidays.filter(h=>h.date>=new Date().toISOString().split('T')[0]).map(h=>`<li class="p-3 flex justify-between items-center text-xs border-b border-gray-50 last:border-0 hover:bg-yellow-50 transition rounded-xl mt-1"><div><b class="text-red-500 font-mono bg-red-50 px-2 py-1 rounded-md border border-red-100 shadow-sm">${new Date(h.date).toLocaleDateString('bn-BD')}</b> <span class="text-gray-700 ml-2 font-bold">${h.reason}</span></div><button onclick="delHol(${h.id})" class="text-gray-300 hover:text-red-500 bg-white shadow-sm border border-gray-100 w-8 h-8 rounded-full flex items-center justify-center transition"><i class="fa-solid fa-trash text-[10px]"></i></button></li>`).join('') || `<li class="p-6 text-center text-[10px] text-gray-300 font-black uppercase tracking-widest">ছুটি নেই</li>`); }
+        async function delHol(id){ await _supabase.from('holidays').delete().eq('id',id); await syncAndRefresh(); }
+        
+        const admSetFormEl = getEl('admin-settings-form');
+        if(admSetFormEl) {
+            admSetFormEl.addEventListener('submit', async (e) => { 
+                e.preventDefault(); const btn=e.submitter; if(btn) btn.innerHTML='<div class="bounce-dots"><div></div><div></div><div></div></div>';
+                const fj={}, mj={}; 
+                classesList.forEach(c=>{fj[c]=parseInt(getEl(`fee-${c}`).value)||0; mj[c]=parseInt(getEl(`mfee-${c}`).value)||0;}); 
+                await _supabase.from('settings').upsert({id:1, bkashNumber:getEl('set-bkash').value, admissionFee:parseInt(getEl('set-adm-fee').value)||0, fees:fj, managementFees:mj}); 
+                if(btn) btn.innerText='সিস্টেম আপডেট করুন'; await syncAndRefresh(); showToast('সেটিংস আপডেটেড'); 
+            });
+        }
+
+        function sendDueReminders() {
+            const now = new Date(); const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            let nums = [];
+            db.students.forEach(s => {
+                if(s.isPaused) return;
+                const nextDue = getNextDueDate(s);
+                const dueMidnight = new Date(nextDue.getFullYear(), nextDue.getMonth(), nextDue.getDate());
+                const diffDays = Math.ceil((dueMidnight - todayMidnight) / (1000 * 60 * 60 * 24));
+                const isPending = db.payments.some(p => p.phone === s.phone && p.month === nextDue.getMonth() && p.year === nextDue.getFullYear() && p.paymentType === 'monthly' && p.status === 'pending');
+                if(!isPending && diffDays <= 5) nums.push(s.guardianPhone);
+            });
+            if(nums.length > 0) window.open(`sms:${nums.join(',')}?body=আপনার সন্তানের প্রাইভেটের বেতন পরিশোধের জন্য বিনীত অনুরোধ করা হচ্ছে। - শিক্ষক`, '_blank');
+            else showToast('কাউকে মেসেজ পাঠানোর নেই', 'error');
+        }
+
+        window.onload = initApp;
     </script>
 </body>
 </html>
